@@ -17,7 +17,7 @@ class UrlSeeder extends Seeder
         $links = [
             [
                 'name' => 'Training Attendance',
-                'url' => 'report.index',
+                'url' => 'report._kooltrainingindex',
                 'ordering' => 1,
             ],
             [

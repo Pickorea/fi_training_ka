@@ -133,9 +133,7 @@ Route::group(['middleware' => 'auth'], function ()
 
      //Excelreports
      Route::group(['as' => 'report.', 'prefix' => 'report'], function () {
-        Route::get('rep', [ExcelReportController::class, 'workstatusmindex'])->name('_workstatusmindex');
-        Route::get('repo', [ExcelReportController::class, 'index'])->name('index');
-        
+              
         Route::get('', [ExcelReportController::class, '_repo'])->name('repo');
         Route::get('training', [ExcelReportController::class, 'generatePDF'])->name('pdf');
         Route::get('Excelexcel', [ExcelReportController::class, 'export'])->name('Excelexcel');
@@ -143,12 +141,7 @@ Route::group(['middleware' => 'auth'], function ()
         Route::get('create', [ExcelReportController::class, 'create'])->name('create');
         Route::post('', [ExcelReportController::class, 'store'])->name('store');
         Route::get('export', [ExcelReportController::class, 'exportlist'])->name('export');
-        Route::group(['prefix' => '{report}'], function () { 
-        Route::get('', [ExcelReportController::class, 'show'])->name('show');
-        Route::get('edit', [ExcelReportController::class, 'edit'])->name('edit');
-        Route::match(['PUT', 'PATCH'], '', [ExcelReportController::class, 'update'])->name('update');
-        Route::delete('', [ExcelReportController::class, 'delete'])->name('delete');
-        });
+       
     });
 
      //chart

@@ -7,7 +7,7 @@
 
     <section class="content-header">
         <h1>
-            {{ __('EMPLOYEE WORK STATUS') }}
+           {{--{{ __('NON PERMENANT EMPLOYEE WORK STATUS') }}--}}
         </h1>
          <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
@@ -23,7 +23,7 @@
         <!-- Default box -->
         <div class="box">
             <div class="box-header with-border">
-                <h3 class="box-title">{{ __('Manage Employee Work Status') }}</h3>
+                <h3 class="box-title">{{ __('Manage Non Permenant Employee Work Status') }}</h3>
 
                 <div class="box-header with-border">
                         <div class="alert alert-info clearfix">
