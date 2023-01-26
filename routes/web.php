@@ -1,14 +1,28 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\EmployeeController;
-use App\Http\Controllers\IslandController;
-use App\Http\Controllers\TrainingController;
-use App\Http\Controllers\TrainingTypeController;
-use App\Http\Controllers\VillageController;
-use App\Http\Controllers\ParticipantController;
-use App\Http\Controllers\ReportController;
-use App\Http\Controllers\ChartController;
+
+//KoolReportController
+use App\Http\Controllers\KoolReportController\KoolReportController;
+//ExcelReportController
+use App\Http\Controllers\ExcelReportController\ExcelReportController;
+
+//Training
+
+use App\Http\Controllers\Training\IslandController;
+use App\Http\Controllers\Training\TrainingController;
+use App\Http\Controllers\Training\TrainingTypeController;
+use App\Http\Controllers\Training\VillageController;
+use App\Http\Controllers\Training\ChartController;
+
+//Alert System
+use App\Http\Controllers\AlertSystem\WorkStatusController;
+use App\Http\Controllers\AlertSystem\EmployeeController;
+use App\Http\Controllers\AlertSystem\EmployeeWorkStatusController;
+use App\Http\Controllers\AlertSystem\SpaController;
+use App\Http\Controllers\AlertSystem\NotifyController;
+
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -64,10 +78,12 @@ Route::group(['middleware' => 'auth'], function ()
     //training detail
     Route::group(['as' => 'training.', 'prefix' => 'training'], function () {
         Route::get('', [TrainingController::class, 'index'])->name('index');
+        Route::get('list/{id?}', [TrainingTypeController::class, 'getvillages'])->name('dropdown');
         Route::get('create', [TrainingController::class, 'create'])->name('create');
         Route::post('', [TrainingController::class, 'store'])->name('store');
         Route::get('export', [TrainingController::class, 'exportlist'])->name('export');
         Route::group(['prefix' => '{training?}'], function () { 
+       
         Route::get('', [TrainingController::class, 'show'])->name('show');
         Route::get('edit', [TrainingController::class, 'edit'])->name('edit');
         Route::match(['PUT', 'PATCH'], '', [TrainingController::class, 'update'])->name('update');
@@ -82,6 +98,7 @@ Route::group(['middleware' => 'auth'], function ()
         Route::post('', [TrainingTypeController::class, 'store'])->name('store');
         Route::get('export', [TrainingTypeController::class, 'exportlist'])->name('export');
         Route::group(['prefix' => '{type}'], function () { 
+        
         Route::get('', [TrainingTypeController::class, 'show'])->name('show');
         Route::get('edit', [TrainingTypeController::class, 'edit'])->name('edit');
         Route::match(['PUT', 'PATCH'], '', [TrainingTypeController::class, 'update'])->name('update');
@@ -103,36 +120,34 @@ Route::group(['middleware' => 'auth'], function ()
         });
     });
 
-     //participant
-    //  Route::group(['as' => 'participant.', 'prefix' => 'participant'], function () {
-    //     Route::get('', [ParticipantController::class, 'index'])->name('index');
-    //     Route::get('create', [ParticipantController::class, 'create'])->name('create');
-    //     Route::post('', [ParticipantController::class, 'store'])->name('store');
-    //     Route::get('export', [ParticipantController::class, 'exportlist'])->name('export');
-    //     Route::group(['prefix' => '{participant}'], function () { 
-    //     Route::get('', [ParticipantController::class, 'show'])->name('show');
-    //     Route::get('edit', [ParticipantController::class, 'edit'])->name('edit');
-    //     Route::match(['PUT', 'PATCH'], '', [ParticipantController::class, 'update'])->name('update');
-    //     Route::delete('', [ParticipantController::class, 'delete'])->name('delete');
-    //     });
-    // });
-
-
-     //reports
+     //koolreports
      Route::group(['as' => 'report.', 'prefix' => 'report'], function () {
-        Route::get('repo', [ReportController::class, 'index'])->name('index');
-        Route::get('', [ReportController::class, '_repo'])->name('repo');
-        Route::get('/training', [ReportController::class, 'generatePDF'])->name('pdf');
-        Route::get('koolexcel', [ReportController::class, 'export'])->name('koolexcel');
-        Route::get('excel', [ReportController::class, 'exportTrainingAttendance'])->name('excel');
-        Route::get('create', [ReportController::class, 'create'])->name('create');
-        Route::post('', [ReportController::class, 'store'])->name('store');
-        Route::get('export', [ReportController::class, 'exportlist'])->name('export');
+        Route::get('rep', [KoolReportController::class, 'koolworkstatus'])->name('_workstatusmindex');
+        Route::get('repo', [KoolReportController::class, 'kooltraining'])->name('_kooltrainingindex');        
+        Route::get('', [KoolReportController::class, '_repo'])->name('repo');
+        Route::get('training', [KoolReportController::class, 'generatePDF'])->name('pdf');
+        Route::get('excel', [KoolReportController::class, 'exportTrainingAttendance'])->name('excel');
+       
+    });
+
+
+     //Excelreports
+     Route::group(['as' => 'report.', 'prefix' => 'report'], function () {
+        Route::get('rep', [ExcelReportController::class, 'workstatusmindex'])->name('_workstatusmindex');
+        Route::get('repo', [ExcelReportController::class, 'index'])->name('index');
+        
+        Route::get('', [ExcelReportController::class, '_repo'])->name('repo');
+        Route::get('training', [ExcelReportController::class, 'generatePDF'])->name('pdf');
+        Route::get('Excelexcel', [ExcelReportController::class, 'export'])->name('Excelexcel');
+        Route::get('excel', [ExcelReportController::class, 'exportTrainingAttendance'])->name('excel');
+        Route::get('create', [ExcelReportController::class, 'create'])->name('create');
+        Route::post('', [ExcelReportController::class, 'store'])->name('store');
+        Route::get('export', [ExcelReportController::class, 'exportlist'])->name('export');
         Route::group(['prefix' => '{report}'], function () { 
-        Route::get('', [ReportController::class, 'show'])->name('show');
-        Route::get('edit', [ReportController::class, 'edit'])->name('edit');
-        Route::match(['PUT', 'PATCH'], '', [ReportController::class, 'update'])->name('update');
-        Route::delete('', [ReportController::class, 'delete'])->name('delete');
+        Route::get('', [ExcelReportController::class, 'show'])->name('show');
+        Route::get('edit', [ExcelReportController::class, 'edit'])->name('edit');
+        Route::match(['PUT', 'PATCH'], '', [ExcelReportController::class, 'update'])->name('update');
+        Route::delete('', [ExcelReportController::class, 'delete'])->name('delete');
         });
     });
 
@@ -151,6 +166,64 @@ Route::group(['middleware' => 'auth'], function ()
         Route::delete('', [ChartController::class, 'delete'])->name('delete');
         });
     });
+
+    //workstatus
+    Route::group(['as' => 'work_status.', 'prefix' => 'work_status'], function () {
+        Route::get('', [WorkStatusController::class, 'index'])->name('index');
+        Route::get('koolexcel', [WorkStatusController::class, 'export'])->name('koolexcel');
+        Route::get('excel', [WorkStatusController::class, 'exportTrainingAttendance'])->name('excel');
+        Route::get('create', [WorkStatusController::class, 'create'])->name('create');
+        Route::post('', [WorkStatusController::class, 'store'])->name('store');
+        Route::get('export', [WorkStatusController::class, 'exportlist'])->name('export');
+        Route::group(['prefix' => '{WorkStatus}'], function () { 
+        Route::get('', [WorkStatusController::class, 'show'])->name('show');
+        Route::get('edit', [WorkStatusController::class, 'edit'])->name('edit');
+        Route::match(['PUT', 'PATCH'], '', [WorkStatusController::class, 'update'])->name('update');
+        Route::delete('', [WorkStatusController::class, 'delete'])->name('delete');
+        });
+    });
+
+
+       //employeework Status
+       Route::group(['as' => 'employeeworkstatuses.', 'prefix' => 'employeeworkstatuses'], function () {
+        Route::get('', [EmployeeWorkStatusController::class, 'index'])->name('index');
+        Route::get('create', [EmployeeWorkStatusController::class, 'create'])->name('create');
+        Route::post('', [EmployeeWorkStatusController::class, 'store'])->name('store');
+        Route::get('export', [EmployeeWorkStatusController::class, 'exportlist'])->name('export');
+        Route::group(['prefix' => '{kiisland?}'], function () { 
+        Route::get('', [EmployeeWorkStatusController::class, 'show'])->name('show');
+        Route::get('edit', [EmployeeWorkStatusController::class, 'edit'])->name('edit');
+        Route::match(['PUT', 'PATCH'], '', [EmployeeWorkStatusController::class, 'update'])->name('update');
+        Route::delete('', [EmployeeWorkStatusController::class, 'delete'])->name('delete');
+        });
+    });
    
+       //employeework Status
+       Route::group(['as' => 'spas.', 'prefix' => 'spas'], function () {
+        Route::get('', [SpaController::class, 'index'])->name('index');
+        Route::get('create', [SpaController::class, 'create'])->name('create');
+        Route::post('', [SpaController::class, 'store'])->name('store');
+        Route::get('export', [SpaController::class, 'exportlist'])->name('export');
+        Route::group(['prefix' => '{kiisland?}'], function () { 
+        Route::get('', [SpaController::class, 'show'])->name('show');
+        Route::get('edit', [SpaController::class, 'edit'])->name('edit');
+        Route::match(['PUT', 'PATCH'], '', [SpaController::class, 'update'])->name('update');
+        Route::delete('', [SpaController::class, 'delete'])->name('delete');
+        });
+    });
+
+     //employeework Status
+     Route::group(['as' => 'notify.', 'prefix' => 'notify'], function () {
+        Route::get('', [NotifyController::class, 'index'])->name('index');
+        Route::get('create', [NotifyController::class, 'create'])->name('create');
+        Route::post('', [NotifyController::class, 'store'])->name('store');
+        Route::get('export', [NotifyController::class, 'exportlist'])->name('export');
+        Route::group(['prefix' => '{notify}'], function () { 
+        Route::get('', [NotifyController::class, 'show'])->name('show');
+        Route::get('edit', [NotifyController::class, 'edit'])->name('edit');
+        Route::match(['PUT', 'PATCH'], '', [NotifyController::class, 'update'])->name('update');
+        Route::delete('', [NotifyController::class, 'delete'])->name('delete');
+        });
+    });
 
 });

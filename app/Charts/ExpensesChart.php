@@ -3,7 +3,7 @@
 namespace App\Charts;
 
 use ArielMejiaDev\LarapexCharts\LarapexChart;
-use \App\Models\Island;
+use \App\Models\Training\Island;
 
 
 class ExpensesChart

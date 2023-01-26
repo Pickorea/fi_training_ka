@@ -3,7 +3,8 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\TrainingType;
+use App\Models\Training\TrainingType;
+use Illuminate\Support\Str;
 
 class TrainingTypeSeeder extends Seeder
 {

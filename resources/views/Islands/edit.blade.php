@@ -40,7 +40,7 @@
                                                    <div class="form-group col-md-6">
                                                       <label for="island_name"><span class="text-danger">*</span> Island Name</label>
                                                    
-                                                            <input type="text" class="form-control {{ $errors->has('island_name') ? ' is-invalid' : '' }}" value="{{$island['name']}}" id="island_name" placeholder="Enter a Emergency Contact" name="island_name" autocomplete="off">
+                                                            <input type="text" class="form-control {{ $errors->has('island_name') ? ' is-invalid' : '' }}" value="{{$island['island_name']}}" id="island_name" placeholder="Enter Island Name" name="island_name" autocomplete="off">
                                                            @if(session()->has('error'))
                                                             <div class="alert alert-danger">
                                                                {{ session()->get('error') }}

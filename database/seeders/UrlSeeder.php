@@ -3,7 +3,7 @@
 namespace Database\Seeders;
   
 use Illuminate\Database\Seeder;
-use App\Models\Url;
+use App\Models\Training\Url;
   
 class UrlSeeder extends Seeder
 {
@@ -20,11 +20,11 @@ class UrlSeeder extends Seeder
                 'url' => 'report.index',
                 'ordering' => 1,
             ],
-            // [
-            //     'name' => 'Island',
-            //     'route' => 'island.index',
-            //     'ordering' => 2,
-            // ],
+            [
+                'name' => 'Employee Work Status',
+                'url' => 'report._workstatusmindex',
+                'ordering' => 2,
+            ],
             // [
             //     'name' => 'Village',
             //     'route' => 'village.index',

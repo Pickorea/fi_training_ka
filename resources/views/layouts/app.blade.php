@@ -7,7 +7,7 @@
 
   <meta name="copyright" content="MACode ID, https://macodeid.com/">
 
-   <link rel="stylesheet" href="{{asset('assets/css/bootstrap.css')}}">
+   {{--<link rel="stylesheet" href="{{asset('assets/css/bootstrap.css')}}">--}}
   
   <link rel="stylesheet" href="{{asset('assets/css/maicons.css')}}">
 
@@ -262,7 +262,7 @@
   
 <script src="{{asset('assets/js/jquery-3.5.1.min.js')}}"></script>
 
-<script src="{{asset('assets/js/bootstrap.bundle.min.js')}}"></script>
+{{--<script src="{{asset('assets/js/bootstrap.bundle.min.js')}}"></script>--}}
 
 <script src="{{asset('assets/vendor/owl-carousel/js/owl.carousel.min.js')}}"></script>
 

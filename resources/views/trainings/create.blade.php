@@ -37,9 +37,12 @@
                                                    <select name="island_id" id="island_id" class="form-control">
                                                         <option value="" selected disabled>{{ __('Select one') }}</option>
                                                         @foreach($islands as $island)
-                                                        <option value="{{ $island['id'] }}">{{ $island['island_name'] }}</option>
+                                                        <option  value="{{ $island['id'] }}">{{ $island['island_name'] }}</option>
+                                                        
                                                         @endforeach
+                                                        <!-- <input  type= "hidden" value="{{ $island['id'] }}"> -->
                                                     </select>
+                                                       <input  type= "hidden" value="{{ $island['id'] }}">
                                                           @if ($errors->has('island_id'))
                                                                 <span class="help-block">
                                                                     <strong>{{ $errors->first('island_id') }}</strong>
@@ -176,11 +179,40 @@
                         </div>
 
                        
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.0-alpha1/css/bootstrap.min.css">
+    <!-- <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.0-alpha1/css/bootstrap.min.css"> -->
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-        
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script> -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    . <script type="text/JavaScript" src="scripts/jquery-1.10.2.js"></script>
+    <script type="text/javascript">
+            jQuery(document).ready(function ()
+            {
+                    jQuery('select[name="island_id"]').on('change',function(){
+                       var islandID = jQuery(this).val();
+                       if(islandID)
+                       {
+                          jQuery.ajax({
+                             url : '{{route('training.dropdown')}}' +islandID,
+                             type : "GET",
+                             dataType : "json",
+                             success:function(data)
+                             {
+                                console.log(data);
+                                jQuery('select[name="village_id"]').empty();
+                                jQuery.each(data, function(key,value){
+                                   $('select[name="village_id"]').append('<option value="'+ key +'">'+ value +'</option>');
+                                });
+                             }
+                          });
+                       }
+                       else
+                       {
+                          $('select[name="village_id"]').empty();
+                       }
+                    });
+            });
+            </script>
 @endsection
    

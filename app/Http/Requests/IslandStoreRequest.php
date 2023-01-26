@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-use App\Models\Island;
+use App\Models\Training\Island;
 
 class IslandStoreRequest extends FormRequest
 {

@@ -1,9 +1,9 @@
 <?php
   
-namespace Database\Seeders;
+  namespace Database\Seeders;
   
 use Illuminate\Database\Seeder;
-use App\Models\Navbar;
+use App\Models\Training\Navbar;
   
 class NavbarSeeder extends Seeder
 {
@@ -50,6 +50,38 @@ class NavbarSeeder extends Seeder
                 'name' => 'Chart',
                 'route' => 'chart.index',
                 'ordering' => 7,
+            ]
+            ,
+            [
+                'name' => 'Employees',
+                'route' => 'employee.index',
+                'ordering' => 8,
+            ]
+            ,
+            [
+                'name' => 'Work Status',
+                'route' => 'work_status.index',
+                'ordering' => 9,
+            ]
+
+            ,
+            [
+                'name' => 'Employee Work Status',
+                'route' => 'employeeworkstatuses.index',
+                'ordering' => 9,
+            ]
+
+            ,
+            [
+                'name' => 'Performance Assessment',
+                'route' => 'spas.index',
+                'ordering' => 10,
+            ]
+            ,
+            [
+                'name' => 'Notify',
+                'route' => 'notify.index',
+                'ordering' => 11,
             ]
         ];
   

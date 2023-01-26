@@ -17,7 +17,8 @@ class CreateEmployeesTable extends Migration
             $table->id();
             $table->string('name');
             $table->integer('age');
-            $table->string('island');
+            $table->string('email');
+            $table->integer('work_status_id')->unsigned();
             $table->timestamps();
         });
     }

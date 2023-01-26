@@ -15,14 +15,7 @@
             <div class="row gx-5">
                
                 <div class="col-lg-7">
-                    <div class="mb-4">
-                    <form method="post">
-                    <a  class="d-inline-block text-primary text-uppercase " href="{{route('$training_type.edit',$trainingType)}}">Edit Profile</a>
-                        <h1>{{$trainingType['training_name']}}</h1>
-                    </form>
-                    </div>
-                    <div>
-
+                  
                     <div class="col-md-8">
                         <div class="tab-content profile-tab" id="myTabContent">
                             <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">

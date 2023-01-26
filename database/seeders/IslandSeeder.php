@@ -3,7 +3,8 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Island;
+use App\Models\Training\Island;
+use Illuminate\Support\Str;
 
 class IslandSeeder extends Seeder
 {
