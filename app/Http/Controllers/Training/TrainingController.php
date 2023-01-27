@@ -65,8 +65,9 @@ class TrainingController extends Controller
 
     public function getvillage($id)
     {
-            $villages = DB::table("villages")->where("island_id",$id)->pluck("village_name","id");
-            return json_encode($villages);
+        dd($id);
+            $villages = Village::where('island_id',$id)->get();
+            return response()->json($course);
     }
     /**
      * Store a newly created resource in storage.

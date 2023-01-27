@@ -121,18 +121,18 @@ Route::group(['middleware' => 'auth'], function ()
     });
 
      //koolreports
-     Route::group(['as' => 'report.', 'prefix' => 'report'], function () {
+     Route::group(['as' => 'koolreport.', 'prefix' => 'koolreport'], function () {
         Route::get('rep', [KoolReportController::class, 'koolworkstatus'])->name('_workstatusmindex');
         Route::get('repo', [KoolReportController::class, 'kooltraining'])->name('_kooltrainingindex');        
         Route::get('', [KoolReportController::class, '_repo'])->name('repo');
         Route::get('training', [KoolReportController::class, 'generatePDF'])->name('pdf');
-        Route::get('excel', [KoolReportController::class, 'exportTrainingAttendance'])->name('excel');
+       
        
     });
 
 
      //Excelreports
-     Route::group(['as' => 'report.', 'prefix' => 'report'], function () {
+     Route::group(['as' => 'excelreport.', 'prefix' => 'excelreport'], function () {
               
         Route::get('', [ExcelReportController::class, '_repo'])->name('repo');
         Route::get('training', [ExcelReportController::class, 'generatePDF'])->name('pdf');

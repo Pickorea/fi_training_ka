@@ -17,12 +17,12 @@ class UrlSeeder extends Seeder
         $links = [
             [
                 'name' => 'Training Attendance',
-                'url' => 'report._kooltrainingindex',
+                'url' => 'koolreport._kooltrainingindex',
                 'ordering' => 1,
             ],
             [
                 'name' => 'Employee Work Status',
-                'url' => 'report._workstatusmindex',
+                'url' => 'koolreport._workstatusmindex',
                 'ordering' => 2,
             ],
             // [

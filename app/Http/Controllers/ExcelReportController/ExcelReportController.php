@@ -18,13 +18,13 @@ class ExcelReportController extends Controller
 {
    
 //url report
-    public function _repo()
-    {
-                $urls = Url::select('name','url')->get();
-        // dd($route);
+    // public function _repo()
+    // {
+    //             $urls = Url::select('name','url')->get();
+    //     // dd($route);
 
-        return view("reports._repo")->withUrls($urls);
-    }
+    //     return view("reports._repo")->withUrls($urls);
+    // }
 
   
 //excel report

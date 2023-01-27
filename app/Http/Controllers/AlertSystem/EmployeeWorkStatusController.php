@@ -27,10 +27,10 @@ class EmployeeWorkStatusController extends Controller {
 		// ->get();
 
 		$employees =  DB::table('employees')
-		->select('employees.name', 'work_status.work_status_name', 'employee_work_statuses.start_date', 'employee_work_statuses.end_date', 'employees.id')
+		->select('employees.name', 'employees.updated_at','work_status.work_status_name', 'employee_work_statuses.start_date', 'employee_work_statuses.end_date','employee_work_statuses.unestablished','employee_work_statuses.id', 'employees.id')
 		->leftJoin('work_status','work_status.id','=','employees.work_status_id')
 		->leftJoin('employee_work_statuses','employees.id','=','employee_work_statuses.employee_id')
-		->where('work_status.work_status_name','!=','permenant')->whereNotNull('employee_work_statuses.start_date')->whereNotNull('employee_work_statuses.end_date')
+		->where('work_status.work_status_name','!=','permenant')->orwhere('employee_work_statuses.unestablished','=','unestablished')->whereNotNull('employee_work_statuses.start_date')->whereNotNull('employee_work_statuses.end_date')
 		->get()
 		->toArray(); 
 				
@@ -71,7 +71,13 @@ class EmployeeWorkStatusController extends Controller {
 	 */
 	public function store(Request $request) {
 		
-		            $input = $request->all();
+		          
+					$input = ['employee_id'=>$request->employee_id,
+					'start_date'=> $request->start_date,
+					'end_date'=> $request->end_date,
+					'unestablished'=> 'unestablished'
+				];
+
 	
 					$results = EmployeeWorkStatus::create($input);
 
@@ -112,7 +118,7 @@ class EmployeeWorkStatusController extends Controller {
 
 		return view('alertsystems.employeeworkstatuses.edit')
 		->with('employeeworkstatuses',$employeeworkstatuses)
-		->with('$workstatus',$$workstatus)
+		->with('$workstatus',$workstatus)
 		->with('employee',$employee);;
         
 	}

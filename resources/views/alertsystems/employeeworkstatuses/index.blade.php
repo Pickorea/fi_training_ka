@@ -62,6 +62,7 @@
                           <th>{{ __(' WORK STATUS') }}</th>
                             <th>{{ __(' START DATE') }}</th>
                             <th>{{ __(' END DATE') }}</th>
+                            <th>{{ __('DAYS') }}</th>
                             <th>{{ __('ALERT') }}</th>
                             <!-- <th>{{ __(' Created At') }}</th> -->
                             <th class="text-center">{{ __('Actions') }}</th>
@@ -71,10 +72,10 @@
                         @php $sl = 1; @endphp
                         @php
                         $now = Carbon::now();
-                 
+                                       
                         @endphp
                       
-                     
+                     {{--dd($employees)--}}
                         @forelse($employees as $employeeworkstatus)
                         <tr>
                            
@@ -82,20 +83,26 @@
                             <td>{{$employeeworkstatus->name}}</td>
                             @if ($employeeworkstatus->work_status_name !='Permenant')
                             <td>  {{$employeeworkstatus->work_status_name}}</td>
-                            @else 
-                            <td>Permenant</td>
+                            @elseif($employeeworkstatus->work_status_name ='Permenant') 
+                            <td> {{$employeeworkstatus->unestablished =='unestblished'?'Archived':'Archived'}}</td>
                             @endif
                             <td>{{$employeeworkstatus->start_date}}</td>
                             <td>{{$employeeworkstatus->end_date}}</td>
-                            @if ($now->between($employeeworkstatus->end_date,$employeeworkstatus->start_date))
-                            <td  style="background-color:lightgreen">Active</td>
-                            @else
+                            @php
+                            $start_date=Carbon::parse($employeeworkstatus->start_date);
+                             $end_date=Carbon::parse($employeeworkstatus->end_date);
+                            @endphp
+                             <td>
+                            {{ $start_date->diffInDays($end_date)}}
+                            </td>
+                            @if ($now->between($employeeworkstatus->start_date,$employeeworkstatus->end_date))
                             <td  style="background-color:red">Expired</td>
+                            @else
+                            <td  style="background-color:lightgreen">Active</td>
                             @endif
-                            
-                              
+                          
                            <td class="text-center">
-                           <a class="btn btn-info text-center" href="{{route('employeeworkstatuses.show', $employeeworkstatus->id)}}">Show</a>      
+                           <a  href="{{route('employeeworkstatuses.show', $employeeworkstatus->id)}}"><i class="icon fa fa-show"></i>{{__('Show')}}</a>      
                                <a href="{{ route('employeeworkstatuses.edit', $employeeworkstatus->id) }}"><i class="icon fa fa-edit"></i> {{ __('Edit') }}</a>
                             </td>
                         </tr>

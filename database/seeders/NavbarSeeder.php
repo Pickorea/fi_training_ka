@@ -43,7 +43,7 @@ class NavbarSeeder extends Seeder
 
             [
                 'name' => 'Report',
-                'route' => 'report.repo',
+                'route' => 'koolreport.repo',
                 'ordering' => 6,
             ],
             [

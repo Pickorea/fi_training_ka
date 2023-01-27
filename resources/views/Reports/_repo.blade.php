@@ -24,7 +24,7 @@
                                                    <select name="forma"  data-placeholder="Select island" style="width:350px;"   class="chosen-select" tabindex="5" onchange="location =    this.options[this.selectedIndex].value;">
                                                         <option value="" selected disabled>{{ __('Select one') }}</option>
                                                         @foreach($urls as $url)
-                                                        <option value="{{route($url->url, $url->id)}}"> <a href="{{route('report.excel', $url->id)}}">{{ $url['name'] }}</a> </option>
+                                                        <option value="{{route($url->url, $url->id)}}"> <a href="{{route('excelreport.excel', $url->id)}}">{{ $url['name'] }}</a> </option>
                                                         @endforeach
                                                     </select>
                                                            @if(session()->has('error'))

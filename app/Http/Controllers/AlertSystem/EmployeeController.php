@@ -85,7 +85,10 @@ class EmployeeController extends Controller {
 	public function edit($id) {
 		
         $employee = Employee::find($id)->toArray();
-		return view('alertsystems.employees.edit')->withEmployee($employee);
+		$workstatus = WorkStatus::all()->toArray();
+		return view('alertsystems.employees.edit')
+		->withStatus($workstatus)
+		->withEmployee($employee);
         
 	}
 

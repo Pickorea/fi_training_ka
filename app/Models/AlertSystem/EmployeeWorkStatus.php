@@ -12,7 +12,7 @@ class EmployeeWorkStatus extends Model
     use HasFactory, SnoozeNotifiable;
 
     protected $table = 'employee_work_statuses';
-    protected $fillable = ['employee_id', 'start_date', 'end_date'];
+    protected $fillable = ['employee_id', 'start_date', 'end_date','unestablished'];
 
     public function employee(){
 

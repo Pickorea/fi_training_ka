@@ -48,6 +48,24 @@
                                                          @endif
                                                    
                                                    </div>
+
+                                                   <div class="form-group col-md-6">
+                                                      <label for="work_status_id"><span class="text-danger">*</span> Work Status</label>
+                                                     
+                                                      <select name="work_status_id" id="work_status_id" class="form-control">
+                                                        <option value="" selected disabled>{{ __('Select one') }}</option>
+                                                        @foreach($status as $statuc)
+                                                           <option value="{{ $statuc['id']  }}" {{  $statuc['id'] == $employee['work_status_id'] ? 'selected' : '' }}>{{ $statuc['work_status_name'] }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                             @if ($errors->has('work_status_id'))
+                                                               <span class="invalid-feedback" role="alert">
+                                                               <strong>{{ $errors->first('work_status_id') }}</strong>
+                                                            </span>
+                                                            @endif
+                                                   
+                                                   </div>
+
                                                    <div class="form-group col-md-6">
                                                       <label for="age"><span class="text-danger">*</span> Age</label>
                                                      
