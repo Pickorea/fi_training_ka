@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\AlertSystem;
 use App\Http\Controllers\Controller;
 
-use App\Models\Designation;
+use App\Repositories\AlertSystem\EmployeeRepository;
+use App\Repositories\AlertSystem\WorkStatusRepository;
 use App\Models\AlertSystem\Employee;
 use App\Models\AlertSystem\WorkStatus;
 use DB;
@@ -13,6 +14,28 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 class EmployeeController extends Controller {
 
+	private $employees;
+    private $workstatus;
+    //private $lodges;
+
+    public function __construct(EmployeeRepository $employees,
+	WorkStatusRepository $workstatus)
+    {
+        $this->employees=$employees;
+        $this->workstatus=$workstatus;
+       
+    }
+
+	public function getDataTables(Request $request)
+    {
+        $search = $request->get('search', '') ;
+        if (is_array($search)) {
+            $search = $search['value'];
+        }
+        $query = $this->employees->getForDataTable($search);
+        $datatables = DataTables::make($query)->make(true);
+        return $datatables;
+    }
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -24,8 +47,9 @@ class EmployeeController extends Controller {
 		->select('employees.id', 'employees.created_at','employees.name', 'employees.age', 'employees.email','work_status.work_status_name')
 		->leftJoin('work_status','employees.work_status_id','=','work_status.id')
 		->get()->toArray();
+	
 			
-		return view('alertsystems.employees.index', compact('employees'));
+		return view('alertsystems.employees.index',compact('employees'));
 	}
 
 	
@@ -37,7 +61,9 @@ class EmployeeController extends Controller {
      */
     public function create()
     {
-		$workstatus = WorkStatus::all()->toArray();
+	
+		$workstatus=$this->workstatus->pluck();
+	
         return view('alertsystems.employees.create')->withStatus($workstatus);
     }
 
@@ -51,7 +77,7 @@ class EmployeeController extends Controller {
 		
 		            $input = $request->all();
 	
-					$results = Employee::create($input);
+			$item = $this->employees->create($input);
 
 			
 				return redirect()->route('employee.index');
@@ -67,7 +93,7 @@ class EmployeeController extends Controller {
 	 */
 	public function show($id) {
 	
-		$employee = Employee::find($id);
+		$employee = $this->employees->getById($id);
 
 		return view('alertsystems.employees.show')
 	        ->with('employee',$employee);
@@ -99,13 +125,13 @@ class EmployeeController extends Controller {
 	 * @param  int  $id
 	 * @return \Illuminate\Http\Response
 	 */
-	public function update(Request $request, $id){
+	public function update(Request $request,  $id){
         
-          $employee = $request->all();
-         $data = Employee::find($id)->update($employee);
-
-
-			return redirect()->route('employee.index')->with('message', 'Updated successfully.');
+       
+		$item=$this->employees->getById($id);
+		$this->employees->update($item,$request->all()); 
+	
+       	return redirect()->route('employee.index')->with('message', 'Updated successfully.');
 	
     }
 

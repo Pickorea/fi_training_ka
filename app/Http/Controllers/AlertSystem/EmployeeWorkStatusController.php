@@ -6,12 +6,27 @@ use App\Http\Controllers\Controller;
 use App\Models\AlertSystem\WorkStatus;
 use App\Models\AlertSystem\Employee;
 use App\Models\AlertSystem\EmployeeWorkStatus;
+
 use DB;
 use Illuminate\Http\Request;
 use PDF;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 class EmployeeWorkStatusController extends Controller {
+
+
+    
+
+	public function getDataTables()
+    {
+        $search = $request->get('search', '') ;
+        if (is_array($search)) {
+            $search = $search['value'];
+        }
+        $query = $this->workstatus->getForDataTable($search);
+        $datatables = DataTables::make($query)->make(true);
+        return $datatables;
+    }
 
 	/**
 	 * Display a listing of the resource.
@@ -27,7 +42,7 @@ class EmployeeWorkStatusController extends Controller {
 		// ->get();
 
 		$employees =  DB::table('employees')
-		->select('employees.name', 'employees.updated_at','work_status.work_status_name', 'employee_work_statuses.start_date', 'employee_work_statuses.end_date','employee_work_statuses.unestablished','employee_work_statuses.id', 'employees.id')
+		->select('employees.name', 'employees.updated_at','work_status.work_status_name', 'employee_work_statuses.start_date', 'employee_work_statuses.end_date','employee_work_statuses.unestablished','employee_work_statuses.id')
 		->leftJoin('work_status','work_status.id','=','employees.work_status_id')
 		->leftJoin('employee_work_statuses','employees.id','=','employee_work_statuses.employee_id')
 		->where('work_status.work_status_name','!=','permenant')->orwhere('employee_work_statuses.unestablished','=','unestablished')->whereNotNull('employee_work_statuses.start_date')->whereNotNull('employee_work_statuses.end_date')

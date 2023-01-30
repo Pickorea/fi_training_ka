@@ -208,7 +208,7 @@
       </div> <!-- .page-section -->
   
   </div>
-        @stack('custom-scripts')
+  @stack('after-scripts')
   </main>
 
   <footer class="page-footer">

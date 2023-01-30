@@ -54,7 +54,7 @@
                                                      
                                                       <select name="work_status_id" id="work_status_id" class="form-control">
                                                         <option value="" selected disabled>{{ __('Select one') }}</option>
-                                                        @foreach($status as $statuc)
+                                                        @foreach($status as $key => $statuc)
                                                            <option value="{{ $statuc['id']  }}" {{  $statuc['id'] == $employee['work_status_id'] ? 'selected' : '' }}>{{ $statuc['work_status_name'] }}</option>
                                                         @endforeach
                                                     </select>

@@ -179,43 +179,44 @@
                         </div>
 
                        
-    <!-- <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.0-alpha1/css/bootstrap.min.css"> -->
-    <!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script> -->
-    <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> -->
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script> -->
-    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> -->
-    <!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script> -->
-    <!-- <script> -->
-            <!-- $(document).ready(function() { -->
-            <!-- $('#island').on('change', function() { -->
-               <!-- var islandID = $(this).val(); -->
-               <!-- console(islandID); -->
-               <!-- if(islandID) { -->
-                   <!-- $.ajax({ -->
-                       <!-- url: 'training/list'+islandID, -->
-                       <!-- type: "GET", -->
-                       <!-- data : {"_token":"{{ csrf_token() }}"}, -->
-                       <!-- dataType: "json", -->
-                       <!-- success:function(data) -->
-                       <!-- { -->
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.0-alpha1/css/bootstrap.min.css">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+            $(document).ready(function() {
+            $('#island').on('change', function() {
+               var islandID = $(this).val();
+               console(islandID);
+               if(islandID) {
+                   $.ajax({
+                       url: 'training/list'+islandID,
+                       type: "GET",
+                       data : {"_token":"{{ csrf_token() }}"},
+                       dataType: "json",
+                       success:function(data)
+                       {
                       
-                         <!-- if(data){ -->
-                            <!-- $('#village').empty(); -->
-                            <!-- $('#village').append('<option hidden>Choose village</option>');  -->
-                            <!-- $.each(data, function(key, village){ -->
-                                <!-- $('select[name="village"]').append('<option value="'+ key +'">' + village.name+ '</option>'); -->
-                            <!-- }); -->
-                        <!-- }else{ -->
-                            <!-- $('#village').empty(); -->
-                        <!-- } -->
-                     <!-- } -->
-                   <!-- }); -->
-               <!-- }else{ -->
-                 <!-- $('#village').empty(); -->
-               <!-- } -->
-            <!-- }); -->
-            <!-- }); -->
-        <!-- </script> -->
+                         if(data){
+                            $('#village').empty();
+                            $('#village').append('<option hidden>Choose village</option>'); 
+                            $.each(data, function(key, village){
+                                $('select[name="village"]').append('<option value="'+ key +'">' + village.village_name+ '</option>');
+                            });
+                        }else{
+                            $('#village').empty();
+                        }
+                     }
+                   });
+               }else{
+                 $('#village').empty();
+               }
+            });
+            });
+        </script>
 @endsection
    

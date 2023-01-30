@@ -28,6 +28,7 @@
                 <div class="box-header with-border">
                         <div class="alert alert-info clearfix">
                             <a href="{{ route('employeeworkstatuses.create') }}" class="alert-link"><button type="button" class="btn btn-primary btn-sm float-end">{{ __(' Add Employee Work Status') }}</button></a> 
+                            <a href="{{ route('excelreport.activeExpireEmployeelist') }}" class="alert-link"><button type="button" class="btn btn-primary btn-sm float-start">{{ __('TO EXCEL') }}</button></a>
                         </div>
                      </div>
             </div>
@@ -58,7 +59,7 @@
                     <thead>
                         <tr>
                             <th>{{ __(' SL#') }}</th>                     
-                            <th>{{ __(' Full Name') }}</th>
+                            <th>{{ __(' FULL NAME') }}</th>
                           <th>{{ __(' WORK STATUS') }}</th>
                             <th>{{ __(' START DATE') }}</th>
                             <th>{{ __(' END DATE') }}</th>
@@ -75,7 +76,7 @@
                                        
                         @endphp
                       
-                     {{--dd($employees)--}}
+           
                         @forelse($employees as $employeeworkstatus)
                         <tr>
                            
@@ -95,10 +96,10 @@
                              <td>
                             {{ $start_date->diffInDays($end_date)}}
                             </td>
-                            @if ($now->between($employeeworkstatus->start_date,$employeeworkstatus->end_date))
-                            <td  style="background-color:red">Expired</td>
-                            @else
-                            <td  style="background-color:lightgreen">Active</td>
+                            @if ($employeeworkstatus->start_date <= carbon::now())
+                            <td  style="background-color:lightgreen">Expire</td>
+                            @else ($employeeworkstatus->end_date >= carbon::now())
+                            <td  style="background-color:lightyellow">Active</td>
                             @endif
                           
                            <td class="text-center">

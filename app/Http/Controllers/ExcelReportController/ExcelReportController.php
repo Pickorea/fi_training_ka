@@ -11,6 +11,8 @@ use App\Models\Training\Url;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\Training\ExportTrainingAttendance;
 use App\Exports\Training\ExportTrainingAttendanceTable;
+use App\Exports\AlertSystem\ExportEmployeeListTable;
+use App\Exports\AlertSystem\ExportActiveExpireEmployeeListTable;
 use PDF;
 use DB;
 
@@ -33,10 +35,22 @@ class ExcelReportController extends Controller
         return Excel::download(new ExportTrainingAttendance, 'Training_attendance.xlsx', \Maatwebsite\Excel\Excel::XLSX);
     }
 
-//excel report
+//excel training Attendance
     public function export() 
     {
         return Excel::download(new ExportTrainingAttendanceTable, '_table.xlsx');
+    }
+
+
+    //excel exportemployeelist _activeExpireEmployeetable.blade
+    public function exportemployeelist() 
+    {
+        return Excel::download(new ExportEmployeeListTable, '_employeetable.xlsx');
+    }
+
+    public function activeExpireEmployeelist() 
+    {
+        return Excel::download(new ExportActiveExpireEmployeeListTable, '_activeExpireEmployeetable.xlsx');
     }
 //pdf report
     public function generatePDF()

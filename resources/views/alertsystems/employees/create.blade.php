@@ -25,8 +25,8 @@
                                 </div>
                             </div>
                             <div class="box-body">
-                            <form method="POST" enctype="multipart/form-data" id="upload-file" action="{{ route('employee.store') }}" >
-                                                                    @csrf
+                            {{ html()->form('POST', route('employee.store'))->open() }}
+                                                               
                                        
                                           <div class="box-body">
                                           <h4 class="box-title text-info"> SECTION A</h4>
@@ -34,7 +34,7 @@
                                                 <div class="row">
                                                
                                                    <div class="form-group col-md-6">
-                                                      <label for="name"><span class="text-danger">*</span> FULL NAME</label>
+                                                      {{ html()->label('FULL NAME')->class('form-control-label')->for('name') }}
                                                    
                                                             <input type="text" class="form-control {{ $errors->has('name') ? ' is-invalid' : '' }}" value="{{ old('name') }}" id="name" placeholder="Enter a Full name" name="name" autocomplete="off">
                                                            @if(session()->has('error'))
@@ -46,12 +46,13 @@
                                                    </div>
 
                                                    <div class="form-group col-md-6">
-                                                      <label for="work_status_id"><span class="text-danger">*</span> Work Status</label>
+                                                   {{ html()->label('Work Status')->class('form-control-label')->for('work_status_id') }}
                                                      
                                                       <select name="work_status_id" id="work_status_id" class="form-control">
                                                         <option value="" selected disabled>{{ __('Select one') }}</option>
-                                                        @foreach($status as $statuc)
-                                                        <option value="{{ $statuc['id'] }}">{{ $statuc['work_status_name'] }}</option>
+                                                        
+                                                        @foreach($status as $key => $statuc)
+                                                        <option value="{{ $key }}">{{ $statuc }}</option>
                                                         @endforeach
                                                     </select>
                                                              @if ($errors->has('work_status_id'))
@@ -62,10 +63,9 @@
                                                    
                                                    </div>
                                                    <div class="form-group col-md-6">
-                                                      <label for="age"><span class="text-danger">*</span> age</label>
-                                                     
-                                                            <input type="age" class="form-control {{ $errors->has('age') ? ' is-invalid' : '' }}" value="{{ old('age') }}" id="age" placeholder="Enter age" name="age" autocomplete="off">
-                                                            @if ($errors->has('receive_date'))
+                                                      {{ html()->label('Age')->class('form-control-label')->for('age') }}
+                                                       <input type="age" class="form-control {{ $errors->has('age') ? ' is-invalid' : '' }}" value="{{ old('age') }}" id="age" placeholder="Enter age" name="age" autocomplete="off">
+                                                            @if ($errors->has('age'))
                                                                <span class="invalid-feedback" role="alert">
                                                                <strong>{{ $errors->first('age') }}</strong>
                                                             </span>
@@ -80,7 +80,7 @@
                                                 <div class="row">
                                                
                                                    <div class="form-group col-md-6">
-                                                      <label for="email"><span class="text-danger">*</span> Email</label>
+                                                   {{ html()->label('Email')->class('form-control-label')->for('email') }}
                                                    
                                                             <input type="text" class="form-control {{ $errors->has('email') ? ' is-invalid' : '' }}" value="{{ old('email') }}" id="email" placeholder="Enter email name" name="email" autocomplete="off">
                                                            @if(session()->has('error'))
@@ -103,7 +103,7 @@
                                                 </a>
                                           </div>
                                           <!-- /.box-footer -->
-                                       </form>
+                                          {{ html()->form()->close() }}
                                        </div>
                                                    <!-- /.box-body -->
                                                 </div>

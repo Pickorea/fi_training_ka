@@ -2,17 +2,43 @@
 
 namespace App\Http\Controllers\AlertSystem;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ViewRequest;
 
 use App\Models\Employee;
 use Illuminate\Http\Request;
 use App\Http\Requests\IslandStoreRequest;
 use App\Http\Requests\IslandUpdateRequest;
 use App\Models\AlertSystem\WorkStatus;
+use App\Repositories\AlertSystem\WorkStatusRepository;
+
+use DataTables;
 
 use Illuminate\Support\Str;
 
 class WorkStatusController extends Controller
 {
+
+    private $workstatus;
+
+
+    public function __construct(
+	WorkStatusRepository $workstatus)
+    {
+  
+        $this->workstatus=$workstatus;
+       
+    }
+
+    public function getForDataTables(ViewRequest $request)
+    {
+        $search = $request->get('search', '') ;
+        if (is_array($search)) {
+            $search = $search['value'];
+        }
+        $query = $this->workstatus->getForDataTable($search);
+        $datatables = DataTables::make($query)->make(true);
+        return $datatables;
+    }
     /**
      * Display a listing of the resource.
      *

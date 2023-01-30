@@ -28,6 +28,8 @@
                 <div class="box-header with-border">
                         <div class="alert alert-info clearfix">
                             <a href="{{ route('employee.create') }}" class="alert-link"><button type="button" class="btn btn-primary btn-sm float-end">{{ __(' Add Employee') }}</button></a> 
+                            <a href="{{ route('excelreport.employeeexcel') }}" class="alert-link"><button type="button" class="btn btn-primary btn-sm float-start">{{ __('TO EXCEL') }}</button></a>
+                            <a href="{{ route('excelreport.pdf') }}" class="alert-link"><button type="button" class="btn btn-primary btn-sm float-middle">{{ __('TO PDF') }}</button></a>
                         </div>
                      </div>
             </div>
@@ -60,8 +62,6 @@
                     <thead>
                         <tr>
                             <th>{{ __(' SL#') }}</th>
-                            <th>{{ __(' ID') }}</th>
-                          
                             <th>{{ __(' Full Name') }}</th>
                             <th>{{ __(' Age') }}</th>
                             <th>{{ __(' Email') }}</th>
@@ -76,7 +76,6 @@
                         @foreach($employees as $employee)
                         <tr>
                             <td>{{ $sl++ }}</td>
-                            <td>{{ $employee->id}}</td>
                             <td>{{ $employee->name}}</td>
                             <td>{{ $employee->age}}</td>
                             <td>{{ $employee->email}}</td>

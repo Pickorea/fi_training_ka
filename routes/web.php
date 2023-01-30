@@ -52,7 +52,7 @@ Route::group(['middleware' => 'auth'], function ()
         Route::get('', [EmployeeController::class, 'index'])->name('index');
         Route::get('create', [EmployeeController::class, 'create'])->name('create');
         Route::post('', [EmployeeController::class, 'store'])->name('store');
-        Route::get('export', [EmployeeController::class, 'exportlist'])->name('export');
+        Route::post('employee/datatable', [EmployeeController::class, 'getDataTables'])->name('datatables');
         Route::group(['prefix' => '{kiisland?}'], function () { 
         Route::get('', [EmployeeController::class, 'show'])->name('show');
         Route::get('edit', [EmployeeController::class, 'edit'])->name('edit');
@@ -138,7 +138,8 @@ Route::group(['middleware' => 'auth'], function ()
         Route::get('training', [ExcelReportController::class, 'generatePDF'])->name('pdf');
         Route::get('Excelexcel', [ExcelReportController::class, 'export'])->name('Excelexcel');
         Route::get('excel', [ExcelReportController::class, 'exportTrainingAttendance'])->name('excel');
-        Route::get('create', [ExcelReportController::class, 'create'])->name('create');
+        Route::get('employee', [ExcelReportController::class, 'exportemployeelist'])->name('employeeexcel');
+        Route::get('active', [ExcelReportController::class, 'activeExpireEmployeelist'])->name('activeExpireEmployeelist');
         Route::post('', [ExcelReportController::class, 'store'])->name('store');
         Route::get('export', [ExcelReportController::class, 'exportlist'])->name('export');
        
@@ -167,7 +168,7 @@ Route::group(['middleware' => 'auth'], function ()
         Route::get('excel', [WorkStatusController::class, 'exportTrainingAttendance'])->name('excel');
         Route::get('create', [WorkStatusController::class, 'create'])->name('create');
         Route::post('', [WorkStatusController::class, 'store'])->name('store');
-        Route::get('export', [WorkStatusController::class, 'exportlist'])->name('export');
+        Route::post('datatable', [WorkStatusController::class, 'getForDataTables'])->name('datatable');
         Route::group(['prefix' => '{WorkStatus}'], function () { 
         Route::get('', [WorkStatusController::class, 'show'])->name('show');
         Route::get('edit', [WorkStatusController::class, 'edit'])->name('edit');
