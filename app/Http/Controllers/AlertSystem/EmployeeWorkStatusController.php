@@ -48,7 +48,9 @@ class EmployeeWorkStatusController extends Controller {
 		->where('work_status.work_status_name','!=','permenant')->orwhere('employee_work_statuses.unestablished','=','unestablished')->whereNotNull('employee_work_statuses.start_date')->whereNotNull('employee_work_statuses.end_date')
 		->get()
 		->toArray(); 
-				
+		$workpermits =EmployeeWorkStatus::where('start_date', '<', now()->addDays(10))->get();
+		// dd($workpermits);
+
 		return view('alertsystems.employeeworkstatuses.index')->with('employees',$employees);
 	}
 

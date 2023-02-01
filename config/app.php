@@ -237,6 +237,7 @@ return [
         'PDF' => Barryvdh\DomPDF\Facade::class,
         'Carbon' => Illuminate\Support\Carbon::class,
         'Html' => Spatie\Html\Facades\Html::class,
+        'DataTables' => Yajra\DataTables\Facades\DataTables::class,
 
 
     ],

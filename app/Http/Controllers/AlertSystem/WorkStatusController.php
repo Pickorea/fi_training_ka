@@ -29,15 +29,10 @@ class WorkStatusController extends Controller
        
     }
 
-    public function getForDataTables(ViewRequest $request)
+    public function getForDataTable()
     {
-        $search = $request->get('search', '') ;
-        if (is_array($search)) {
-            $search = $search['value'];
-        }
-        $query = $this->workstatus->getForDataTable($search);
-        $datatables = DataTables::make($query)->make(true);
-        return $datatables;
+             
+        return $workstatus = WorkStatus::all();
     }
     /**
      * Display a listing of the resource.
@@ -47,13 +42,10 @@ class WorkStatusController extends Controller
     public function index()
     {
         
-        $workstatus = WorkStatus::all();
-        //dd($employees);
-
-        // Pass data to view
+        $workstatus = $this->getForDataTable();
+   
         return view('alertsystems.workstatus.index', ['workstatus'=>$workstatus]);
 
-        //return 'welcome'; //view('employees.index');
     }
 
     /**

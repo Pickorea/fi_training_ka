@@ -168,7 +168,7 @@ Route::group(['middleware' => 'auth'], function ()
         Route::get('excel', [WorkStatusController::class, 'exportTrainingAttendance'])->name('excel');
         Route::get('create', [WorkStatusController::class, 'create'])->name('create');
         Route::post('', [WorkStatusController::class, 'store'])->name('store');
-        Route::post('datatable', [WorkStatusController::class, 'getForDataTables'])->name('datatable');
+        Route::get('datatable', [WorkStatusController::class, 'getForDataTable'])->name('datatable');
         Route::group(['prefix' => '{WorkStatus}'], function () { 
         Route::get('', [WorkStatusController::class, 'show'])->name('show');
         Route::get('edit', [WorkStatusController::class, 'edit'])->name('edit');
