@@ -4,6 +4,8 @@ namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use App\Models\AlertSystem\EmployeeWorkStatus;
+use Carbon\Carbon;
 
 class Kernel extends ConsoleKernel
 {
@@ -16,6 +18,17 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // $schedule->command('inspire')->hourly();
+        $schedule->command('send:notification')->everyMinute()
+        ->when(function(){
+
+            $now = Carbon::now()->addDays(1);
+
+            $notify =EmployeeWorkStatus::select('end_date')
+            ->whereDate('end_date', '>', $now->toDateString())
+            ->get();
+        return $notify;
+
+        });
     }
 
     /**
@@ -28,5 +41,7 @@ class Kernel extends ConsoleKernel
         $this->load(__DIR__.'/Commands');
 
         require base_path('routes/console.php');
+
+               
     }
 }

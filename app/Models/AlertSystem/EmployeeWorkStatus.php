@@ -10,6 +10,7 @@ use Illuminate\Notifications\Notifiable;
 class EmployeeWorkStatus extends Model
 {
     use HasFactory, SnoozeNotifiable;
+    protected $dates = ['end_date'];
 
     protected $table = 'employee_work_statuses';
     protected $fillable = ['employee_id', 'start_date', 'end_date','unestablished'];

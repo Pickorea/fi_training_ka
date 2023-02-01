@@ -96,7 +96,7 @@
                              <td>
                             {{ $start_date->diffInDays($end_date)}}
                             </td>
-                            @if ($employeeworkstatus->start_date <= carbon::now())
+                            @if ($employeeworkstatus->end_date <= carbon::now())
                             <td  style="background-color:lightgreen">Expire</td>
                             @else ($employeeworkstatus->end_date >= carbon::now())
                             <td  style="background-color:lightyellow">Active</td>

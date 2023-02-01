@@ -26,7 +26,7 @@
                 <h3 class="box-title">{{ __('Manage Employee') }}</h3>
 
                 <div class="box-header with-border">
-                @can('isUser')
+                {{--@can('isUser')--}}
                         <div class="alert alert-info clearfix">
                             <a href="{{ route('employee.create') }}" class="alert-link"><button type="button" class="btn btn-primary btn-sm float-end">{{ __(' Add Employee') }}</button></a> 
                           
@@ -35,7 +35,7 @@
                             <a href="{{ route('excelreport.pdf') }}" class="alert-link"><button type="button" class="btn btn-primary btn-sm float-middle">{{ __('TO PDF') }}</button></a>
                         </div>
                      </div>
-                 @endcan
+                {{--@endcan--}}
             </div>
             <div class="box-body">
                 
@@ -61,7 +61,7 @@
                     @endif
                 </div>
                 <!-- /.Notification Box -->
-         @can('isAdmin')
+         {{--@can('isAdmin')--}}
         <div id="printable_area" class="col-md-12 table-responsive">
                <table  class="table table-bordered table-striped">
                     <thead>
@@ -106,7 +106,7 @@
             <!-- /.box-body -->
         </div>
         <!-- /.box -->
-        @endcan
+        {{--@endcan--}}
     </section>
     <!-- /.content -->
 </div>
