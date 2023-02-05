@@ -83,6 +83,12 @@ class NavbarSeeder extends Seeder
                 'route' => 'notify.index',
                 'ordering' => 11,
             ]
+            ,
+            [
+                'name' => 'Send Notification',
+                'route' => 'artisan.command',
+                'ordering' => 12,
+            ]
         ];
   
         foreach ($links as $key => $navbar) {

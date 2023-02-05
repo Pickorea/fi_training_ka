@@ -63,7 +63,8 @@
                           <th>{{ __(' WORK STATUS') }}</th>
                             <th>{{ __(' START DATE') }}</th>
                             <th>{{ __(' END DATE') }}</th>
-                            <th>{{ __('DAYS') }}</th>
+                            <th>{{ __('# DAYS') }}</th>
+                            {{--<th>{{ __('# LEFT DAYS') }}</th>--}}
                             <th>{{ __('ALERT') }}</th>
                             <!-- <th>{{ __(' Created At') }}</th> -->
                             <th class="text-center">{{ __('Actions') }}</th>
@@ -92,10 +93,21 @@
                             @php
                             $start_date=Carbon::parse($employeeworkstatus->start_date);
                              $end_date=Carbon::parse($employeeworkstatus->end_date);
+                            $left_days = Carbon\Carbon::now()->diffInDays($end_date, false);
+                            $no_of_days = $start_date->diffInDaysFiltered(function(Carbon $date) {
+                            return !$date->isSunday();
+                        }, $end_date);
+
                             @endphp
-                             <td>
-                            {{ $start_date->diffInDays($end_date)}}
-                            </td>
+                            <td>
+                             {{$no_of_days}}
+                             </td>
+                            {{-- <td>
+                             {{$left_days == $employeeworkstatus->id?"":$left_days}}
+                             </td>--}}
+                            {{--<td>
+                            {{$left_days}}
+                            </td>--}}
                             @if ($employeeworkstatus->end_date <= carbon::now())
                             <td  style="background-color:lightgreen">Expire</td>
                             @else ($employeeworkstatus->end_date >= carbon::now())
@@ -104,7 +116,7 @@
                           
                            <td class="text-center">
                            <a  href="{{route('employeeworkstatuses.show', $employeeworkstatus->id)}}"><i class="icon fa fa-show"></i>{{__('Show')}}</a>      
-                               <a href="{{ route('employeeworkstatuses.edit', $employeeworkstatus->id) }}"><i class="icon fa fa-edit"></i> {{ __('Edit') }}</a>
+                            <a href="{{ route('employeeworkstatuses.edit', $employeeworkstatus->id) }}"><i class="icon fa fa-edit"></i> {{ __('Edit') }}</a>
                             </td>
                         </tr>
                             

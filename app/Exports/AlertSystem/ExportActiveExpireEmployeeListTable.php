@@ -14,6 +14,7 @@ use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\Style;
 use PhpOffice\PhpSpreadsheet\Style\Color;
 use Maatwebsite\Excel\Concerns\WithBackgroundColor;
+use Maatwebsite\Excel\Concerns\WithHeadings;
 
 
 
@@ -21,7 +22,7 @@ use RegistersEventListeners;
 use DB;
 
 class ExportActiveExpireEmployeeListTable implements FromView, 
-ShouldAutoSize, WithStyles, WithBackgroundColor
+ShouldAutoSize, WithStyles, WithBackgroundColor,WithHeadings
 {
     /**
     * @return \Illuminate\Support\Collection
@@ -42,7 +43,7 @@ ShouldAutoSize, WithStyles, WithBackgroundColor
     {
         return [
             // Style the first row as bold text.
-            1    => ['font' => ['bold' => true]],
+            2    => ['font' => ['bold' => true]],
 
             // Styling a specific cell by coordinate.
             '1' => ['font' => ['italic' => FALSE]],
@@ -71,29 +72,32 @@ ShouldAutoSize, WithStyles, WithBackgroundColor
         // ];
     }
 
-    public function title() : string
-    {
-        return 'MATRIK 2';
-    }
+    // public function title() : string
+    // {
+    //     return 'MATRIK 2';
+    // }
 
-    public function registerEvents(): array
-    {
-        return [
-            AfterSheet::class    => function(AfterSheet $event) 
+    // public function registerEvents(): array
+    // {
+    //     return [
+    //         AfterSheet::class    => function(AfterSheet $event) 
             
-            {
-                $styleHeader = [
-                    'borders' => [
-                        'allBorders' => [
-                            'borderStyle' => 'thin',
-                            'color' => ['rgb' => '808080']
-                        ],
-                    ]
-                ];
-        $event->sheet->getStyle("A1:C1")->applyFromArray($styleHeader);
-            }
-        ];
+    //         {
+    //             $styleHeader = [
+    //                 'borders' => [
+    //                     'allBorders' => [
+    //                         'borderStyle' => 'thin',
+    //                         'color' => ['rgb' => '808080']
+    //                     ],
+    //                 ]
+    //             ];
+    //     $event->sheet->getStyle("A1:C1")->applyFromArray($styleHeader);
+    //         }
+    //     ];
+    // }
+    public function headings(): array
+    {
+        return ["your", "headings", "here"];
     }
-
     
 }

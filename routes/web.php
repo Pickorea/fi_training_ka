@@ -21,6 +21,7 @@ use App\Http\Controllers\AlertSystem\EmployeeController;
 use App\Http\Controllers\AlertSystem\EmployeeWorkStatusController;
 use App\Http\Controllers\AlertSystem\SpaController;
 use App\Http\Controllers\AlertSystem\NotifyController;
+use App\Http\Controllers\AlertSystem\ArtisanCommandController;
 
 
 /*
@@ -219,5 +220,11 @@ Route::group(['middleware' => 'auth'], function ()
         Route::delete('', [NotifyController::class, 'delete'])->name('delete');
         });
     });
+
+     //employeework Status
+     Route::group(['as' => 'artisan.', 'prefix' => 'artisan'], function () {
+        Route::get('', [ArtisanCommandController::class, 'RunArtisanCommand'])->name('command');
+       
+            });
 
 });

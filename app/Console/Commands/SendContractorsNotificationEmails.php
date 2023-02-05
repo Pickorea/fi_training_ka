@@ -51,13 +51,14 @@ class SendContractorsNotificationEmails extends Command
             ->leftJoin('employee_work_statuses','employees.id','=','employee_work_statuses.employee_id')
             ->where('work_status.work_status_name','!=','permenant')->orwhere('employee_work_statuses.unestablished','=','unestablished')->whereNotNull('employee_work_statuses.start_date')->whereNotNull('employee_work_statuses.end_date')
             ->get();
+            // $data['title'] = 'ACTIVE AND EXPIRED CONTRACTED EMPLOYEE LIST';
 
         $excel = PDF::loadView('reports.alertsystems._activeExpireEmployeetable', $data);
 
         \Mail::send('reports.alertsystems._activeExpireEmployeetable',
         $data, function ($m)use($excel){
             // $m->from('kairaoii@mfmrd.gov.ki', env('APP_NAME'));
-            $m->to('kairaoi1ien@yahoo.com')->subject('Active and Expire list of Employees')
+            $m->to('kairaoi1ien@yahoo.com')->subject('ACTIVE AND EXPIRED EMPLOYEES LIST')
             ->attachData($excel->output(), '_activeExpireEmployeetable.pdf');
         });
 

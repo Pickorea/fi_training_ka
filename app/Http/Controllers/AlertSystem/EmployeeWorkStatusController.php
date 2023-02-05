@@ -42,7 +42,7 @@ class EmployeeWorkStatusController extends Controller {
 		// ->get();
 
 		$employees =  DB::table('employees')
-		->select('employees.name', 'work_status.work_status_name', 'employee_work_statuses.start_date', 'employee_work_statuses.end_date','employee_work_statuses.unestablished','employee_work_statuses.id')
+		->select('employees.name', 'work_status.work_status_name', 'employee_work_statuses.start_date', 'employee_work_statuses.end_date','employee_work_statuses.unestablished','employee_work_statuses.id', 'employees.*')
 		->leftJoin('work_status','work_status.id','=','employees.work_status_id')
 		->leftJoin('employee_work_statuses','employee_work_statuses.employee_id','=','employees.id')
 		->where('work_status.work_status_name','!=','permenant')->orwhere('employee_work_statuses.unestablished','=','unestablished')->whereNotNull('employee_work_statuses.start_date')->whereNotNull('employee_work_statuses.end_date')
