@@ -89,6 +89,12 @@ class NavbarSeeder extends Seeder
                 'route' => 'artisan.command',
                 'ordering' => 12,
             ]
+            ,
+            [
+                'name' => 'Department',
+                'route' => 'department.index',
+                'ordering' => 13,
+            ]
         ];
   
         foreach ($links as $key => $navbar) {

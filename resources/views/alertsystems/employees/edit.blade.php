@@ -66,19 +66,40 @@
                                                    
                                                    </div>
 
+                                                  
+
                                                    <div class="form-group col-md-6">
                                                       <label for="age"><span class="text-danger">*</span> Age</label>
                                                      
                                                             <input type="age" class="form-control {{ $errors->has('age') ? ' is-invalid' : '' }}" value="{{$employee['age']}}" id="age" placeholder="Enter age" name="age" autocomplete="off">
-                                                            @if ($errors->has('receive_date'))
+                                                            @if ($errors->has('age'))
                                                                <span class="invalid-feedback" role="alert">
                                                                <strong>{{ $errors->first('age') }}</strong>
                                                             </span>
                                                             @endif
                                                    
                                                    </div>
+
+                                                   <div class="form-group col-md-6">
+                                                      <label for="department_id"><span class="text-danger">*</span> Department Name</label>
+                                                     
+                                                      <select name="department_id" id="department_id" class="form-control">
+                                                        <option value="" selected disabled>{{ __('Select one') }}</option>
+                                                        @foreach($departments as $key => $department)
+                                                        <option value="{{ $department['id']  }}" {{  $department['id'] == $employee['work_status_id'] ? 'selected' : '' }}>{{ $department['department_name'] }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                             @if ($errors->has('department_id'))
+                                                               <span class="invalid-feedback" role="alert">
+                                                               <strong>{{ $errors->first('department_id') }}</strong>
+                                                            </span>
+                                                            @endif
+                                                   
+                                                   </div>
                                                    
                                                 </div>
+
+                                                
                                                 <!-- new input -->
                                                 <h4 class="box-title text-info"> SECTION B</h4>
                                                 <hr class="my-15">

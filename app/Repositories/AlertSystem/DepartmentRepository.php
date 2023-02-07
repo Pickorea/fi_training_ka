@@ -2,17 +2,17 @@
 namespace App\Repositories\AlertSystem;
 
 use App\Repositories\BaseRepository;
-use App\Models\AlertSystem\Employee;
+use App\Models\AlertSystem\Department;
 use Auth;
 
-class EmployeeRepository extends BaseRepository
+class DepartmentRepository extends BaseRepository
 {
     /**
      * @return string
      */
     public function model()
     {
-        return Employee::class;
+        return Department::class;
     }
 
     	public function create(array $input)
@@ -26,11 +26,7 @@ class EmployeeRepository extends BaseRepository
 
 		//}
 		$data=[];
-		$data['name']=$input['name'];
-		$data['age']=$input['age'];
-		$data['email']=$input['email'];
-        $data['work_status_id']=$input['work_status_id'];
-        $data['department_id']=$input['department_id'];
+		$data['department_name']=$input['department_name'];
 		$item=$this->model();
 		$item=new $item($data);
 		//$item->owner_organisation_id=$user->organisation_id;
@@ -38,7 +34,7 @@ class EmployeeRepository extends BaseRepository
         
 	}
 
-	public function update(Employee $model, array $input)
+	public function update(Department $model, array $input)
 	{
 
 	//$user = Auth::user();
@@ -54,30 +50,22 @@ class EmployeeRepository extends BaseRepository
 	
 		//}
 		$data=[];
-		$data['name']=$input['name'];
-		$data['age']=$input['age'];
-		$data['email']=$input['email'];
-        $data['work_status_id']=$input['work_status_id'];
-        $data['department_id']=$input['department_id'];
+		$data['department_name']=$input['department_name'];
 		return $model->update($data);
 	}
 
 	public function getForDataTable($search = '', $order_by = '', $sort = 'asc', $trashed = false)
     {
 
-	//   \Barryvdh\Debugbar\Facade::info('Employee getForDataTable : "' . $search . '"');
+	//   \Barryvdh\Debugbar\Facade::info('Department getForDataTable : "' . $search . '"');
        // $user = Auth::user();
         $dataTableQuery = $this->model->query()
-						->leftjoin('work_status','work_status.id', '=', 'employees.work_status_id')						
-                       ->select(['employees.id', 'employees.name', 'employees.age', 'employees.email', 'work_status.work_status_name']);
+						       ->select(['departments.id', 'departments.department_name']);
          if (!empty($search)) {
             $search = '%' . strtolower($search) . '%' ;
             $dataTableQuery->where(function ($query) use ($search) {
                 $query->where('id','ILIKE',  $search )
-					->orWhere('name','ILIKE',  $search )
-					->orWhere('age','ILIKE',  $search )
-					->orWhere('email','ILIKE',  $search )
-                    ->orWhere('work_status_name','ILIKE',  $search );
+				       ->orWhere('department_name','ILIKE',  $search );
             });
         }
 
@@ -88,7 +76,7 @@ class EmployeeRepository extends BaseRepository
         return $dataTableQuery ;
     }
 	   
-    public function pluck($column = 'name', $key = 'id')
+    public function pluck($column = 'department_name', $key = 'id')
     {
         return $this->model->query()
             ->orderBy($column)

@@ -27,29 +27,30 @@
                             <div class="box-body">
                             <form method="POST" enctype="multipart/form-data" id="upload-file" action="{{ route('training.store') }}" >
                                                                     @csrf
-                                       
+                                       <input  type= "hidden"  id="island_id" name="island_id" value="{{$islands->id}}">
                                           <div class="box-body">
                                           <h4 class="box-title text-info"> SECTION A</h4>
                                                 <hr class="my-15">
-                                                <div class="row">
+                                               {{--<div class="row">
                                                    <div class="form-group col-md-6">
                                                    <label for="island_id">{{ __('ISLAND') }} <span class="text-danger">*</span></label>
                                                    <select name="island_id" id="island_id" class="form-control">
                                                         <option value="" selected disabled>{{ __('Select one') }}</option>
                                                         @foreach($islands as $island)
                                                         <option  value="{{ $island['id'] }}">{{ $island['island_name'] }}</option>
-                                                        
+                                                      
                                                         @endforeach
-                                                        <!-- <input  type= "hidden" value="{{ $island['id'] }}"> -->
+                                                       
+                                                    
                                                     </select>
-                                                       <input  type= "hidden" value="{{ $island['id'] }}">
+                                                    
                                                           @if ($errors->has('island_id'))
                                                                 <span class="help-block">
                                                                     <strong>{{ $errors->first('island_id') }}</strong>
                                                                 </span>
                                                           @endif
                                                       
-                                                   </div>
+                                                   </div>--}}
                                                    <div class="form-group col-md-6">
                                                    <label for="training_type_id">{{ __('TRAINING NAME') }} <span class="text-danger">*</span></label>
                                                    <select name="training_type_id" id="training_type_id" class="form-control">
@@ -113,6 +114,10 @@
                                                         <option value="{{ $village['id'] }}">{{ $village['village_name'] }}</option>
                                                         @endforeach
                                                     </select>
+
+                                                   {{--<select name="village_id" id="village_id" class="form-control">
+                                                      <option value="0">-- Select Village --</option>
+                                                   </select>--}}
                                                            @if(session()->has('error'))
                                                             <div class="alert alert-danger">
                                                                {{ session()->get('error') }}
@@ -179,44 +184,6 @@
                         </div>
 
                        
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.0-alpha1/css/bootstrap.min.css">
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script>
-            $(document).ready(function() {
-            $('#island').on('change', function() {
-               var islandID = $(this).val();
-               console(islandID);
-               if(islandID) {
-                   $.ajax({
-                       url: 'training/list'+islandID,
-                       type: "GET",
-                       data : {"_token":"{{ csrf_token() }}"},
-                       dataType: "json",
-                       success:function(data)
-                       {
-                      
-                         if(data){
-                            $('#village').empty();
-                            $('#village').append('<option hidden>Choose village</option>'); 
-                            $.each(data, function(key, village){
-                                $('select[name="village"]').append('<option value="'+ key +'">' + village.village_name+ '</option>');
-                            });
-                        }else{
-                            $('#village').empty();
-                        }
-                     }
-                   });
-               }else{
-                 $('#village').empty();
-               }
-            });
-            });
-        </script>
+                       
 @endsection
    

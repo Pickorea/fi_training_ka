@@ -3,29 +3,24 @@
 namespace App\Http\Controllers\AlertSystem;
 use App\Http\Controllers\Controller;
 
-use App\Repositories\AlertSystem\EmployeeRepository;
-use App\Repositories\AlertSystem\WorkStatusRepository;
 use App\Repositories\AlertSystem\DepartmentRepository;
-use App\Models\AlertSystem\Employee;
-use App\Models\AlertSystem\WorkStatus;
 use App\Models\AlertSystem\Department;
 use DB;
 use Illuminate\Http\Request;
 use PDF;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
-class EmployeeController extends Controller {
+class DepartmentController extends Controller {
 
-	private $employees;
-    private $workstatus;
-    private $departments;
+	private $departments;
 
-    public function __construct(EmployeeRepository $employees,
-	WorkStatusRepository $workstatus, DepartmentRepository $departments)
+
+
+    public function __construct(DepartmentRepository $departments
+	)
     {
-        $this->employees=$employees;
-        $this->workstatus=$workstatus;
-		$this->departments=$departments;
+        $this->departments=$departments;
+      
        
     }
 
@@ -35,7 +30,7 @@ class EmployeeController extends Controller {
         if (is_array($search)) {
             $search = $search['value'];
         }
-        $query = $this->employees->getForDataTable($search);
+        $query = $this->departments->getForDataTable($search);
         $datatables = DataTables::make($query)->make(true);
         return $datatables;
     }
@@ -46,15 +41,26 @@ class EmployeeController extends Controller {
 	 */
 	public function index() {
 
-		$employees = DB::table('employees')
-		->select('employees.id', 'employees.created_at','employees.name', 'employees.age', 'employees.email','work_status.work_status_name')
-		->leftJoin('work_status','employees.work_status_id','=','work_status.id')
+		$departments = DB::table('departments')
+		->select('departments.id', 'departments.created_at','departments.department_name')
 		->get()->toArray();
 	
 			
-		return view('alertsystems.employees.index',compact('employees'));
+		return view('alertsystems.departments.index',compact('departments'));
 	}
 
+	  // Fetch records
+	  public function getEmployees($departmentid=0){
+
+		// Fetch Employees by Departmentid
+		$empData['data'] = Employees::orderby("name","asc")
+			 ->select('id','name')
+			 ->where('department',$departmentid)
+			 ->get();
+
+		return response()->json($empData);
+
+   }
 	
 
     /**
@@ -65,11 +71,9 @@ class EmployeeController extends Controller {
     public function create()
     {
 	
-		$workstatus=$this->workstatus->pluck();
 		$departments=$this->departments->pluck();
 	
-        return view('alertsystems.employees.create')->withDepartments($departments)
-		->withStatus($workstatus);
+        return view('alertsystems.departments.create')->withDepartments($departments);
     }
 
 	/**
@@ -81,12 +85,11 @@ class EmployeeController extends Controller {
 	public function store(Request $request) {
 		
 		            $input = $request->all();
-					// dd($input);
 	
-			$item = $this->employees->create($input);
+			$item = $this->departments->create($input);
 
 			
-				return redirect()->route('employee.index');
+				return redirect()->route('department.index');
 	}
 
 	
@@ -99,10 +102,10 @@ class EmployeeController extends Controller {
 	 */
 	public function show($id) {
 	
-		$employee = $this->employees->getById($id);
+		$department = $this->departments->getById($id);
 
-		return view('alertsystems.employees.show')
-	        ->with('employee',$employee);
+		return view('alertsystems.departments.show')
+	        ->with('department',$department);
 
 	}
 
@@ -116,14 +119,9 @@ class EmployeeController extends Controller {
 	 */
 	public function edit($id) {
 		
-        $employee = Employee::find($id)->toArray();
-		$workstatus = WorkStatus::all()->toArray();
-		$departments = Department::all()->toArray();
-		// $departments=$this->departments->pluck();
-		return view('alertsystems.employees.edit')
-		->withStatus($workstatus)
-		->withEmployee($employee)
-		->withDepartments($departments);
+        $department = department::find($id)->toArray();
+		return view('alertsystems.departments.edit')
+		->withdepartment($department);
         
 	}
 
@@ -137,10 +135,10 @@ class EmployeeController extends Controller {
 	public function update(Request $request,  $id){
         
        
-		$item=$this->employees->getById($id);
-		$this->employees->update($item,$request->all()); 
+		$item=$this->departments->getById($id);
+		$this->departments->update($item,$request->all()); 
 	
-       	return redirect()->route('employee.index')->with('message', 'Updated successfully.');
+       	return redirect()->route('department.index')->with('message', 'Updated successfully.');
 	
     }
 
@@ -152,7 +150,7 @@ class EmployeeController extends Controller {
 	 */
 	public function destroy($id) {
 		
-		return redirect()->route('/employee')->with('exception', 'Operation failed !');
+		return redirect()->route('/department')->with('exception', 'Operation failed !');
 	}
 
 	

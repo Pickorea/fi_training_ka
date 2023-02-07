@@ -44,30 +44,33 @@ class TrainingController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(Request $request)
+    public function create($island_id)
     {
-        // $island_id = $request->input('island_id');
-        // dd($island);
-
-        // $island_id = request()->island_id;
-        $data['villages'] = Village::where("island_id", $request->island_id)
-        ->get(["village_name", "id"]);
-
-        
-        $islands = Island::all()->toArray();
+               
+        $islands = Island::select('id')->where('id', $island_id)->first();
+        // dd($islands->id);
         $types =   TrainingType::all()->toArray();
-        $villages =   Village::all()->toArray();
-        // $villages =   Village::with('island')->where('island_id',$island_id)->get()->toArray();
-        
-        // dd($types);
-        return view('trainings.create',$data)->withIslands($islands)->withTypes($types)->withVillages($villages);
+        // $villages =   Village::all()->toArray();
+        $villages = $this->getVillage($island_id);
+
+        return view('trainings.create')->withTypes($types)->withVillages($villages)
+        ->withIslands($islands);
     }
 
-    public function getvillage($id)
+    public function getVillage($island_id)
     {
-        dd($id);
-            $villages = Village::where('island_id',$id)->get();
-            return response()->json($course);
+        $data = Village::where('island_id',$island_id)->get();
+        \Log::info($data);
+        // dd($data);
+        return $data;
+    }
+
+    public function islandList()
+    {
+        $islands = Island::all();
+        \Log::info($islands);
+        // dd($data);
+        return view('trainings.islandlist')->withIslands($islands);
     }
     /**
      * Store a newly created resource in storage.
@@ -77,7 +80,7 @@ class TrainingController extends Controller
      */
     public function store(Request $request)
     {
-         
+       
         DB::beginTransaction();
         try {
             $training = new Training();

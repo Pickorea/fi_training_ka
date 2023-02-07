@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\IslandStoreRequest;
 use App\Http\Requests\IslandUpdateRequest;
 use App\Models\Training\Island;
+use App\Models\Training\Village;
 
 use Illuminate\Support\Str;
 
@@ -29,6 +30,13 @@ class IslandController extends Controller
 
         //return 'welcome'; //view('employees.index');
     }
+
+    // public function getVillage($island_id)
+    // {
+    //     $data = Village::where('island_id',$island_id)->get();
+    //     \Log::info($data);
+    //     return response()->json(['data' => $data]);
+    // }
 
     /**
      * Show the form for creating a new resource.

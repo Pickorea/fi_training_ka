@@ -72,6 +72,22 @@
                                                             @endif
                                                    
                                                    </div>
+                                                   <div class="form-group col-md-6">
+                                                      {{ html()->label('Department Name')->class('form-control-label')->for('department_id') }}
+                                                      <select name="department_id" id="department_id" class="form-control">
+                                                        <option value="" selected disabled>{{ __('Select one') }}</option>
+                                                        
+                                                        @foreach($departments as $key => $department)
+                                                        <option value="{{ $key }}">{{ $department }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                            @if ($errors->has('age'))
+                                                               <span class="invalid-feedback" role="alert">
+                                                               <strong>{{ $errors->first('department_id') }}</strong>
+                                                            </span>
+                                                            @endif
+                                                   
+                                                   </div>
                                                    
                                                 </div>
                                                 <!-- new input -->

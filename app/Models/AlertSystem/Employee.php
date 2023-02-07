@@ -11,7 +11,7 @@ class Employee extends Model
     use HasFactory;
 
     protected $table = 'employees';
-    protected $fillable = ['name', 'age', 'email', 'work_status_id'];
+    protected $fillable = ['name', 'age', 'email', 'work_status_id', 'department_id'];
 
     public function employeeworkstatuses(){
 
@@ -21,6 +21,11 @@ class Employee extends Model
     public function workstatus(){
 
         return $this->belongsTo(WorkStatus::class);
+    }
+
+    public function department(){
+
+        return $this->belongsTo(Department::class);
     }
 
 }

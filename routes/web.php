@@ -22,6 +22,8 @@ use App\Http\Controllers\AlertSystem\EmployeeWorkStatusController;
 use App\Http\Controllers\AlertSystem\SpaController;
 use App\Http\Controllers\AlertSystem\NotifyController;
 use App\Http\Controllers\AlertSystem\ArtisanCommandController;
+use App\Http\Controllers\AlertSystem\DepartmentController;
+
 
 
 /*
@@ -65,6 +67,7 @@ Route::group(['middleware' => 'auth'], function ()
      //island
      Route::group(['as' => 'island.', 'prefix' => 'island'], function () {
         Route::get('', [IslandController::class, 'index'])->name('index');
+        Route::get('village/{id}', [IslandController::class, 'getVillage'])->name('village');
         Route::get('create', [IslandController::class, 'create'])->name('create');
         Route::post('', [IslandController::class, 'store'])->name('store');
         Route::get('export', [IslandController::class, 'exportlist'])->name('export');
@@ -79,8 +82,8 @@ Route::group(['middleware' => 'auth'], function ()
     //training detail
     Route::group(['as' => 'training.', 'prefix' => 'training'], function () {
         Route::get('', [TrainingController::class, 'index'])->name('index');
-        Route::get('list/{id?}', [TrainingTypeController::class, 'getvillages'])->name('dropdown');
-        Route::get('create', [TrainingController::class, 'create'])->name('create');
+        Route::get('list', [TrainingController::class, 'islandList'])->name('islandList');
+        Route::get('create/{island_id}', [TrainingController::class, 'create'])->name('create');
         Route::post('', [TrainingController::class, 'store'])->name('store');
         Route::get('export', [TrainingController::class, 'exportlist'])->name('export');
         Route::group(['prefix' => '{training?}'], function () { 
@@ -226,5 +229,22 @@ Route::group(['middleware' => 'auth'], function ()
         Route::get('', [ArtisanCommandController::class, 'RunArtisanCommand'])->name('command');
        
             });
+
+      //Department
+      Route::group(['as' => 'department.', 'prefix' => 'department'], function () {
+        Route::get('', [DepartmentController::class, 'index'])->name('index');
+        Route::get('koolexcel', [DepartmentController::class, 'export'])->name('koolexcel');
+        Route::get('excel', [DepartmentController::class, 'exportTrainingAttendance'])->name('excel');
+        Route::get('create', [DepartmentController::class, 'create'])->name('create');
+        Route::post('', [DepartmentController::class, 'store'])->name('store');
+        Route::get('export', [DepartmentController::class, 'exportlist'])->name('export');
+        Route::group(['prefix' => '{department}'], function () { 
+        Route::get('', [DepartmentController::class, 'show'])->name('show');
+        Route::get('edit', [DepartmentController::class, 'edit'])->name('edit');
+        Route::match(['PUT', 'PATCH'], '', [DepartmentController::class, 'update'])->name('update');
+        Route::delete('', [DepartmentController::class, 'delete'])->name('delete');
+        });
+    });
+
 
 });
