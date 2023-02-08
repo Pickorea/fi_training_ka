@@ -23,6 +23,9 @@ use App\Http\Controllers\AlertSystem\SpaController;
 use App\Http\Controllers\AlertSystem\NotifyController;
 use App\Http\Controllers\AlertSystem\ArtisanCommandController;
 use App\Http\Controllers\AlertSystem\DepartmentController;
+use App\Http\Controllers\AlertSystem\SchoolController;
+use App\Http\Controllers\AlertSystem\QualificationController;
+use App\Http\Controllers\AlertSystem\EducationController;
 
 
 
@@ -245,6 +248,55 @@ Route::group(['middleware' => 'auth'], function ()
         Route::delete('', [DepartmentController::class, 'delete'])->name('delete');
         });
     });
+
+     //school
+     Route::group(['as' => 'school.', 'prefix' => 'school'], function () {
+        Route::get('', [SchoolController::class, 'index'])->name('index');
+        Route::get('koolexcel', [SchoolController::class, 'export'])->name('koolexcel');
+        Route::get('excel', [SchoolController::class, 'exportTrainingAttendance'])->name('excel');
+        Route::get('create', [SchoolController::class, 'create'])->name('create');
+        Route::post('', [SchoolController::class, 'store'])->name('store');
+        Route::get('export', [SchoolController::class, 'exportlist'])->name('export');
+        Route::group(['prefix' => '{school}'], function () { 
+        Route::get('', [SchoolController::class, 'show'])->name('show');
+        Route::get('edit', [SchoolController::class, 'edit'])->name('edit');
+        Route::match(['PUT', 'PATCH'], '', [SchoolController::class, 'update'])->name('update');
+        Route::delete('', [SchoolController::class, 'delete'])->name('delete');
+        });
+    });
+
+     //qualification
+     Route::group(['as' => 'qualification.', 'prefix' => 'qualification'], function () {
+        Route::get('', [QualificationController::class, 'index'])->name('index');
+        Route::get('koolexcel', [QualificationController::class, 'export'])->name('koolexcel');
+        Route::get('excel', [QualificationController::class, 'exportTrainingAttendance'])->name('excel');
+        Route::get('create', [QualificationController::class, 'create'])->name('create');
+        Route::post('', [QualificationController::class, 'store'])->name('store');
+        Route::get('export', [QualificationController::class, 'exportlist'])->name('export');
+        Route::group(['prefix' => '{qualification}'], function () { 
+        Route::get('', [QualificationController::class, 'show'])->name('show');
+        Route::get('edit', [QualificationController::class, 'edit'])->name('edit');
+        Route::match(['PUT', 'PATCH'], '', [QualificationController::class, 'update'])->name('update');
+        Route::delete('', [QualificationController::class, 'delete'])->name('delete');
+        });
+    });
+
+    //education
+    Route::group(['as' => 'education.', 'prefix' => 'education'], function () {
+        Route::get('', [EducationController::class, 'index'])->name('index');
+        Route::get('koolexcel', [EducationController::class, 'export'])->name('koolexcel');
+        Route::get('excel', [EducationController::class, 'exportTrainingAttendance'])->name('excel');
+        Route::get('create', [EducationController::class, 'create'])->name('create');
+        Route::post('', [EducationController::class, 'store'])->name('store');
+        Route::get('export', [EducationController::class, 'exportlist'])->name('export');
+        Route::group(['prefix' => '{education}'], function () { 
+        Route::get('', [EducationController::class, 'show'])->name('show');
+        Route::get('edit', [EducationController::class, 'edit'])->name('edit');
+        Route::match(['PUT', 'PATCH'], '', [EducationController::class, 'update'])->name('update');
+        Route::delete('', [EducationController::class, 'delete'])->name('delete');
+        });
+    });
+
 
 
 });

@@ -1,19 +1,19 @@
 @extends('layouts.app')
-@section('title', __('Island'))
+@section('title', __('school'))
 
 @section('content')
 <div class="container">
 <div class="content-wrapper">
 
     <section class="content-header">
-        <!-- <h1>
-            {{ __('Island') }}
-        </h1> -->
+        <h1>
+            {{ __('Schools') }}
+        </h1>
          <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ url('/home') }}">Dashboard</a></li>
-                <li class="breadcrumb-item"><a href="{{ route('employee.index') }}">Employee List</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Island List</li>
+                <li class="breadcrumb-item"><a href="{{ url('/island') }}">Island List</a></li>
+                <li class="breadcrumb-item active" aria-current="page">school List</li>
             </ol>
         </nav>
     </section>
@@ -23,13 +23,19 @@
         <!-- Default box -->
         <div class="box">
             <div class="box-header with-border">
-                <h3 class="box-title">{{ __('Create New Training by Islands') }}</h3>
+                <h3 class="box-title">{{ __('Manage school') }}</h3>
 
-               {{--<div class="box-body">
-                        <div >
-                            <a href="{{ route('training.create') }}" class="breadcrumb-item btn btn-primary btn-sm float-end">{{ __(' Add') }}</a> 
+                <div class="box-header with-border">
+                {{--@can('isUser')--}}
+                        <div class="alert alert-info clearfix">
+                            <a href="{{ route('school.create') }}" class="alert-link"><button type="button" class="btn btn-primary btn-sm float-end">{{ __(' Add school') }}</button></a> 
+                          
+                            {{--<a href="{{ route('excelreport.schoolexcel') }}" class="alert-link"><button type="button" class="btn btn-primary btn-sm float-start">{{ __('TO EXCEL') }}</button></a>--}}
+                      
+                            <a href="{{ route('excelreport.pdf') }}" class="alert-link"><button type="button" class="btn btn-primary btn-sm float-middle">{{ __('TO PDF') }}</button></a>
                         </div>
-                     </div>--}}
+                     </div>
+                {{--@endcan--}}
             </div>
             <div class="box-body">
                 
@@ -55,33 +61,28 @@
                     @endif
                 </div>
                 <!-- /.Notification Box -->
+         {{--@can('isAdmin')--}}
         <div id="printable_area" class="col-md-12 table-responsive">
                <table  class="table table-bordered table-striped">
                     <thead>
                         <tr>
                             <th>{{ __(' SL#') }}</th>
-                            <th>{{ __('Island Name') }}</th>
-                             {{--<th>{{ __(' Created At') }}</th>--}}
-                            <th class="text-center">{{ __('Create') }}</th>
+                            <th>{{ __(' school Name') }}</th>
+                       
+                            <th class="text-center">{{ __('Actions') }}</th>
                         </tr>
                     </thead>
                     <tbody id="myTable">
                         @php $sl = 1; @endphp
-                      
-                        @foreach($islands as $island)
+                     
+                        @foreach($schools as $school)
                         <tr>
                             <td>{{ $sl++ }}</td>
-                     
-                            
-                            <td>{{ $island['island_name'] }}</td>
-                            
-                        
-                           {{--<td class="text-center">{{ date("d F Y", strtotime($island['created_at'])) }}</td>--}}
-                           
-                           
+                            <td>{{ $school->school_name}}</td>
+                          
                             <td class="text-center">
-                            <a class="btn btn-info text-center" href="{{route('training.create', $island['id'])}}">New Training</a>  
-                            
+                            <a class="btn btn-info text-center" href="{{route('school.show', $school->id)}}">Show</a>      
+                               <a href="{{ route('school.edit', $school->id) }}"><i class="icon fa fa-edit"></i> {{ __('Edit') }}</a>
                               
                             </td>
                         </tr>
@@ -93,6 +94,7 @@
             <!-- /.box-body -->
         </div>
         <!-- /.box -->
+        {{--@endcan--}}
     </section>
     <!-- /.content -->
 </div>

@@ -21,5 +21,7 @@ class DatabaseSeeder extends Seeder
         $this->call(UrlSeeder::class);
         $this->call(PermissionSeeder::class);
         $this->call(WorkStatusSeeder::class);
+        $this->call(SchoolSeeder::class);
+        $this->call(QualificationSeeder::class);
     }
 }
