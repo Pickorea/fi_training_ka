@@ -45,13 +45,24 @@ class EmployeeController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function index() {
-
+	
 		$employees = DB::table('employees')
-		->select('employees.id', 'employees.created_at','employees.name', 'employees.age', 'employees.email','work_status.work_status_name')
+		->select(
+				'employees.id',
+				'employees.created_at',
+				'employees.name',
+				'employees.email',
+				'employees.pf_number',
+				'employees.joining_date',
+				'employees.gender',
+				'employees.date_of_birth',
+				'employees.marital_status',
+				'work_status.work_status_name'
+			   )
 		->leftJoin('work_status','employees.work_status_id','=','work_status.id')
 		->get()->toArray();
 	
-			
+			// dd($employees);
 		return view('alertsystems.employees.index',compact('employees'));
 	}
 
@@ -116,10 +127,11 @@ class EmployeeController extends Controller {
 	 */
 	public function edit($id) {
 		
-        $employee = Employee::find($id)->toArray();
+        $employee = Employee::find($id);
 		$workstatus = WorkStatus::all()->toArray();
 		$departments = Department::all()->toArray();
 		// $departments=$this->departments->pluck();
+		// dd($employee);
 		return view('alertsystems.employees.edit')
 		->withStatus($workstatus)
 		->withEmployee($employee)

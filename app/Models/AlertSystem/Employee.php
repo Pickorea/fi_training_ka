@@ -11,8 +11,19 @@ class Employee extends Model
     use HasFactory;
 
     protected $table = 'employees';
-    protected $fillable = ['name', 'age', 'email', 'work_status_id', 'department_id'];
-
+    protected $fillable = [
+        'name',
+        'email', 
+        'work_status_id',
+        'department_id',
+        'present_address',
+        'pf_number',
+        'joining_date',
+        'gender',
+        'date_of_birth',
+        'marital_status'
+    ];
+   
     public function employeeworkstatuses(){
 
         return $this->hasMany(EmployeeWorkStatus::class);

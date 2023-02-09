@@ -69,15 +69,15 @@
                                                   
 
                                                    <div class="form-group col-md-6">
-                                                      <label for="age"><span class="text-danger">*</span> Age</label>
-                                                     
-                                                            <input type="age" class="form-control {{ $errors->has('age') ? ' is-invalid' : '' }}" value="{{$employee['age']}}" id="age" placeholder="Enter age" name="age" autocomplete="off">
-                                                            @if ($errors->has('age'))
-                                                               <span class="invalid-feedback" role="alert">
-                                                               <strong>{{ $errors->first('age') }}</strong>
-                                                            </span>
+                                                      {{ html()->label('DoB')->class('form-control-label')->for('date_of_birth') }}
+                                                      
+                                                               <input type="date" class="form-control {{ $errors->has('date_of_birth') ? ' is-invalid' : '' }}" value="{{ \Carbon\Carbon::parse($employee->date_of_birth)->format('Y-m-d') }}" id="date_of_birth" placeholder="Enter date_of_birth name" name="date_of_birth" autocomplete="off">
+                                                               @if(session()->has('error'))
+                                                               <div class="alert alert-danger">
+                                                                  {{ session()->get('error') }}
+                                                               </div>
                                                             @endif
-                                                   
+                                                      
                                                    </div>
 
                                                    <div class="form-group col-md-6">
@@ -86,7 +86,7 @@
                                                       <select name="department_id" id="department_id" class="form-control">
                                                         <option value="" selected disabled>{{ __('Select one') }}</option>
                                                         @foreach($departments as $key => $department)
-                                                        <option value="{{ $department['id']  }}" {{  $department['id'] == $employee['work_status_id'] ? 'selected' : '' }}>{{ $department['department_name'] }}</option>
+                                                        <option value="{{ $department['id']  }}" {{  $department['id'] == $employee['department_id'] ? 'selected' : '' }}>{{ $department['department_name'] }}</option>
                                                         @endforeach
                                                     </select>
                                                              @if ($errors->has('department_id'))
@@ -116,9 +116,92 @@
                                                          @endif
                                                    
                                                    </div>
+
+                                                   <div class="form-group col-md-6">
+                                                   {{ html()->label('Present Address')->class('form-control-label')->for('present_address') }}
+                                                   
+                                                            <input type="text" class="form-control {{ $errors->has('present_address') ? ' is-invalid' : '' }}" value="{{ $employee->present_address}}" id="present_address" placeholder="Enter present_address name" name="present_address" autocomplete="off">
+                                                           @if(session()->has('error'))
+                                                            <div class="alert alert-danger">
+                                                               {{ session()->get('error') }}
+                                                            </div>
+                                                         @endif
+                                                   
+                                                   </div>
                                                    
                                                    
                                                 </div>
+
+                                                <div class="row">
+                                               
+                                               <div class="form-group col-md-6">
+                                               {{ html()->label('PF Number')->class('form-control-label')->for('pf_number') }}
+                                               
+                                                        <input type="text" class="form-control {{ $errors->has('pf_number') ? ' is-invalid' : '' }}" value="{{$employee->pf_number}}" id="pf_number" placeholder="Enter pf_number name" name="pf_number" autocomplete="off">
+                                                       @if(session()->has('error'))
+                                                        <div class="alert alert-danger">
+                                                           {{ session()->get('error') }}
+                                                        </div>
+                                                     @endif
+                                               
+                                               </div>
+
+                                               <div class="form-group col-md-6">
+                                               {{ html()->label('Gender')->class('form-control-label')->for('gender') }}
+                                       
+                                               <select name="gender" id="gender" class="form-control">
+                                                    <option value="" selected disabled>{{ __('Select one') }}</option>
+                                                  
+                                                    <option value="1" {{$employee->gender == '1' ? 'selected' : '' }}>{{ __('Male') }}</option>
+                                                      <option value="0" {{$employee->gender =='0' ? 'selected' : '' }}>{{ __('Female') }}</option>
+                                                    
+                                                </select>
+                                                       @if(session()->has('error'))
+                                                        <div class="alert alert-danger">
+                                                           {{ session()->get('error') }}
+                                                        </div>
+                                                     @endif
+                                               
+                                               </div>
+                                               
+                                            </div> 
+
+                                            <div class="row">
+                                           
+                                           <div class="form-group col-md-6">
+                                           {{ html()->label('Joining Date')->class('form-control-label')->for('joining_date') }}
+                                           
+                                                    <input type="date" class="form-control {{ $errors->has('joining_date') ? ' is-invalid' : '' }}" value="{{ \Carbon\Carbon::parse($employee->joining_date)->format('Y-m-d') }}"  id="joining_date" placeholder="Enter joining_date name" name="joining_date" autocomplete="off">
+                                                   @if(session()->has('error'))
+                                                    <div class="alert alert-danger">
+                                                       {{ session()->get('error') }}
+                                                    </div>
+                                                 @endif
+                                           
+                                           </div>
+
+                                           <div class="form-group col-md-6">
+                                           {{ html()->label('Martial Status')->class('form-control-label')->for('marital_status') }}
+                                               <select name="marital_status" id="marital_status" class="form-control">
+
+                                                   <option value="" selected disabled>{{ __('Select one') }}</option>
+                                                   <option value="1" {{$employee->marital_status == '1' ? 'selected' : '' }}>{{ __('Married') }}</option>
+                                                   <option value="2" {{$employee->marital_status =='2' ? 'selected' : '' }}>{{ __('Single') }}</option>
+                                                   <option value="3" {{$employee->marital_status =='3' ? 'selected' : '' }}>{{ __('Divorced') }}</option>
+                                                   <option value="4" {{$employee->marital_status =='4' ? 'selected' : '' }}>{{ __('Separated') }}</option>
+                                                   <option value="5" {{$employee->marital_status =='5' ? 'selected' : '' }}>{{ __('Widowed') }}</option>
+                                                   
+                                                </select>
+                                                   @if(session()->has('error'))
+                                                    <div class="alert alert-danger">
+                                                       {{ session()->get('error') }}
+                                                    </div>
+                                                 @endif
+                                           
+                                           </div>
+                                           
+                                        </div> 
+
                                                
                                           <!-- /.box-body -->
                                           <div class="box-footer text-right">

@@ -114,6 +114,13 @@ class NavbarSeeder extends Seeder
                 'route' => 'education.index',
                 'ordering' => 15,
             ]
+
+            ,
+            [
+                'name' => 'weather',
+                'route' => 'weather.index',
+                'ordering' => 15,
+            ]
         ];
   
         foreach ($links as $key => $navbar) {

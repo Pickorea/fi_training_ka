@@ -27,10 +27,15 @@ class EmployeeRepository extends BaseRepository
 		//}
 		$data=[];
 		$data['name']=$input['name'];
-		$data['age']=$input['age'];
 		$data['email']=$input['email'];
-        $data['work_status_id']=$input['work_status_id'];
+		$data['work_status_id']=$input['work_status_id'];
         $data['department_id']=$input['department_id'];
+        $data['present_address']=$input['present_address'];
+		$data['pf_number']=$input['pf_number'];
+		$data['joining_date']=$input['joining_date'];
+		$data['gender']=$input['gender'];
+		$data['date_of_birth']=$input['date_of_birth'];
+		$data['marital_status']=$input['marital_status'];
 		$item=$this->model();
 		$item=new $item($data);
 		//$item->owner_organisation_id=$user->organisation_id;
@@ -55,10 +60,15 @@ class EmployeeRepository extends BaseRepository
 		//}
 		$data=[];
 		$data['name']=$input['name'];
-		$data['age']=$input['age'];
 		$data['email']=$input['email'];
-        $data['work_status_id']=$input['work_status_id'];
+		$data['work_status_id']=$input['work_status_id'];
         $data['department_id']=$input['department_id'];
+        $data['present_address']=$input['present_address'];
+		$data['pf_number']=$input['pf_number'];
+		$data['joining_date']=$input['joining_date'];
+		$data['gender']=$input['gender'];
+		$data['date_of_birth']=$input['date_of_birth'];
+		$data['marital_status']=$input['marital_status'];
 		return $model->update($data);
 	}
 

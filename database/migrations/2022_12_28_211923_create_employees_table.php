@@ -16,11 +16,17 @@ class CreateEmployeesTable extends Migration
         Schema::create('employees', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->integer('age');
             $table->string('email');
             $table->integer('work_status_id')->unsigned();
             $table->integer('department_id')->unsigned();
-            $table->timestamps();
+     		$table->string('present_address')->nullable();
+			$table->text('pf_number')->nullable();
+			$table->date('joining_date')->nullable();
+			$table->string('gender', 1)->nullable();
+			$table->date('date_of_birth')->nullable();
+			$table->string('marital_status')->nullable()->comment('1 for Married, Single, 3 for Divorced, 4 for Separated, 5 for Widowed');
+			// $table->string('picture')->nullable();
+			$table->timestamps();
         });
     }
 

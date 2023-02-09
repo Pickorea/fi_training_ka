@@ -27,6 +27,8 @@ use App\Http\Controllers\AlertSystem\SchoolController;
 use App\Http\Controllers\AlertSystem\QualificationController;
 use App\Http\Controllers\AlertSystem\EducationController;
 
+use App\Http\Controllers\Weather\WeatherController;
+
 
 
 /*
@@ -294,6 +296,22 @@ Route::group(['middleware' => 'auth'], function ()
         Route::get('edit', [EducationController::class, 'edit'])->name('edit');
         Route::match(['PUT', 'PATCH'], '', [EducationController::class, 'update'])->name('update');
         Route::delete('', [EducationController::class, 'delete'])->name('delete');
+        });
+    });
+
+    //weather
+    Route::group(['as' => 'weather.', 'prefix' => 'weather'], function () {
+        Route::get('', [WeatherController::class, 'index'])->name('index');
+        Route::get('koolexcel', [WeatherController::class, 'export'])->name('koolexcel');
+        Route::get('excel', [WeatherController::class, 'exportTrainingAttendance'])->name('excel');
+        Route::get('create', [WeatherController::class, 'create'])->name('create');
+        Route::post('', [WeatherController::class, 'store'])->name('store');
+        Route::get('export', [WeatherController::class, 'exportlist'])->name('export');
+        Route::group(['prefix' => '{weather}'], function () { 
+        Route::get('', [WeatherController::class, 'show'])->name('show');
+        Route::get('edit', [WeatherController::class, 'edit'])->name('edit');
+        Route::match(['PUT', 'PATCH'], '', [WeatherController::class, 'update'])->name('update');
+        Route::delete('', [WeatherController::class, 'delete'])->name('delete');
         });
     });
 

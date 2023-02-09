@@ -70,7 +70,7 @@
                                                       <label for="training_date"><span class="text-danger">*</span>TRAINING DATE</label>
                                                    
                                                           
-                                                            <input type="date" class="form-control datepicker pull-right{{ $errors->has('training_date') ? ' is-invalid' : '' }}"  value="{{$training['training_date']}}" id="training_date"  name="training_date" autocomplete="off">
+                                                            <input type="date" class="form-control datepicker pull-right{{ $errors->has('training_date') ? ' is-invalid' : '' }}"  value="{{ \Carbon\Carbon::parse($training['training_date'])->format('Y-m-d') }}" id="training_date"  name="training_date" autocomplete="off">
                                                            @if(session()->has('error'))
                                                             <div class="alert alert-danger">
                                                                {{ session()->get('error') }}

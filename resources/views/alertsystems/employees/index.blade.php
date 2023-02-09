@@ -68,9 +68,12 @@
                         <tr>
                             <th>{{ __(' SL#') }}</th>
                             <th>{{ __(' Full Name') }}</th>
-                            <th>{{ __(' Age') }}</th>
+                            <th>{{ __(' Martial Status') }}</th>
                             <th>{{ __(' Email') }}</th>
                             <th>{{ __(' Work Status') }}</th>
+                            <th>{{ __(' PF') }}</th>
+                            <th>{{ __(' Gender') }}</th>
+                            <th>{{ __(' DoB') }}</th>
                             <th>{{ __(' Created At') }}</th>
                             <th class="text-center">{{ __('Actions') }}</th>
                         </tr>
@@ -82,13 +85,14 @@
                         <tr>
                             <td>{{ $sl++ }}</td>
                             <td>{{ $employee->name}}</td>
-                            <td>{{ $employee->age}}</td>
+                            <td>{{ $employee->marital_status}}</td>
                             <td>{{ $employee->email}}</td>
                             <td>{{ $employee->work_status_name}}</td>
-                            
-                         
-                            
-                        
+                            <td>{{ $employee->pf_number}}</td>
+                            <td>{{ date("d F Y", strtotime($employee->joining_date))}}</td>
+                            <td>{{ $employee->gender}}</td>
+                            <td>{{ date("d F Y", strtotime($employee->date_of_birth))}}</td>
+                   
                             <td class="text-center">{{ date("d F Y", strtotime($employee->created_at)) }}</td>
                            
                            
