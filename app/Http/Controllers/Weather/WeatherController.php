@@ -14,13 +14,13 @@ class WeatherController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function getCurrentByCity()
     {
         $wt = new Weather();
 
         $info = $wt->getCurrentByCity('kiribati'); 
         // dd($info);
-        return view('weathers.kiribati.index')->with('response', json_decode(json_encode($info), true));
+        return view('weathers.kiribati.getCurrentByCity')->with('response', json_decode(json_encode($info), true));
         // json_decode( json_encode($data), true);
     }
 
@@ -29,9 +29,13 @@ class WeatherController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function get3HourlyByCity()
     {
-        //
+        $wt = new Weather();
+
+        $info = $wt->get3HourlyByCity('kiribati'); 
+        // dd($info);
+        return view('weathers.kiribati.get3HourlyByCity')->with('response', json_decode(json_encode($info), true));
     }
 
     /**
@@ -40,9 +44,13 @@ class WeatherController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function ajaxget3HourlyByCity()
     {
-        //
+        $wt = new Weather();
+
+        $info = $wt->get3HourlyByCity('kiribati'); 
+        // dd($info);
+        return view('weathers.kiribati.ajaxget3HourlyByCity');//->with('response', json_decode(json_encode($info), true));
     }
 
     /**

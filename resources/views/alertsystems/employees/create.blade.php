@@ -25,7 +25,9 @@
                                 </div>
                             </div>
                             <div class="box-body">
-                            {{ html()->form('POST', route('employee.store'))->open() }}
+                            <form method="POST" enctype="multipart/form-data" id="upload-file" action="{{ route('employee.store') }}"  enctype="multipart/form-data">
+                                                                    @csrf
+
                                                                
                                        
                                           <div class="box-body">
@@ -188,6 +190,15 @@
                                                      @endif
                                                
                                                </div>
+                                               <label for="picture">{{ __('Picture  ') }}<span class="text-danger">*</span></label>
+                                          <div class="form-group{{ $errors->has('picture') ? ' has-error' : '' }} has-feedback">
+                                             <input type="file" id="picture" name="picture" class="form-control">
+                                             @if ($errors->has('picture'))
+                                             <span class="help-block">
+                                                <strong>{{ $errors->first('picture') }}</strong>
+                                             </span>
+                                             @endif
+                                                      </div>
                                                
                                             </div> 
 
@@ -201,7 +212,7 @@
                                                 </a>
                                           </div>
                                           <!-- /.box-footer -->
-                                          {{ html()->form()->close() }}
+                                          </form>
                                        </div>
                                                    <!-- /.box-body -->
                                                 </div>

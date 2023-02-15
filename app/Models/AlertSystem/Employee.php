@@ -21,7 +21,8 @@ class Employee extends Model
         'joining_date',
         'gender',
         'date_of_birth',
-        'marital_status'
+        'marital_status',
+        'picture'
     ];
    
     public function employeeworkstatuses(){

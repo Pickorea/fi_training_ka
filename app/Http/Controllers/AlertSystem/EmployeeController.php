@@ -90,11 +90,24 @@ class EmployeeController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function store(Request $request) {
+
+		$request->validate([
+			'picture' => 'required|image|mimes:jpeg,png,jpg,gif|max:16384',
+		]);
+		
+		if ($picture = $request->file('picture')) {
+			// Move the uploaded file to a permanent location
+			$profilePicture = date('YmdHis') . "." . $picture->getClientOriginalExtension();
+			$picture->move(public_path('uploads/employees'), $profilePicture);
+			// Set the filename in the $input array
+			$input['picture'] = "$profilePicture";
+		}
+		
 		
 		            $input = $request->all();
-					// dd($input);
+					$input['picture'] = "$profilePicture";
 	
-			$item = $this->employees->create($input);
+					$item = $this->employees->create($input);
 
 			
 				return redirect()->route('employee.index');
@@ -110,8 +123,14 @@ class EmployeeController extends Controller {
 	 */
 	public function show($id) {
 	
-		$employee = $this->employees->getById($id);
-
+		// $employee = $this->employees->getById($id);
+		$employee = Employee::select('employees.name', 'employees.picture', 'employees.email', 'employees.present_address', 'employees.pf_number', 'employees.joining_date', 'employees.gender', 'employees.date_of_birth', 'employees.marital_status', 'departments.department_name', 'work_status.work_status_name', 'educations.from_year', 'educations.to_year', 'qualifications.qualification_name', 'schools.school_name')
+		->leftJoin('departments', 'employees.department_id', '=', 'departments.id')
+		->leftJoin('work_status', 'employees.work_status_id', '=', 'work_status.id')
+		->leftJoin('educations', 'educations.employee_id', '=', 'employees.id')
+		->leftJoin('qualifications', 'educations.qualification_id', '=', 'qualifications.id')
+		->leftJoin('schools', 'educations.school_id', '=', 'schools.id')->where('employees.id', $id)->first();
+	// dd($employee);
 		return view('alertsystems.employees.show')
 	        ->with('employee',$employee);
 
@@ -170,3 +189,6 @@ class EmployeeController extends Controller {
 	
 
 }
+/**
+ * Select employees.name, employees.picture, employees.email, employees.present_address, employees.pf_number, employees.joining_date, employees.gender, employees.date_of_birth, employees.marital_status, departments.department_name,work_status.work_status_name, educations.from_year,educations.to_year, qualifications.qualification_name, schools.school_name from employees left join departments on employees.department_id = departments.id left join work_status on work_status.id = employees.work_status_id left join educations on educations.employee_id = employees.id left join qualifications on educations.qualification_id = qualifications.id left join schools on educations.school_id = schools.id
+ */

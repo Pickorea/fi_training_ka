@@ -301,9 +301,9 @@ Route::group(['middleware' => 'auth'], function ()
 
     //weather
     Route::group(['as' => 'weather.', 'prefix' => 'weather'], function () {
-        Route::get('', [WeatherController::class, 'index'])->name('index');
-        Route::get('koolexcel', [WeatherController::class, 'export'])->name('koolexcel');
-        Route::get('excel', [WeatherController::class, 'exportTrainingAttendance'])->name('excel');
+        Route::get('getCurrentByCity', [WeatherController::class, 'getCurrentByCity'])->name('getCurrentByCity');
+        Route::get('get3HourlyByCity', [WeatherController::class, 'get3HourlyByCity'])->name('get3HourlyByCity');
+        Route::get('ajaxget3HourlyByCity', [WeatherController::class, 'ajaxget3HourlyByCity'])->name('ajaxget3HourlyByCity');
         Route::get('create', [WeatherController::class, 'create'])->name('create');
         Route::post('', [WeatherController::class, 'store'])->name('store');
         Route::get('export', [WeatherController::class, 'exportlist'])->name('export');

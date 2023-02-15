@@ -114,13 +114,26 @@ class NavbarSeeder extends Seeder
                 'route' => 'education.index',
                 'ordering' => 15,
             ]
+             ,
+            [
+                'name' => 'Current Weather',
+                'route' => 'weather.getCurrentByCity',
+                'ordering' => 15,
+            ]
+            ,
+            [
+                'name' => '3 Hour Weather Forcast',
+                'route' => 'weather.get3HourlyByCity',
+                'ordering' => 16,
+            ]
 
             ,
             [
-                'name' => 'weather',
-                'route' => 'weather.index',
-                'ordering' => 15,
+                'name' => 'Ajax Weather',
+                'route' => 'weather.ajaxget3HourlyByCity',
+                'ordering' => 16,
             ]
+            
         ];
   
         foreach ($links as $key => $navbar) {

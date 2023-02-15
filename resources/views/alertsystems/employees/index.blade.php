@@ -72,9 +72,9 @@
                             <th>{{ __(' Email') }}</th>
                             <th>{{ __(' Work Status') }}</th>
                             <th>{{ __(' PF') }}</th>
-                            <th>{{ __(' Gender') }}</th>
+                            <th>{{ __(' Joining Date') }}</th>
+                            <th>{{ __(' Gender') }}</th> 
                             <th>{{ __(' DoB') }}</th>
-                            <th>{{ __(' Created At') }}</th>
                             <th class="text-center">{{ __('Actions') }}</th>
                         </tr>
                     </thead>
@@ -85,20 +85,23 @@
                         <tr>
                             <td>{{ $sl++ }}</td>
                             <td>{{ $employee->name}}</td>
-                            <td>{{ $employee->marital_status}}</td>
+                            <td>{{ $employee->marital_status === "1"?"Maried":
+                                ($employee->marital_status === "2"?"Single":
+                                ($employee->marital_status === "3"?"Divorced":
+                                ($employee->marital_status === "4"?"Separated":"Widowed")))}}</td>
                             <td>{{ $employee->email}}</td>
                             <td>{{ $employee->work_status_name}}</td>
                             <td>{{ $employee->pf_number}}</td>
                             <td>{{ date("d F Y", strtotime($employee->joining_date))}}</td>
-                            <td>{{ $employee->gender}}</td>
+                            <td>{{ $employee->gender === "1"?"Male":"Female"}}</td>
                             <td>{{ date("d F Y", strtotime($employee->date_of_birth))}}</td>
                    
-                            <td class="text-center">{{ date("d F Y", strtotime($employee->created_at)) }}</td>
+                          
                            
                            
                             <td class="text-center">
-                            <a class="btn btn-info text-center" href="{{route('employee.show', $employee->id)}}">Show</a>      
-                               <a href="{{ route('employee.edit', $employee->id) }}"><i class="icon fa fa-edit"></i> {{ __('Edit') }}</a>
+                            <a href="{{route('employee.show', $employee->id)}}">Show</a>      
+                            <a href="{{ route('employee.edit', $employee->id) }}"><i class="icon fa fa-edit"></i> {{ __('Edit') }}</a>
                               
                             </td>
                         </tr>

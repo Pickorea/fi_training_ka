@@ -7,7 +7,7 @@
 
     <section class="content-header">
         <h1>
-            {{ __('WEATHER FORCAST FOR KIRIBATI') }}
+            {{ __('CURRENT WEATHER FOR KIRIBATI') }}
         </h1>
          <nav aria-label="breadcrumb">
             <ol class="breadcrumb">

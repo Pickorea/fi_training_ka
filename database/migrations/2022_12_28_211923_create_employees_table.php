@@ -24,8 +24,8 @@ class CreateEmployeesTable extends Migration
 			$table->date('joining_date')->nullable();
 			$table->string('gender', 1)->nullable();
 			$table->date('date_of_birth')->nullable();
-			$table->string('marital_status')->nullable()->comment('1 for Married, Single, 3 for Divorced, 4 for Separated, 5 for Widowed');
-			// $table->string('picture')->nullable();
+			$table->string('marital_status')->nullable()->comment('1 for Married, 2 Single, 3 for Divorced, 4 for Separated, 5 for Widowed');
+			$table->string('picture');
 			$table->timestamps();
         });
     }

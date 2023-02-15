@@ -25,6 +25,7 @@ class EmployeeRepository extends BaseRepository
 		//throw new GeneralException(__('exceptions-app.frontend.not_auth'));
 
 		//}
+	
 		$data=[];
 		$data['name']=$input['name'];
 		$data['email']=$input['email'];
@@ -36,6 +37,8 @@ class EmployeeRepository extends BaseRepository
 		$data['gender']=$input['gender'];
 		$data['date_of_birth']=$input['date_of_birth'];
 		$data['marital_status']=$input['marital_status'];
+		$data['picture'] = $input['picture'];
+	
 		$item=$this->model();
 		$item=new $item($data);
 		//$item->owner_organisation_id=$user->organisation_id;
