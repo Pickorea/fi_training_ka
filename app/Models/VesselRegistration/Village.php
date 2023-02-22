@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Training;
+namespace App\Models\VesselRegistration;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -20,7 +20,7 @@ class Village extends Model
 
     public function vessels()
     {
-        return $this->hasMany(Vessel::class);
+        return $this->hasMany(Vessel::class,'id','village_id');
     }
 
 }

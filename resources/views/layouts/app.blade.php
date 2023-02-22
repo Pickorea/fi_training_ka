@@ -72,7 +72,7 @@
 
     <nav class="navbar navbar-expand-lg navbar-light">
       <div class="container">
-        <a href="index.html" class="navbar-brand">Fisheries<span class="text-primary">Training.</span></a>
+        <a href="index.html" class="navbar-brand">KI<span>-FISHERIES</span><span class="text-primary">-IMS.</span></a>
 
         <button class="navbar-toggler" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>

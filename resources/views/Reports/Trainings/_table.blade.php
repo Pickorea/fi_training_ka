@@ -16,27 +16,26 @@
 <table class="styled-table">
     <thead>
     <tr>
-        <th>Name</th>
-        <th>Village Name</th>
-        <th>Training Date</th>
-        <th>First Name</th>
-        <th>Last Name</th>
-        <th>Training Name</th>
-        <th>Age</th>
-        <th>Gender</th>
+        <th>Island</th>
+        <th>Village</th>
+        <th> Date</th>
+        <th>Training</th>
+        <th>Male</th>
+        <th>Female</th>
+        <th>Total</th>
     </tr>
     </thead>
     <tbody>
-    @foreach($trainings as $training)
+    
+    @foreach($collection as $item)
         <tr>
-            <td>{{ $training->island_name }}</td>
-            <td>{{ $training->village_name }}</td>
-            <td>{{date('d-m-Y', strtotime($training->training_date))}}</td>
-            <td>{{ $training->participant_first_name }}</td>
-            <td>{{ $training->participant_last_name }}</td>
-            <td>{{ $training->training_name }}</td>
-            <td>{{ $training->age }}</td>
-            <td>{{ $training->gender ?'M':'F'}}</td>
+            <td>{{ $item->Island  }}</td>
+            <td>{{ $item->Village  }}</td>
+            <td>{{date('d-m-Y', strtotime($item->Date ))}}</td>
+            <td>{{ $item->Training   }}</td>
+            <td>{{ $item->Male  }}</td>
+            <td>{{ $item->Female  }}</td>
+            <td>{{ $item->Total   }}</td>
             
         </tr>
     @endforeach

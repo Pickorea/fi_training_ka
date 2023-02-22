@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Training;
+namespace App\Models\VesselRegistration;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -16,7 +16,7 @@ class Island extends Model
 
     public function villages(){
 
-        return $this->hasMany(Village::class);
+        return $this->hasMany(Village::class,'id','village_id');
 
     }
     

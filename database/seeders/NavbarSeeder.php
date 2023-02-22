@@ -133,6 +133,13 @@ class NavbarSeeder extends Seeder
                 'route' => 'weather.ajaxget3HourlyByCity',
                 'ordering' => 16,
             ]
+
+            ,
+            [
+                'name' => ' Vessel-registrations',
+                'route' => 'vessel-registrations.index',
+                'ordering' => 17,
+            ]
             
         ];
   

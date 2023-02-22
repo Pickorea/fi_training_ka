@@ -27,7 +27,15 @@ use App\Http\Controllers\AlertSystem\SchoolController;
 use App\Http\Controllers\AlertSystem\QualificationController;
 use App\Http\Controllers\AlertSystem\EducationController;
 
+//Vessel Registration
+use App\Http\Controllers\VesselRegistration\VesselRegistrationController;
+
 use App\Http\Controllers\Weather\WeatherController;
+
+//access management
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\PermissionsController;
+use App\Http\Controllers\RolesController;
 
 
 
@@ -316,5 +324,81 @@ Route::group(['middleware' => 'auth'], function ()
     });
 
 
+    //vessel registation
+    Route::group(['as' => 'vessel-registrations.', 'prefix' => 'vessel-registrations'], function () {
+        Route::get('', [VesselRegistrationController::class, 'index'])->name('index');
+        Route::get('/villages/{village}/island', [VesselRegistrationController::class, 'getIsland'])->name('getIsland');
+        Route::get('create', [VesselRegistrationController::class, 'create'])->name('create');
+        Route::post('', [VesselRegistrationController::class, 'store'])->name('store');
+        Route::group(['prefix' => '{VesselRegister}'], function () { 
+        Route::get('', [VesselRegistrationController::class, 'show'])->name('show');
+         Route::get('edit', [VesselRegistrationController::class, 'edit'])->name('edit');
+        Route::match(['PUT', 'PATCH'], '', [VesselRegistrationController::class, 'update'])->name('update');
+        Route::delete('', [VesselRegistrationController::class, 'delete'])->name('delete');
+        });
+    });
 
+
+    
+    //vessel registation
+    Route::group(['as' => 'vessel-registrations.', 'prefix' => 'vessel-registrations'], function () {
+        Route::get('', [VesselRegistrationController::class, 'index'])->name('index');
+        Route::get('/villages/{village}/island', [VesselRegistrationController::class, 'getIsland'])->name('getIsland');
+        Route::get('create', [VesselRegistrationController::class, 'create'])->name('create');
+        Route::post('', [VesselRegistrationController::class, 'store'])->name('store');
+        Route::group(['prefix' => '{VesselRegister}'], function () { 
+        Route::get('', [VesselRegistrationController::class, 'show'])->name('show');
+         Route::get('edit', [VesselRegistrationController::class, 'edit'])->name('edit');
+        Route::match(['PUT', 'PATCH'], '', [VesselRegistrationController::class, 'update'])->name('update');
+        Route::delete('', [VesselRegistrationController::class, 'delete'])->name('delete');
+        });
+    });
+
+
+
+});
+
+Route::group([
+    'as' => 'access-management.',
+    'prefix' => 'access-management',
+    'middleware' => ['auth', 'role:administrator']
+], function () {
+    // users
+    Route::group(['as' => 'users.', 'prefix' => 'users'], function () {
+        Route::get('', [UserController::class, 'index'])->name('index');
+        Route::get('create', [UserController::class, 'create'])->name('create');
+        Route::post('', [UserController::class, 'store'])->name('store');
+        Route::group(['prefix' => '{user}'], function () {
+            Route::get('', [UserController::class, 'show'])->name('show');
+            Route::get('edit', [UserController::class, 'edit'])->name('edit');
+            Route::match(['PUT', 'PATCH'], '', [UserController::class, 'update'])->name('update');
+            Route::delete('', [UserController::class, 'destroy'])->name('destroy');
+        });
+    });
+
+    // roles
+    Route::group(['as' => 'roles.', 'prefix' => 'roles'], function () {
+        Route::get('', [RolesController::class, 'index'])->name('index');
+        Route::get('create', [RolesController::class, 'create'])->name('create');
+        Route::post('', [RolesController::class, 'store'])->name('store');
+        Route::group(['prefix' => '{role}'], function () {
+            Route::get('', [RolesController::class, 'show'])->name('show');
+            Route::get('edit', [RolesController::class, 'edit'])->name('edit');
+            Route::match(['PUT', 'PATCH'], '', [RolesController::class, 'update'])->name('update');
+            Route::delete('', [RolesController::class, 'destroy'])->name('destroy');
+        });
+    });
+
+    // permissions
+    Route::group(['as' => 'permissions.', 'prefix' => 'permissions'], function () {
+        Route::get('', [PermissionsController::class, 'index'])->name('index');
+        Route::get('create', [PermissionsController::class, 'create'])->name('create');
+        Route::post('', [PermissionsController::class, 'store'])->name('store');
+        Route::group(['prefix' => '{permission}'], function () {
+            Route::get('', [PermissionsController::class, 'show'])->name('show');
+            Route::get('edit', [PermissionsController::class, 'edit'])->name('edit');
+            Route::match(['PUT', 'PATCH'], '', [PermissionsController::class, 'update'])->name('update');
+            Route::delete('', [PermissionsController::class, 'destroy'])->name('destroy');
+        });
+    });
 });
