@@ -16,11 +16,12 @@ class UserController extends Controller
      */
     public function index()
     {
-        $this->authorize('viewAny', User::class);
-
-        $users = User::all();
-
-        return view('acessManagement.users.index', compact('users'));
+        if (auth()->user()->hasRole('administrator')) {
+            $users = User::all();
+            return view('accessManagement.users.index', compact('users'));
+        } else {
+            abort(403, 'Unauthorized action.');
+        }
     }
 
     /**
@@ -30,12 +31,16 @@ class UserController extends Controller
      */
     public function create()
     {
-        $this->authorize('create', User::class);
-
-        $roles = Role::pluck('name', 'id');
-
-        return view('acessManagement.users.create', compact('roles'));
+        if (auth()->user()->hasPermissionTo('users.create')) {
+            $roles = Role::pluck('name', 'id');
+    
+            return view('accessManagement.users.create', compact('roles'));
+        } else {
+            abort(403, 'Unauthorized action.');
+        }
     }
+    
+    
 
     /**
      * Store a newly created user in storage.
@@ -45,26 +50,30 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $this->authorize('create', User::class);
-
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|unique:users,email|max:255',
-            'password' => 'required|string|min:8|confirmed',
-            'roles' => 'required|array',
-        ]);
-
-        $user = User::create([
-            'name' => $validatedData['name'],
-            'email' => $validatedData['email'],
-            'password' => Hash::make($validatedData['password']),
-        ]);
-
-        $user->assignRole($validatedData['roles']);
-
-        return redirect()->route('users.index')
-            ->with('success', 'User created successfully.');
+        if (auth()->user()->hasRole('administrator')) {
+            // Allow creating a new user
+            $validatedData = $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|string|email|unique:users,email|max:255',
+                'password' => 'required|string|min:8|confirmed',
+                'roles' => 'required|array',
+            ]);
+    
+            $user = User::create([
+                'name' => $validatedData['name'],
+                'email' => $validatedData['email'],
+                'password' => Hash::make($validatedData['password']),
+            ]);
+    
+            $user->assignRole($validatedData['roles']);
+    
+            return redirect()->route('access-management.users.index')
+                ->with('success', 'User created successfully.');
+        } else {
+            abort(403, 'Unauthorized action.');
+        }
     }
+    
 
     /**
      * Show the form for editing the specified user.
@@ -73,15 +82,21 @@ class UserController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
-    {
-        $user = User::findOrFail($id);
+{
+    $user = User::findOrFail($id);
 
-        $this->authorize('update', $user);
-
+    if (auth()->user()->hasRole('administrator')) {
+        // user has 'admin' role, allow access to edit page
         $roles = Role::pluck('name', 'id');
-
-        return view('acessManagement.users.edit', compact('user', 'roles'));
+        return view('accessManagement.users.edit', compact('user', 'roles'));
+    } else {
+        // user does not have 'admin' role, deny access
+        abort(403, 'Unauthorized action.');
     }
+}
+
+
+
 
     /**
      * Update the specified user in storage.
@@ -92,9 +107,16 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
+
+        if (auth()->user()->hasRole('administrator')) {
+            // Allow access to the protected routes
+        } else {
+            abort(403, 'Unauthorized action.');
+        }
+
         $user = User::findOrFail($id);
 
-        $this->authorize('update', $user);
+        // $this->authorize('update', $user);
 
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
@@ -114,7 +136,7 @@ class UserController extends Controller
 
         $user->syncRoles($validatedData['roles']);
 
-        return redirect()->route('users.index')
+        return redirect()->route('access-management.users.index')
             ->with('success', 'User updated successfully.');
     }
 
@@ -126,6 +148,12 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
+        if (auth()->user()->hasRole('administrator')) {
+            // Allow access to the protected routes
+        } else {
+            abort(403, 'Unauthorized action.');
+        }
+
         $user = User::findOrFail($id);
 
         $this->authorize('delete', $user);

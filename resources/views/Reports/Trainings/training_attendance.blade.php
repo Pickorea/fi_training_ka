@@ -9,5 +9,5 @@
                 </div>
             </div>
     </div>
-<?php $report->render(); ?>
+<?php $collection->render(); ?>
 @endsection

@@ -65,7 +65,7 @@ class ExcelReportController extends Controller
         ->whereNotNull('training_details.village_id')
         ->get();
 
-      $pdf = PDF::loadView('reports.trainings._table', ['trainings' => $trainings ])->setPaper('a4', 'landscape');
+      $pdf = PDF::loadView('reports.trainings._tablepdf', ['trainings' => $trainings ])->setPaper('a4', 'landscape');
     
         return $pdf->download('training_attendance.pdf');
     }

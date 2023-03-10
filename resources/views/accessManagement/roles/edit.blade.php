@@ -8,7 +8,8 @@
                     <div class="card-header">{{ __('Edit Role') }}</div>
 
                     <div class="card-body">
-                        <form method="POST" action="{{ route('roles.update', $role) }}">
+                    <form method="POST" action="{{ route('access-management.roles.update', $role->id) }}">
+
                             @csrf
                             @method('PUT')
 
@@ -31,7 +32,7 @@
                                     <button type="submit" class="btn btn-primary">
                                         {{ __('Save') }}
                                     </button>
-                                    <a href="{{ route('roles.index') }}" class="btn btn-secondary">
+                                    <a href="{{ route('access-management.roles.index') }}" class="btn btn-secondary">
                                         {{ __('Cancel') }}
                                     </a>
                                 </div>

@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', __('Training'))
+@section('title', __('Employee'))
 
 @section('content')
 <div class="container">
@@ -7,7 +7,7 @@
 
     <section class="content-header">
         <h1>
-            {{ __('TRAININGS') }}
+            {{ __('EMPLOYEE') }}
         </h1>
          <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
@@ -23,15 +23,19 @@
         <!-- Default box -->
         <div class="box">
             <div class="box-header with-border">
-                <h3 class="box-title">{{ __('Manage Training') }}</h3>
+                <h3 class="box-title">{{ __('Manage Employee') }}</h3>
 
                 <div class="box-header with-border">
+                {{--@can('isUser')--}}
                         <div class="alert alert-info clearfix">
-                            <a href="{{ route('training.islandList') }}" class="alert-link"><button type="button" class="btn btn-primary btn-sm float-end">{{ __(' Add Training Information') }}</button></a> 
-                            <a href="{{ route('excelreport.excel') }}" class="alert-link"><button type="button" class="btn btn-primary btn-sm float-start">{{ __('TO EXCEL') }}</button></a>
+                            <a href="{{ route('employee.create') }}" class="alert-link"><button type="button" class="btn btn-primary btn-sm float-end">{{ __(' Add Employee') }}</button></a> 
+                          
+                            <a href="{{ route('excelreport.employeeexcel') }}" class="alert-link"><button type="button" class="btn btn-primary btn-sm float-start">{{ __('TO EXCEL') }}</button></a>
+                      
                             <a href="{{ route('excelreport.pdf') }}" class="alert-link"><button type="button" class="btn btn-primary btn-sm float-middle">{{ __('TO PDF') }}</button></a>
                         </div>
                      </div>
+                {{--@endcan--}}
             </div>
             <div class="box-body">
                 
@@ -57,42 +61,47 @@
                     @endif
                 </div>
                 <!-- /.Notification Box -->
+         {{--@can('isAdmin')--}}
         <div id="printable_area" class="col-md-12 table-responsive">
                <table  class="table table-bordered table-striped">
                     <thead>
                         <tr>
                             <th>{{ __(' SL#') }}</th>
-                            <th>{{ __(' Island name') }}</th>
-                            <th>{{ __(' Village name') }}</th>
-                             <th>{{ __(' Training name') }}</th>
-                            <th>{{ __(' First name') }}</th>
-                            <th>{{ __(' Last name') }}</th>
-                            <th>{{ __(' Age') }}</th>
-                            <th>{{ __(' Gender') }}</th>
-                            <th>{{ __(' Training Date') }}</th>
-                           {{--<th>{{ __(' Created At') }}</th>--}}
+                            <th>{{ __(' Full Name') }}</th>
+                            <th>{{ __(' Martial Status') }}</th>
+                            <th>{{ __(' Email') }}</th>
+                            <th>{{ __(' Work Status') }}</th>
+                            <th>{{ __(' PF') }}</th>
+                            <th>{{ __(' Joining Date') }}</th>
+                            <th>{{ __(' Gender') }}</th> 
+                            <th>{{ __(' DoB') }}</th>
                             <th class="text-center">{{ __('Actions') }}</th>
                         </tr>
                     </thead>
                     <tbody id="myTable">
                         @php $sl = 1; @endphp
-                      {{--{{dd($trainings)}}--}}
-                        @foreach($trainings as $training)
+                     
+                        @foreach($employees as $employee)
                         <tr>
-                            <td>{{ $sl++ }}</td> 
-                            <td>{{ $training->island_name }}</td> 
-                            <td>{{ $training->village_name }}</td>                       
-                            <td>{{ $training->training_name }}</td>
-                            <td>{{ $training->participant_first_name }}</td>
-                            <td>{{ $training->participant_last_name }}</td>
-                            <td>{{ $training->age }}</td>
-                            <td>{{ $training->gender ?'Male':'Female' }}</td>
-                            <td class="text-center">{{ date("Y", strtotime($training->training_date)) }}</td>         
-                           {{--<td class="text-center">{{ date("d F Y", strtotime($training->created_at)) }}</td>--}}
+                            <td>{{ $sl++ }}</td>
+                            <td>{{ $employee->name}}</td>
+                            <td>{{ $employee->marital_status === "1"?"Maried":
+                                ($employee->marital_status === "2"?"Single":
+                                ($employee->marital_status === "3"?"Divorced":
+                                ($employee->marital_status === "4"?"Separated":"Widowed")))}}</td>
+                            <td>{{ $employee->email}}</td>
+                            <td>{{ $employee->work_status_name}}</td>
+                            <td>{{ $employee->pf_number}}</td>
+                            <td>{{ date("d F Y", strtotime($employee->joining_date))}}</td>
+                            <td>{{ $employee->gender === "1"?"Male":"Female"}}</td>
+                            <td>{{ date("d F Y", strtotime($employee->date_of_birth))}}</td>
+                   
+                          
+                           
                            
                             <td class="text-center">
-                            <a class="btn btn-info text-center" href="{{route('training.show', $training->id)}}">Show</a>      
-                               <a href="{{ route('training.edit', $training->id) }}"><i class="icon fa fa-edit"></i> {{ __('Edit') }}</a>
+                            <a href="{{route('employee.show', $employee->id)}}">Show</a>      
+                            <a href="{{ route('employee.edit', $employee->id) }}"><i class="icon fa fa-edit"></i> {{ __('Edit') }}</a>
                               
                             </td>
                         </tr>
@@ -104,13 +113,9 @@
             <!-- /.box-body -->
         </div>
         <!-- /.box -->
+        {{--@endcan--}}
     </section>
     <!-- /.content -->
 </div>
 </div>
 @endsection
-
-@push('custom-scripts')
-<!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous"> -->
-<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script> -->
-@endpush

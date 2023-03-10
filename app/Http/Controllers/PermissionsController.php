@@ -30,10 +30,15 @@ class PermissionsController extends Controller
      */
     public function create()
     {
-        $roles = Role::all();
-
-        return view('accessManagement.permissions.create', compact('roles'));
+        if (auth()->check() && auth()->user()->hasRole('administrator')) {
+            $roles = Role::all();
+    
+            return view('accessManagement.permissions.create', compact('roles'));
+        } else {
+            abort(403, 'Unauthorized action.');
+        }
     }
+    
 
     /**
      * Store a newly created resource in storage.

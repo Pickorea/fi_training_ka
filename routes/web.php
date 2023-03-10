@@ -78,7 +78,11 @@ Route::group(['middleware' => 'auth'], function ()
     });
 
      //island
-     Route::group(['as' => 'island.', 'prefix' => 'island'], function () {
+     Route::group([
+        'as' => 'island.',
+        'prefix' => 'island',
+        'middleware' => ['auth', 'role:trainer'],
+    ], function () {
         Route::get('', [IslandController::class, 'index'])->name('index');
         Route::get('village/{id}', [IslandController::class, 'getVillage'])->name('village');
         Route::get('create', [IslandController::class, 'create'])->name('create');
@@ -93,7 +97,11 @@ Route::group(['middleware' => 'auth'], function ()
     });
 
     //training detail
-    Route::group(['as' => 'training.', 'prefix' => 'training'], function () {
+    Route::group([
+        'as' => 'training.',
+        'prefix' => 'training',
+        'middleware' => ['auth', 'role:trainer'],
+    ], function () {
         Route::get('', [TrainingController::class, 'index'])->name('index');
         Route::get('list', [TrainingController::class, 'islandList'])->name('islandList');
         Route::get('create/{island_id}', [TrainingController::class, 'create'])->name('create');
@@ -109,7 +117,11 @@ Route::group(['middleware' => 'auth'], function ()
     });
 
      //training_type
-     Route::group(['as' => 'training_type.', 'prefix' => 'training_type'], function () {
+     Route::group([
+        'as' => 'training_type.',
+        'prefix' => 'training_type',
+        'middleware' => ['auth', 'role:trainer'],
+    ], function () {
         Route::get('', [TrainingTypeController::class, 'index'])->name('index');
         Route::get('create', [TrainingTypeController::class, 'create'])->name('create');
         Route::post('', [TrainingTypeController::class, 'store'])->name('store');
@@ -124,7 +136,11 @@ Route::group(['middleware' => 'auth'], function ()
     });
 
      //village
-     Route::group(['as' => 'village.', 'prefix' => 'village'], function () {
+     Route::group([
+        'as' => 'village.',
+        'prefix' => 'village',
+        'middleware' => ['auth', 'role:trainer'],
+    ], function () {
         Route::get('', [VillageController::class, 'index'])->name('index');
         Route::get('create', [VillageController::class, 'create'])->name('create');
         Route::post('', [VillageController::class, 'store'])->name('store');
@@ -364,7 +380,7 @@ Route::group([
     'middleware' => ['auth', 'role:administrator']
 ], function () {
     // users
-    Route::group(['as' => 'users.', 'prefix' => 'users'], function () {
+    Route::group(['as' => 'users.', 'prefix' => 'users', 'middleware' => ['auth', 'role:administrator']], function () {
         Route::get('', [UserController::class, 'index'])->name('index');
         Route::get('create', [UserController::class, 'create'])->name('create');
         Route::post('', [UserController::class, 'store'])->name('store');
@@ -377,7 +393,7 @@ Route::group([
     });
 
     // roles
-    Route::group(['as' => 'roles.', 'prefix' => 'roles'], function () {
+    Route::group(['as' => 'roles.', 'prefix' => 'roles', 'middleware' => ['auth', 'role:administrator']], function () {
         Route::get('', [RolesController::class, 'index'])->name('index');
         Route::get('create', [RolesController::class, 'create'])->name('create');
         Route::post('', [RolesController::class, 'store'])->name('store');
@@ -390,7 +406,7 @@ Route::group([
     });
 
     // permissions
-    Route::group(['as' => 'permissions.', 'prefix' => 'permissions'], function () {
+    Route::group(['as' => 'permissions.', 'prefix' => 'permissions', 'middleware' => ['auth', 'role:administrator']], function () {
         Route::get('', [PermissionsController::class, 'index'])->name('index');
         Route::get('create', [PermissionsController::class, 'create'])->name('create');
         Route::post('', [PermissionsController::class, 'store'])->name('store');

@@ -8,7 +8,7 @@
                     <div class="card-header">{{ __('Create Role') }}</div>
 
                     <div class="card-body">
-                        <form method="POST" action="{{ route('roles.store') }}">
+                        <form method="POST" action="{{ route('access-management.roles.store') }}">
                             @csrf
 
                             <div class="form-group row">

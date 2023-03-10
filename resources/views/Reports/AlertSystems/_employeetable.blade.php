@@ -32,9 +32,11 @@
                         <tr>
                             <th>{{ __(' SL#') }}</th>
                             <th>{{ __(' Full Name') }}</th>
-                            <th>{{ __(' Age') }}</th>
                             <th>{{ __(' Email') }}</th>
                             <th>{{ __(' Work Status') }}</th>
+                            <th>{{ __(' Gender') }}</th>
+                            <th>{{ __(' DoB') }}</th>
+                            <th>{{ __(' Joining Date') }}</th>
                             <th>{{ __(' Created At') }}</th>
                          
                         </tr>
@@ -46,9 +48,11 @@
                         <tr>
                             <td>{{ $sl++ }}</td>
                             <td>{{ $employee->name}}</td>
-                            <td>{{ $employee->age}}</td>
                             <td>{{ $employee->email}}</td>
                             <td>{{ $employee->work_status_name}}</td>
+                            <td>{{ ($employee->gender == '1'?"Male":"Female")}}</td>
+                            <td>{{ $employee->date_of_birth}}</td>
+                            <td>{{ $employee->joining_date}}</td>
                             <td class="text-center">{{ date("d F Y", strtotime($employee->created_at)) }}</td>
                          </tr>
                         @endforeach

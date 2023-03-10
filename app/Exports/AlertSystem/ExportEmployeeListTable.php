@@ -30,7 +30,7 @@ ShouldAutoSize, WithStyles, WithBackgroundColor
     {
         return view('reports.alertsystems._employeetable', [
             'employees' =>DB::table('employees')
-            ->select('employees.id', 'employees.created_at','employees.name', 'employees.age', 'employees.email','work_status.work_status_name')
+            ->select('employees.id', 'employees.created_at','employees.name', 'employees.gender', 'employees.date_of_birth','employees.email', 'employees.joining_date','work_status.work_status_name')
             ->leftJoin('work_status','employees.work_status_id','=','work_status.id')
             ->get()
         ]);
