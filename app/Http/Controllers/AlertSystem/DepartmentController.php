@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use PDF;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 class DepartmentController extends Controller {
 
 	private $departments;
@@ -70,6 +71,9 @@ class DepartmentController extends Controller {
      */
     public function create()
     {
+		if (! Auth::user()->can('hr.create')) {
+            abort(403, 'Unauthorized action.');
+        }
 	
 		$departments=$this->departments->pluck();
 	
@@ -83,7 +87,10 @@ class DepartmentController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function store(Request $request) {
-		
+
+			if (! Auth::user()->can('hr.store')) {
+            abort(403, 'Unauthorized action.');
+        }
 		            $input = $request->all();
 	
 			$item = $this->departments->create($input);
@@ -102,6 +109,9 @@ class DepartmentController extends Controller {
 	 */
 	public function show($id) {
 	
+		if (! Auth::user()->can('hr.show')) {
+            abort(403, 'Unauthorized action.');
+        }
 		$department = $this->departments->getById($id);
 
 		return view('alertsystems.departments.show')
@@ -118,6 +128,10 @@ class DepartmentController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function edit($id) {
+
+		if (! Auth::user()->can('hr.edit')) {
+            abort(403, 'Unauthorized action.');
+        }
 		
         $department = department::find($id)->toArray();
 		return view('alertsystems.departments.edit')
@@ -134,6 +148,9 @@ class DepartmentController extends Controller {
 	 */
 	public function update(Request $request,  $id){
         
+		if (! Auth::user()->can('hr.update')) {
+            abort(403, 'Unauthorized action.');
+        }
        
 		$item=$this->departments->getById($id);
 		$this->departments->update($item,$request->all()); 

@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use PDF;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 class QualificationController extends Controller {
 
 
@@ -53,6 +54,9 @@ class QualificationController extends Controller {
      */
     public function create()
     {
+		if (! Auth::user()->can('hr.create')) {
+            abort(403, 'Unauthorized action.');
+        }
 	        return view('alertsystems.qualifications.create');
     }
 
@@ -63,6 +67,10 @@ class QualificationController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function store(Request $request) {
+
+		if (! Auth::user()->can('hr.store')) {
+            abort(403, 'Unauthorized action.');
+        }
 		
 		            $input = $request->all();
 					// dd($input);
@@ -83,6 +91,9 @@ class QualificationController extends Controller {
 	 */
 	public function show($id) {
 	
+		if (! Auth::user()->can('hr.show')) {
+            abort(403, 'Unauthorized action.');
+        }
 		$qualification = $this->qualifications->getById($id);
 
 		return view('alertsystems.qualifications.show')
@@ -99,6 +110,9 @@ class QualificationController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function edit($id) {
+		if (! Auth::user()->can('hr.edit')) {
+            abort(403, 'Unauthorized action.');
+        }
 
 		$qualification = $this->qualifications->getById($id);
    		return view('alertsystems.qualifications.edit')->with('qualification',$qualification);;
@@ -114,7 +128,9 @@ class QualificationController extends Controller {
 	 */
 	public function update(Request $request,  $id){
         
-       
+		if (! Auth::user()->can('hr.update')) {
+            abort(403, 'Unauthorized action.');
+        }
 		$item=$this->qualifications->getById($id);
 		$this->qualifications->update($item,$request->all()); 
 	

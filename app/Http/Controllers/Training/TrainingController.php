@@ -10,6 +10,7 @@ use App\Models\Training\Training;
 use App\Models\Training\TrainingType;
 use App\Models\Training\TrainingDetail;
 use DB;
+use Illuminate\Support\Facades\Auth;
 
 class TrainingController extends Controller
 {
@@ -46,7 +47,9 @@ class TrainingController extends Controller
      */
     public function create($island_id)
     {
-               
+        if (! Auth::user()->can('training.create')) {
+            abort(403, 'Unauthorized action.');
+        }    
         $islands = Island::select('id')->where('id', $island_id)->first();
         // dd($islands->id);
         $types =   TrainingType::all()->toArray();
@@ -80,7 +83,9 @@ class TrainingController extends Controller
      */
     public function store(Request $request)
     {
-       
+        if (! Auth::user()->can('training.store')) {
+            abort(403, 'Unauthorized action.');
+        }
         DB::beginTransaction();
         try {
             $training = new Training();
@@ -116,6 +121,9 @@ class TrainingController extends Controller
      */
     public function show($id)
     {
+        if (! Auth::user()->can('island.show')) {
+            abort(403, 'Unauthorized action.');
+        }
         $data['training'] = DB::table('islands')
         ->select('trainings.id', 'islands.island_name', 'villages.village_name', 'trainings.training_date', 'training_details.participant_first_name', 'training_details.participant_last_name', 'training_details.age', 'training_details.gender', 'training_types.training_name')
         ->leftJoin('trainings','islands.id','=','trainings.island_id')
@@ -137,6 +145,9 @@ class TrainingController extends Controller
      */
     public function edit($id)
     {
+        if (! Auth::user()->can('training.edit')) {
+            abort(403, 'Unauthorized action.');
+        }
         $training = Training::find($id);
         $islands = Island::all()->toArray();
         $types =   TrainingType::all()->toArray();
@@ -167,6 +178,9 @@ class TrainingController extends Controller
      */
     public function update(Request $request, $id)
     {
+        if (! Auth::user()->can('training.update')) {
+            abort(403, 'Unauthorized action.');
+        }
         DB::beginTransaction();
         try {
            

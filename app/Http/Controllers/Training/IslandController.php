@@ -9,6 +9,7 @@ use App\Http\Requests\IslandStoreRequest;
 use App\Http\Requests\IslandUpdateRequest;
 use App\Models\Training\Island;
 use App\Models\Training\Village;
+use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Support\Str;
 
@@ -45,6 +46,9 @@ class IslandController extends Controller
      */
     public function create()
     {
+        if (! Auth::user()->can('island.create')) {
+            abort(403, 'Unauthorized action.');
+        }
         return view('islands.create');
     }
 
@@ -56,6 +60,9 @@ class IslandController extends Controller
      */
     public function store(Request $request)
     {
+        if (! Auth::user()->can('island.store')) {
+            abort(403, 'Unauthorized action.');
+        }
         $input = [
             
 			'island_name'=> $request->island_name,
@@ -76,6 +83,9 @@ class IslandController extends Controller
      */
     public function show($id)
     {
+        if (! Auth::user()->can('island.show')) {
+            abort(403, 'Unauthorized action.');
+        }
         $island = Island::where('id',$uuid)->firstOrFail();
 
 		return view('islands.show')
@@ -90,6 +100,9 @@ class IslandController extends Controller
      */
     public function edit($id)
     {
+        if (! Auth::user()->can('island.edit')) {
+            abort(403, 'Unauthorized action.');
+        }
    $island = Island::where('id',$id)->firstOrFail();
 		return view('islands.edit')->withIsland($island);
     }
@@ -103,7 +116,9 @@ class IslandController extends Controller
      */
     public function update(IslandUpdateRequest $request, $id)
     {
-       
+        if (! Auth::user()->can('island.update')) {
+            abort(403, 'Unauthorized action.');
+        }
      
         $data = Island::find($id)->update($request->all());
 

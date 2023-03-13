@@ -172,10 +172,11 @@
                                     </form>
 
                                     @foreach ($navbars as $navbarItem)
-                     
-                                        <a class="dropdown-item" href="{{ route($navbarItem->route) }}">{{ ($navbarItem->name) }}</a>
-              
-                                     @endforeach
+                                        @can($navbarItem->permission)
+                                            <a class="dropdown-item" href="{{ route($navbarItem->route) }}">{{ $navbarItem->name }}</a>
+                                        @endcan
+                                    @endforeach
+
                                 </div>
                             </li>
                         @endguest

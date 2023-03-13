@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use PDF;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 class EmployeeWorkStatusController extends Controller {
 
 
@@ -63,6 +64,9 @@ class EmployeeWorkStatusController extends Controller {
      */
     public function create()
     {
+		if (! Auth::user()->can('hr.create')) {
+            abort(403, 'Unauthorized action.');
+        }
 		$workstatuses = WorkStatus::where('work_status.work_status_name','!=','permenant')->get()->toArray();
 
 		$employees = DB::table('employees')->distinct()
@@ -88,6 +92,9 @@ class EmployeeWorkStatusController extends Controller {
 	 */
 	public function store(Request $request) {
 		
+		if (! Auth::user()->can('hr.store')) {
+            abort(403, 'Unauthorized action.');
+        }
 		          
 					$input = ['employee_id'=>$request->employee_id,
 					'start_date'=> $request->start_date,
@@ -112,6 +119,9 @@ class EmployeeWorkStatusController extends Controller {
 	 */
 	public function show($id) {
 	
+		if (! Auth::user()->can('hr.show')) {
+            abort(403, 'Unauthorized action.');
+        }
 		$employeeworkstatuses = EmployeeWorkStatus::find($id);
 
 		return view('alertsystems.employeeworkstatuses.show')
@@ -128,6 +138,9 @@ class EmployeeWorkStatusController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function edit($id) {
+		if (! Auth::user()->can('hr.edit')) {
+            abort(403, 'Unauthorized action.');
+        }
 		
         $employeeworkstatuses = EmployeeWorkStatus::find($id)->toArray();
 		$workstatus = WorkStatus::pluck('work_status_name', 'id')->get();
@@ -148,6 +161,10 @@ class EmployeeWorkStatusController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function update(Request $request, $id){
+
+		if (! Auth::user()->can('hr.update')) {
+            abort(403, 'Unauthorized action.');
+        }
         
           $employeeworkstatuses = $request->all();
          $data = EmployeeWorkStatus::find($id)->update( $woemployeeworkstatusesrkstatuses);

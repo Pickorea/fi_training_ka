@@ -7,6 +7,8 @@ use App\Models\Training\Island;
 use Illuminate\Http\Request;
 use App\Models\Training\Village;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
+
 
 class VillageController extends Controller
 {
@@ -34,6 +36,10 @@ class VillageController extends Controller
      */
     public function create()
     {
+        // Check if the authenticated user has permission to create a new village
+        if (! Auth::user()->can('village.create')) {
+            abort(403, 'Unauthorized action.');
+        }
 
         $islands = Island::all()->toArray();
         // dd($islands);
@@ -48,6 +54,10 @@ class VillageController extends Controller
      */
     public function store(Request $request)
     {
+        // Check if the authenticated user has permission to create a new village
+        if (! Auth::user()->can('village.store')) {
+            abort(403, 'Unauthorized action.');
+        }
         $input = [
              'island_id'=> $request->island_id,
 			'village_name'=> $request->village_name,
@@ -82,6 +92,10 @@ class VillageController extends Controller
      */
     public function edit($id)
     {
+         // Check if the authenticated user has permission to edit a village
+         if (! Auth::user()->can('villages.edit')) {
+            abort(403, 'Unauthorized action.');
+        }
         $village = village::where('id',$id)->firstOrFail();
         $islands = Island::all()->toArray();
       
@@ -99,6 +113,10 @@ class VillageController extends Controller
     public function update(Request $request, $id)
     {
         // $village = $request->all();
+         // Check if the authenticated user has permission to update a village
+         if (! Auth::user()->can('village.update')) {
+            abort(403, 'Unauthorized action.');
+        }
      
         $data = Village::find($id)->update($request->all());
 
@@ -114,6 +132,9 @@ class VillageController extends Controller
      */
     public function destroy($id)
     {
-        //
+        //  Check if the authenticated user has permission to delete a village
+        // if (! Auth::user()->can('villages.delete')) {
+        //     abort(403, 'Unauthorized action.');
+        // }
     }
 }

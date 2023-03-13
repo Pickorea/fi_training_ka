@@ -57,8 +57,8 @@ class PermissionSeeder extends Seeder
       $administratorrole->givePermissionTo('permissions.delete');
 
      $administrator = User::create([
-      'name' => 'Toaa Tokoia', 
-      'email' => 'toaat@mfmrd.gov.ki',
+      'name' => 'Kairaoi Ientumoa', 
+      'email' => 'kairaoii@mfmrd.gov.ki',
       'password' => bcrypt('2'),
      
 
@@ -104,6 +104,15 @@ class PermissionSeeder extends Seeder
     Permission::create(['name' => 'village.edit']);
     Permission::create(['name' => 'village.update']);
     Permission::create(['name' => 'village.delete']);
+
+    Permission::create(['name' => 'hr.index']);
+    Permission::create(['name' => 'hr.create']);
+    Permission::create(['name' => 'hr.store']);
+    Permission::create(['name' => 'hr.export']);
+    Permission::create(['name' => 'hr.show']);
+    Permission::create(['name' => 'hr.edit']);
+    Permission::create(['name' => 'hr.update']);
+    Permission::create(['name' => 'hr.delete']);
 
 
      // create roles and assign existing permissions
@@ -157,6 +166,31 @@ class PermissionSeeder extends Seeder
       ]);
 
       $trainer->assignRole($trainerrole);
+
+
+    // create roles and assign existing permissions
+     $hrrole = Role::create(['name' => 'hr']);
+     $hrrole->givePermissionTo('hr.index');
+     $hrrole->givePermissionTo('hr.create');
+     $hrrole->givePermissionTo('hr.store');
+     $hrrole->givePermissionTo('hr.export');
+     $hrrole->givePermissionTo('hr.show');
+     $hrrole->givePermissionTo('hr.edit');
+     $hrrole->givePermissionTo('hr.update');
+     $hrrole->givePermissionTo('hr.delete');
+
+
+
+
+     $hr = User::create([
+      'name' => 'Eberaim', 
+      'email' => 'eberaint@mfmrd.gov.ki',
+      'password' => bcrypt('2'),
+     
+
+      ]);
+
+      $hr->assignRole($hrrole);
  
 
     }

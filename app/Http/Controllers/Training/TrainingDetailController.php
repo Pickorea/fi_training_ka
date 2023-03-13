@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Models\Training\Training;
 use App\Models\Training\TrainingDetail;
 use App\Models\Training\TrainingType;
+use Illuminate\Support\Facades\Auth;
 
 class TrainingDetailController extends Controller
 {

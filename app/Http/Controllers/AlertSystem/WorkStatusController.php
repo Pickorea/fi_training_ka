@@ -10,6 +10,7 @@ use App\Http\Requests\IslandStoreRequest;
 use App\Http\Requests\IslandUpdateRequest;
 use App\Models\AlertSystem\WorkStatus;
 use App\Repositories\AlertSystem\WorkStatusRepository;
+use Illuminate\Support\Facades\Auth;
 
 use DataTables;
 
@@ -55,6 +56,9 @@ class WorkStatusController extends Controller
      */
     public function create()
     {
+        if (! Auth::user()->can('hr.create')) {
+            abort(403, 'Unauthorized action.');
+        }
         return view('alertsystems.workstatus.create');
     }
 
@@ -66,6 +70,9 @@ class WorkStatusController extends Controller
      */
     public function store(Request $request)
     {
+        if (! Auth::user()->can('hr.store')) {
+            abort(403, 'Unauthorized action.');
+        }
         $input = [
             
 			'work_status_name'=> $request->work_status_name,
@@ -86,6 +93,9 @@ class WorkStatusController extends Controller
      */
     public function show($id)
     {
+        if (! Auth::user()->can('hr.show')) {
+            abort(403, 'Unauthorized action.');
+        }
         $workstatus = WorkStatus::where('id',$id)->firstOrFail();
 
 		return view('alertsystems.workstatus.show')
@@ -100,6 +110,9 @@ class WorkStatusController extends Controller
      */
     public function edit($id)
     {
+        if (! Auth::user()->can('hr.edit')) {
+            abort(403, 'Unauthorized action.');
+        }
    $workstatus = WorkStatus::where('id',$id)->firstOrFail();
 		return view('alertsystems.workstatus.edit')->withWorkstatus($workstatus);
     }
@@ -114,7 +127,9 @@ class WorkStatusController extends Controller
     public function update(Request $request, $id)
     {
        
-     
+        if (! Auth::user()->can('hr.update')) {
+            abort(403, 'Unauthorized action.');
+        }
         $data = WorkStatus::find($id)->update($request->all());
 
 

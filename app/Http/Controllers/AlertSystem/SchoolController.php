@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use PDF;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 class SchoolController extends Controller {
 
 
@@ -55,6 +56,9 @@ class SchoolController extends Controller {
      */
     public function create()
     {
+		if (! Auth::user()->can('hr.create')) {
+            abort(403, 'Unauthorized action.');
+        }
 	        return view('alertsystems.schools.create');
     }
 
@@ -65,6 +69,10 @@ class SchoolController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function store(Request $request) {
+
+		if (! Auth::user()->can('hr.store')) {
+            abort(403, 'Unauthorized action.');
+        }
 		
 		            $input = $request->all();
 					// dd($input);
@@ -84,7 +92,9 @@ class SchoolController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function show($id) {
-	
+		if (! Auth::user()->can('hr.show')) {
+            abort(403, 'Unauthorized action.');
+        }
 		$school = $this->schools->getById($id);
 
 		return view('alertsystems.schools.show')
@@ -101,6 +111,9 @@ class SchoolController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function edit($id) {
+		if (! Auth::user()->can('hr.edit')) {
+            abort(403, 'Unauthorized action.');
+        }
 
 		$school = $this->schools->getById($id);
    		return view('alertsystems.schools.edit')->with('school',$school);;
@@ -116,7 +129,9 @@ class SchoolController extends Controller {
 	 */
 	public function update(Request $request,  $id){
         
-       
+		if (! Auth::user()->can('hr.update')) {
+            abort(403, 'Unauthorized action.');
+        }
 		$item=$this->schools->getById($id);
 		$this->schools->update($item,$request->all()); 
 	

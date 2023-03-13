@@ -140,6 +140,25 @@ class NavbarSeeder extends Seeder
                 'route' => 'vessel-registrations.index',
                 'ordering' => 17,
             ]
+            ,
+            [
+                'name' => ' Users Management',
+                'route' => 'access-management.users.index',
+                'ordering' => 18,
+            ]
+            ,
+            [
+                'name' => ' Roles Management',
+                'route' => 'access-management.roles.index',
+                'ordering' => 19,
+            ]
+            ,
+            [
+                'name' => ' Permission Management',
+                'route' => 'access-management.permissions.index',
+                'ordering' => 20,
+            ]
+            
             
         ];
   

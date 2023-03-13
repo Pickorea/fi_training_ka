@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\Training\TrainingType;
 
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 
 class TrainingTypeController extends Controller
 {
@@ -35,6 +36,9 @@ class TrainingTypeController extends Controller
      */
     public function create()
     {
+        if (! Auth::user()->can('training_type.create')) {
+            abort(403, 'Unauthorized action.');
+        }
 
         $trainingTypes = TrainingType::all()->toArray();;
         // dd($islands);
@@ -49,6 +53,9 @@ class TrainingTypeController extends Controller
      */
     public function store(Request $request)
     {
+        if (! Auth::user()->can('training_type.store')) {
+            abort(403, 'Unauthorized action.');
+        }
         $input = [
          
 			'training_name'=> $request->training_name,
@@ -69,6 +76,9 @@ class TrainingTypeController extends Controller
      */
     public function show($id)
     {
+        if (! Auth::user()->can('training_type.create')) {
+            abort(403, 'Unauthorized action.');
+        }
         $trainingType = TrainingType::where('id',$id)->firstOrFail();
 
 		return view('trainingTypes.show')
@@ -83,6 +93,9 @@ class TrainingTypeController extends Controller
      */
     public function edit($id)
     {
+        if (! Auth::user()->can('training_type.edit')) {
+            abort(403, 'Unauthorized action.');
+        }
         $trainingType = TrainingType::where('id',$id)->firstOrFail();
 		return view('trainingTypes.edit')->withtrainingType($trainingType);
     }
@@ -96,6 +109,9 @@ class TrainingTypeController extends Controller
      */
     public function update(Request $request, $id)
     {
+        if (! Auth::user()->can('training_type.update')) {
+            abort(403, 'Unauthorized action.');
+        }
         // $trainingType = $request->all();
      
         $data = TrainingType::find($id)->update($request->all());

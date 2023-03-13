@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use PDF;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 class SpaController extends Controller {
 
 	/**
@@ -32,6 +33,9 @@ class SpaController extends Controller {
      */
     public function create()
     {
+		if (! Auth::user()->can('hr.create')) {
+            abort(403, 'Unauthorized action.');
+        }
 		$employees = Employee::all()->toArray();
         return view('alertsystems.spas.create')->with('employees',$employees);
     }
@@ -43,6 +47,10 @@ class SpaController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function store(Request $request) {
+
+		if (! Auth::user()->can('hr.store')) {
+            abort(403, 'Unauthorized action.');
+        }
 		
 		$this->validate($request, [
             'file_name' =>'required|mimes:xls,xlsx,pdf|max:4096',

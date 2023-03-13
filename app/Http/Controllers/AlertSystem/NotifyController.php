@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use PDF;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 class NotifyController  extends Controller {
 
 	/**
@@ -21,6 +22,10 @@ class NotifyController  extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function index() {
+
+		if (! Auth::user()->can('hr.index')) {
+            abort(403, 'Unauthorized action.');
+        }
 
 		$employees = Employee::select('email')->get();
 		// User::find(1)->notify(new WorkStatusAlert);

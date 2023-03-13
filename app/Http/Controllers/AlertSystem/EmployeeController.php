@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use PDF;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 class EmployeeController extends Controller {
 
 	private $employees;
@@ -75,6 +76,9 @@ class EmployeeController extends Controller {
      */
     public function create()
     {
+		if (! Auth::user()->can('hr.create')) {
+            abort(403, 'Unauthorized action.');
+        }
 	
 		$workstatus=$this->workstatus->pluck();
 		$departments=$this->departments->pluck();
@@ -90,6 +94,9 @@ class EmployeeController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function store(Request $request) {
+		if (! Auth::user()->can('hr.store')) {
+            abort(403, 'Unauthorized action.');
+        }
 
 		$request->validate([
 			'picture' => 'required|image|mimes:jpeg,png,jpg,gif|max:16384',
@@ -122,6 +129,10 @@ class EmployeeController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function show($id) {
+
+		if (! Auth::user()->can('hr.show')) {
+            abort(403, 'Unauthorized action.');
+        }
 	
 		// $employee = $this->employees->getById($id);
 		$employee = Employee::select('employees.name', 'employees.picture', 'employees.email', 'employees.present_address', 'employees.pf_number', 'employees.joining_date', 'employees.gender', 'employees.date_of_birth', 'employees.marital_status', 'departments.department_name', 'work_status.work_status_name', 'educations.from_year', 'educations.to_year', 'qualifications.qualification_name', 'schools.school_name')
@@ -145,7 +156,9 @@ class EmployeeController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function edit($id) {
-		
+		if (! Auth::user()->can('hr.edit')) {
+            abort(403, 'Unauthorized action.');
+        }
         $employee = Employee::find($id);
 		$workstatus = WorkStatus::all()->toArray();
 		$departments = Department::all()->toArray();
@@ -167,7 +180,9 @@ class EmployeeController extends Controller {
 	 */
 	public function update(Request $request,  $id){
         
-       
+		if (! Auth::user()->can('hr.update')) {
+            abort(403, 'Unauthorized action.');
+        }
 		$item=$this->employees->getById($id);
 		$this->employees->update($item,$request->all()); 
 	
