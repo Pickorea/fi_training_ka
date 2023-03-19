@@ -15,21 +15,52 @@ class Kernel extends ConsoleKernel
      * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
      * @return void
      */
+    // protected function schedule(Schedule $schedule)
+    // {
+    //     // $schedule->command('inspire')->hourly();
+    //     $schedule->command('send:notification')->everyMinute()
+    //     ->when(function(){
+
+    //         $now = Carbon::now()->addDays(1);
+
+    //         $notify =EmployeeWorkStatus::select('end_date')
+    //         ->whereDate('end_date', '>', $now->toDateString())
+    //         ->get();
+    //     return $notify;
+
+    //     });
+    // }
+
     protected function schedule(Schedule $schedule)
-    {
-        // $schedule->command('inspire')->hourly();
-        $schedule->command('send:notification')->everyMinute()
-        ->when(function(){
+{
+    $schedule->command('send:notification')
+        ->daily()
+        ->at('17:00')
+        ->when(function () {
+            $endDate = Carbon::now()->addDays(3);
+            $employees = Employee::whereHas('workStatus', function ($query) {
+                    $query->where('work_status_name', '!=', 'permanent');
+                })
+                ->whereHas('employeeWorkStatuses', function ($query) use ($endDate) {
+                    $query->whereNotNull('start_date')
+                          ->whereNotNull('end_date')
+                          ->whereDate('end_date', $endDate);
+                })
+                ->get();
 
-            $now = Carbon::now()->addDays(1);
+            // Check if there are employees who meet the criteria
+            $hasEmployees = $employees->count() > 0;
 
-            $notify =EmployeeWorkStatus::select('end_date')
-            ->whereDate('end_date', '>', $now->toDateString())
-            ->get();
-        return $notify;
-
+            return $hasEmployees;
         });
-    }
+    
+    // Log the information outside the closure
+    $schedule->exec('echo "Scheduled command ran."')
+        ->daily()
+        ->at('17:05');
+}
+
+
 
     /**
      * Register the commands for the application.
