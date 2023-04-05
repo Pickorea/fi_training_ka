@@ -171,11 +171,38 @@
                                         @csrf
                                     </form>
 
-                                    @foreach ($navbars as $navbarItem)
+                                    {{--@foreach ($navbars as $navbarItem)
                                         @can($navbarItem->permission)
-                                            <a class="dropdown-item" href="{{ route($navbarItem->route) }}">{{ $navbarItem->name }}</a>
+                                            @if (auth()->user()->hasAnyRole(['hr', 'trainer']))
+                                                <a class="dropdown-item" href="{{ route($navbarItem->route) }}">{{ $navbarItem->name }}</a>
+                                            @endif
                                         @endcan
+                                    @endforeach--}}
+
+                                    @foreach ($navbars as $navbarItem)
+                                        @if (auth()->check() && auth()->user()->hasRole('trainer') && (in_array($navbarItem->route, ['island.index', 'village.index'])))
+                                            <a class="dropdown-item" href="{{ route($navbarItem->route) }}">{{ $navbarItem->name }}</a>
+                                        @elseif (auth()->check() && auth()->user()->hasRole('hr') && (in_array($navbarItem->route, 
+                                        [
+                                          'education.index', 
+                                          'employee.index',
+                                          'displinary-action.index',
+                                          'school.index',
+                                          'qualification.index',
+                                          'work_status.index',
+                                          'spas.index',
+                                          'koolreport.repo',
+                                          'employeeworkstatuses.index',
+                                          'artisan.command'
+                                          
+                                          ])))
+                                            <a class="dropdown-item" href="{{ route($navbarItem->route) }}">{{ $navbarItem->name }}</a>
+                                        @endif
                                     @endforeach
+
+
+
+
 
                                 </div>
                             </li>

@@ -27,6 +27,9 @@ use App\Http\Controllers\AlertSystem\SchoolController;
 use App\Http\Controllers\AlertSystem\QualificationController;
 use App\Http\Controllers\AlertSystem\EducationController;
 
+//displinary 
+use App\Http\Controllers\Displinary\DisplinaryActionController;
+
 //Vessel Registration
 use App\Http\Controllers\VesselRegistration\VesselRegistrationController;
 
@@ -460,5 +463,28 @@ Route::group([
             Route::match(['PUT', 'PATCH'], '', [PermissionsController::class, 'update'])->name('update');
             Route::delete('', [PermissionsController::class, 'destroy'])->name('destroy');
         });
+    });
+});
+
+
+ //displinary
+ Route::group([
+    'as' => 'displinary-action.',
+    'prefix' => 'displinary-action',
+    'middleware' => ['auth', 'role:hr'],
+], function () {
+    Route::get('', [DisplinaryActionController::class, 'index'])->name('index');
+    Route::get('/disciplinary/search', [DisplinaryActionController::class, 'search'])->name('displinary-action.search');
+    Route::get('koolexcel', [DisplinaryActionController::class, 'export'])->name('koolexcel');
+    Route::get('excel', [DisplinaryActionController::class, 'exportTrainingAttendance'])->name('excel');
+    Route::get('create', [DisplinaryActionController::class, 'create'])->name('create');
+    Route::post('', [DisplinaryActionController::class, 'store'])->name('store');
+    Route::get('export', [DisplinaryActionController::class, 'exportlist'])->name('export');
+    Route::group(['prefix' => '{displinaryaction}'], function () { 
+    Route::get('', [DisplinaryActionController::class, 'show'])->name('show');
+    Route::get('', [DisplinaryActionController::class, 'employeeReport'])->name('employeeReport');
+    Route::get('edit', [DisplinaryActionController::class, 'edit'])->name('edit');
+    Route::match(['PUT', 'PATCH'], '', [DisplinaryActionController::class, 'update'])->name('update');
+    Route::delete('', [DisplinaryActionController::class, 'delete'])->name('delete');
     });
 });

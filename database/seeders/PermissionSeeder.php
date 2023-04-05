@@ -59,8 +59,8 @@ class PermissionSeeder extends Seeder
      $administrator = User::create([
       'name' => 'Kairaoi Ientumoa', 
       'email' => 'kairaoii@mfmrd.gov.ki',
-      'password' => bcrypt('2'),
-     
+      'password' => bcrypt('admin_creatorKI'),
+      // 'password' => bcrypt('admin_gov.ki'),
 
       ]);
 
@@ -160,12 +160,23 @@ class PermissionSeeder extends Seeder
      $trainer = User::create([
       'name' => 'Rotia Tabua', 
       'email' => 'rotia@fisheries.gov.ki',
-      'password' => bcrypt('2'),
+      'password' => bcrypt('cfd_trainingrt'),
      
 
       ]);
 
       $trainer->assignRole($trainerrole);
+
+
+      $trainer = User::create([
+        'name' => 'Tirae Tabee', 
+        'email' => 'tiraet@fisheries.gov.ki',
+        'password' => bcrypt('cfd_trainingtt'),
+       
+  
+        ]);
+  
+        $trainer->assignRole($trainerrole);
 
 
     // create roles and assign existing permissions
@@ -184,13 +195,24 @@ class PermissionSeeder extends Seeder
 
      $hr = User::create([
       'name' => 'Eberaim', 
-      'email' => 'eberaint@mfmrd.gov.ki',
-      'password' => bcrypt('2'),
+      'email' => 'eberaimt@mfmrd.gov.ki',
+      'password' => bcrypt('admin_hr'),
      
 
       ]);
 
       $hr->assignRole($hrrole);
+
+
+      $hr = User::create([
+        'name' => 'Meeratia Marabu', 
+        'email' => 'meeratiam@mfmrd.gov.ki',
+        'password' => bcrypt('admin_Coporate'),
+       
+  
+        ]);
+  
+        $hr->assignRole($hrrole);
  
 
     }

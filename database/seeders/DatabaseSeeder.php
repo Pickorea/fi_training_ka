@@ -23,5 +23,8 @@ class DatabaseSeeder extends Seeder
         $this->call(WorkStatusSeeder::class);
         $this->call(SchoolSeeder::class);
         $this->call(QualificationSeeder::class);
+        $this->call(DepartmentSeeder::class);
+        $this->call(EmployeesTableSeeder::class);
+        // $this->call(DisplinaryActionSeeder::class);
     }
 }

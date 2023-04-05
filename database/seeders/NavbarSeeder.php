@@ -158,6 +158,13 @@ class NavbarSeeder extends Seeder
                 'route' => 'access-management.permissions.index',
                 'ordering' => 20,
             ]
+            ,
+            [
+                'name' => ' Displinary Action',
+                'route' => 'displinary-action.index',
+                'ordering' => 21,
+            ]
+            
             
             
         ];

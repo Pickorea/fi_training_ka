@@ -45,4 +45,19 @@ class Employee extends Model
         return $this->belongsTo(Education::class);
     }
 
+    public function disciplinaryActions()
+    {
+        return $this->hasMany(DisciplinaryAction::class);
+    }
+
+    public function hasReprimand()
+{
+    return $this->disciplinaryActions()->where('action_type', 'reprimand')->exists();
+}
+
+public function hasSuspension()
+{
+    return $this->disciplinaryActions()->where('action_type', 'suspension')->exists();
+}
+
 }

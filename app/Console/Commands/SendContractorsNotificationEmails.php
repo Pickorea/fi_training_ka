@@ -64,9 +64,9 @@ class SendContractorsNotificationEmails extends Command
 
             // $data['title'] = 'ACTIVE AND EXPIRED CONTRACTED EMPLOYEE LIST';
 
-        $excel = PDF::loadView('reports.alertsystems._activeExpireEmployeetable', $data);
+        $excel = PDF::loadView('reports.alertSystems._activeExpireEmployeetable', $data);
 
-        \Mail::send('reports.alertsystems._activeExpireEmployeetable',
+        \Mail::send('reports.alertSystems._activeExpireEmployeetable',
         $data, function ($m)use($excel){
             // $m->from('kairaoii@mfmrd.gov.ki', env('APP_NAME'));
             $m->to(['kairaoi1ien@yahoo.com','eberaimt@mfmrd.gov.ki'])->subject('ACTIVE AND EXPIRED EMPLOYEES LIST')

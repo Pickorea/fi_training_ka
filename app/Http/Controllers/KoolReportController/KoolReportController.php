@@ -35,7 +35,7 @@ class KoolReportController extends Controller
         $report = new WorkStatusReport;
         $report->run();
        
-        return view("reports.alertsystems.work_status_report")->withReport($report);
+        return view("reports.alertSystems.work_status_report")->withReport($report);
     }
 //url report
     public function _repo()
