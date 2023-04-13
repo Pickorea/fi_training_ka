@@ -10,12 +10,14 @@ class CreateDeductionsTable extends Migration
     {
         Schema::create('deductions', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('displinary_action_id');
             $table->unsignedBigInteger('employee_id');
-            $table->string('type');
+            // $table->string('type');
             $table->decimal('amount', 10, 2);
             $table->timestamps();
 
-            $table->foreign('employee_id')->references('id')->on('employees');
+            $table->foreign('displinary_action_id')->references('id')->on('displinary_actions')->onDelete('cascade');
+            $table->foreign('employee_id')->references('id')->on('employees')->onDelete('cascade');
         });
     }
 

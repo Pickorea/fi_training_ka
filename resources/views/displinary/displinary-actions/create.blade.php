@@ -47,10 +47,10 @@
 
                 <!-- Nested form for suspension details -->
                 <div class="suspension-details" style="display:none">
-                    <div class="form-group">
-                        <label for="suspension_days">Suspension Days:</label>
-                        <input type="number" name="suspension_days" id="suspension_days" class="form-control">
-                    </div>
+                <label>
+                    <input type="checkbox" id="with_pay_checkbox" value="true">
+                    With pay
+                </label>
                     <div class="form-group">
                         <label for="start_date">Start Date:</label>
                         <input type="date" name="start_date" id="start_date" class="form-control">
@@ -63,6 +63,20 @@
                         <label for="suspension_reason">Suspension Reason:</label>
                         <textarea name="suspension_reason" id="suspension_reason" class="form-control"></textarea>
                     </div>
+                    <div>
+                        <label>
+                            <input type="radio" name="suspension_type" value="20_days" checked>
+                            20 Days Suspension
+                        </label>
+                    </div>
+
+                    <div>
+                        <label>
+                            <input type="radio" name="suspension_type" value="stoppage_of_increment" checked>
+                            Stoppage of Increment
+                        </label>
+                    </div>
+                   
                     <div>
                         <label>
                             <input type="radio" name="suspension_type" value="interim" checked>
@@ -112,31 +126,50 @@
                     </div> -->
                 </div>
 
-
-
+                <!-- Nested form for severityLevel-details details -->
+                <div class="severityLevel-details" style="display:none">
                 <div class="form-group">
-                    <button type="submit" class="btn btn-primary">Save</button>
-                    <a href="{{ route('displinary-action.index') }}" class="btn btn-secondary">Cancel</a>
+                    <label for="severityLevel">Severity Level:</label>
+                    <select name="severityLevel" id="severityLevel" class="form-control">
+                        <option value="low">Low</option>
+                        <option value="moderate">Moderate</option>
+                        <option value="high">High</option>
+                        <option value="extreme">Extreme</option>
+                    </select>
                 </div>
-            </form>
-        </div>
+                </div>
+                <div class="form-group" id="salary_input" style="display:none">
+                <label for="salary">Salary:</label>
+                <input type="number" name="salary" id="salary" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">{{ __('Submit') }}</button>
+            </div>
+
+        </form>
     </div>
+</div>
+
 </div>
 
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <script>
 $(document).ready(function() {
   // Hide the suspension, final warning, and termination details form initially
   $('.suspension-details').hide();
   $('.final-warning-details').hide();
   $('.termination-details').hide();
-  
+  $('.severityLevel-details').hide();
+
   // Show/hide the suspension, final warning, and termination details form based on the selected action type
   $('#action_type').change(function() {
     var selectedOption = $(this).val();
     if (selectedOption == 'suspension') {
       $('.suspension-details').show();
+      $('.severityLevel-details').show();
       $('.final-warning-details').hide();
       $('.termination-details').hide();
     } else if (selectedOption == 'final warning') {
@@ -157,14 +190,43 @@ $(document).ready(function() {
   // Show/hide the additional form for "Final Suspension" based on radio button selection
   $('input[name="suspension_type"]').change(function() {
     var selectedSuspensionType = $('input[name="suspension_type"]:checked').val();
-    if (selectedSuspensionType == 'final') {
+    if (selectedSuspensionType == 'stoppage_of_increment') {
       $('.stoppage-increments-details').show();
-    } else {
+    } else if (selectedSuspensionType == '20_days' || selectedSuspensionType == 'interim' || selectedSuspensionType == 'final') {
       $('.stoppage-increments-details').hide();
     }
   });
+
+  // Show/hide the salary input based on the selected severity level
+  $('#severityLevel').change(function() {
+    var selectedSeverityLevel = $(this).val();
+    if (selectedSeverityLevel == 'Extreme') {
+      $('.salary-details').show();
+    } else {
+      $('.salary-details').hide();
+    }
+  });
+
+  // Update the hidden input value based on the checkbox state
+  $('#with_pay_checkbox').change(function() {
+    var isChecked = $(this).prop('checked');
+    if (isChecked) {
+      // Checkbox is checked, set with_pay to true
+      $('#with_pay_hidden_input').val('true');
+    } else {
+      // Checkbox is not checked, set with_pay to false
+      $('#with_pay_hidden_input').val('false');
+    }
+  });
+
+  // When submitting the form, include the value of the hidden input in the request
+  $('#your_form').submit(function() {
+    // Get the current value of with_pay
+    var withPayValue = $('#with_pay_hidden_input').val();
+    // Update the value of the hidden input with the current value of with_pay
+    $('#with_pay_hidden_input').val(withPayValue);
+  });
 });
 </script>
-
 
 @endsection

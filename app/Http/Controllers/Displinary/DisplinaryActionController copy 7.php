@@ -10,7 +10,6 @@ use App\Models\Displinary\Termination;
 use App\Models\Displinary\Suspension;
 use App\Models\Displinary\FinalWarning;
 use App\Models\Displinary\StoppageOfIncrement;
-use App\Models\Displinary\Deduction;
 use DB;
 use Illuminate\Http\Request;
 use PDF;
@@ -52,7 +51,7 @@ class DisplinaryActionController extends Controller
         $employeeId = $request->input('employee_id');
         $actionType = $request->input('action_type');
         $severityLevel = null;
-    
+        
         // Step 2: Check if employee has any previous disciplinary actions of the same type.
         $previousAction = DisplinaryAction::where('employee_id', $employeeId)
             ->where('action_type', $actionType)
@@ -60,7 +59,7 @@ class DisplinaryActionController extends Controller
         if ($previousAction) {
             return redirect()->back()->withErrors(['Employee already has a previous ' . $actionType . '.']);
         }
-    
+        
         // Step 3: Check severity level of disciplinary action.
         switch ($actionType) {
             case 'reprimand':
@@ -83,11 +82,11 @@ class DisplinaryActionController extends Controller
             default:
                 throw new \Exception('Invalid action type selected');
         }
-    
+        
         // Step 4: Begin a transaction to wrap the creation of disciplinary action and action specific model.
-        DB::beginTransaction();
-    
-        try {
+        // DB::beginTransaction();
+        
+        // try {
             // Step 5: Create the disciplinary action.
             $disciplinaryAction = new DisplinaryAction();
             $disciplinaryAction->employee_id = $employeeId;
@@ -96,64 +95,43 @@ class DisplinaryActionController extends Controller
             $disciplinaryAction->action_date = now();
             $disciplinaryAction->severity_level = $severityLevel;
             $disciplinaryAction->save();
-    
+        
             // Step 6: Create action specific model based on the action type.
             switch ($actionType) {
                 case 'reprimand':
                     // No specific model needed for reprimand
                     break;
+    
                     case 'suspension':
-                        $suspensionType = $request->input('suspension_type');
-                        if ($suspensionType == 'interim') {
-                            $severityLevel = 'High';
-                        } else {
-                            $severityLevel = 'Medium';
-                        }
-                        {
+                       // Exit case 'suspension':
                             // Create the suspension
                             $suspension = new Suspension();
                             $suspension->displinary_action_id = $disciplinaryAction->id;
                             $suspension->employee_id = $employeeId;
+                            $suspension->days = $request->input('suspension_days');
                             $suspension->start_date = $request->input('start_date');
                             $suspension->end_date = $request->input('end_date');
                             $suspension->reason = $request->input('suspension_reason');
-                    
-                            switch ($suspensionType) {
-                                case '20_days':
-                                    $suspension->with_pay = false;
-                                    $suspension->days = 20;
-                                    break;
-                                case 'stoppage_of_increment':
-                                    // Create the stoppage of increment
-                                    $stoppageOfIncrement = new StoppageOfIncrement();
-                                    $stoppageOfIncrement->displinary_action_id = $disciplinaryAction->id;
-                                    $stoppageOfIncrement->employee_id = $employeeId;
-                                    $stoppageOfIncrement->duration = $request->input('stoppage_duration');
-                                    $stoppageOfIncrement->save();
-                                    break;
-                                case 'interim':
-                                    $suspension->with_pay = $request->input('with_pay') == 'yes' ? true : false;
-                                    if (!$suspension->with_pay) {
-                                        // Deduct salary for interim suspension
-                                        $deduction = new Deduction();
-                                        $deduction->displinary_action_id = $disciplinaryAction->id;
-                                        $deduction->employee_id = $employeeId;
-                                        $deduction->amount = 0.5 * $request->input('salary');
-                                        $deduction->save();
-                                    }
-                                    // Here, you can set the suspension days to a default value or leave it as null
-                                    $suspension->days = null;
-                                    break;
-                                default:
-                                    // Handle any other cases if needed
-                                    break;
+
+                            $suspensionType = $request->input('suspension_type');
+                            if ($suspensionType == 'interim') {
+                                $suspension->with_pay = false;
+                            } else {
+                                $suspension->with_pay = true;
                             }
-                    
+
                             $suspension->save();
-                        }
-                        break;
-                    
-      
+
+                            if ($suspensionType == 'interim') {
+                                // Create the stoppage of increment
+                                $stoppageOfIncrement = new StoppageOfIncrement();
+                                $stoppageOfIncrement->displinary_action_id = $disciplinaryAction->id;
+                                $stoppageOfIncrement->employee_id = $employeeId;
+                                $stoppageOfIncrement->duration = $request->input('stoppage_duration');
+                                $stoppageOfIncrement->save();
+                            }
+                            break;
+  
                 case 'final warning':
                     // Create the final warning
                     $finalWarning = new FinalWarning();
@@ -174,126 +152,93 @@ class DisplinaryActionController extends Controller
                     $termination->save();
                     break;
                     
-                    
                 default:
                     throw new \Exception('Invalid action type selected');
             }
     
-                // Step 7: Deduct the appropriate amount from the employee's salary based on the severity level.
-                switch ($severityLevel) {
-                    // case 'High':
-                    //     $deduction = new Deduction();
-                    //     $deduction->employee_id = $employeeId;
-                    //     $deduction->amount = $request->input('salary') * 0.25;
-                    //     $deduction->reason = 'Disciplinary action: ' . $disciplinaryAction->id;
-                    //     $deduction->save();
-                    //     break;
+            // Step 7: Commit the transaction if no errors occurred.
+            // DB::commit();
+    
+            // Step 9: Return a success message to the user.
+            return redirect()->back()->with('success', 'Employee has been ' . $actionType . '.');
+        // } catch (\Exception $e) {
+        //     // Step 8: If an error occurred during any of the database transactions, rollback and return an error message.
+            // DB::rollback();
+            return redirect()->back()->withErrors(['An error occurred while creating the disciplinary action. Please try again.']);
+        // }
+    }
+    
 
-                    case 'Extreme':
-                        $deduction = new Deduction();
-                        $deduction->displinary_action_id = $disciplinaryAction->id;
-                        $deduction->employee_id = $employeeId;
-                        $deduction->amount = $request->input('salary') * 0.50;
-                      
-                        $deduction->save();
-                        break;
-
-                    default:
-                        // Do nothing for Low and Medium severity levels
-                        break;
-                }
-
-                // Step 8: Commit the transaction
-                DB::commit();
-
-                return redirect()->back()->with('success', 'Disciplinary action created successfully.');
-            } catch (\Exception $e) {
-            //     // Step 9: Rollback the transaction and log the error
-                DB::rollback();
-            //     Log::error($e->getMessage());
-                return redirect()->back()->withErrors(['An error occurred while creating the disciplinary action.']);
-            }
+    public function employeeReport($employeeId, $search = '')
+    {
+        // Get the employee's name
+        $employeeName = Employee::find($employeeId)->name;
+    
+        // Get all disciplinary actions for the employee
+        $disciplinaryActionsQuery = DisplinaryAction::where('employee_id', $employeeId);
+    
+        // Apply search criteria to the query
+        if (!empty($search)) {
+            $disciplinaryActionsQuery->where(function ($query) use ($search) {
+                $query->where('action_type', 'LIKE', '%' . $search . '%')
+                    ->orWhere('description', 'LIKE', '%' . $search . '%');
+            });
         }
-
-        public function employeeReport($employeeId, $search = '')
-        {
-            // Get the employee's name
-            $employeeName = Employee::find($employeeId)->name;
-        
-            // Get all disciplinary actions for the employee
-            $disciplinaryActionsQuery = DisplinaryAction::where('employee_id', $employeeId);
-        
-            // Apply search criteria to the query
-            if (!empty($search)) {
-                $disciplinaryActionsQuery->where(function ($query) use ($search) {
-                    $query->where('action_type', 'LIKE', '%' . $search . '%')
-                        ->orWhere('description', 'LIKE', '%' . $search . '%');
-                });
+    
+        $disciplinaryActions = $disciplinaryActionsQuery->get();
+    
+        // Initialize an empty array to store the report data
+        $reportData = array();
+    
+        // Loop through each disciplinary action and add its data to the report
+        foreach ($disciplinaryActions as $disciplinaryAction) {
+            // Initialize an array to store the action data
+            $actionData = array(
+                'action_type' => $disciplinaryAction->action_type,
+                'description' => $disciplinaryAction->description,
+                'action_date' => $disciplinaryAction->action_date
+            );
+    
+            // Get the action-specific model and add its data to the report (if applicable)
+            switch ($disciplinaryAction->action_type) {
+                case 'suspension':
+                    $suspension = Suspension::where('displinary_action_id', $disciplinaryAction->id)->first();
+                    if ($suspension) {
+                        $actionData['days'] = $suspension->days;
+                        $actionData['start_date'] = $suspension->start_date;
+                        $actionData['end_date'] = $suspension->end_date;
+                    }
+                    break;
+    
+                case 'final warning':
+                    $finalWarning = FinalWarning::where('displinary_action_id', $disciplinaryAction->id)->first();
+                    if ($finalWarning) {
+                        $actionData['date'] = $finalWarning->date;
+                        $actionData['reason'] = $finalWarning->description;
+                    }
+                    break;
+    
+                case 'termination':
+                    $termination = Termination::where('displinary_action_id', $disciplinaryAction->id)->first();
+                    if ($termination) {
+                        $actionData['date'] = $termination->date;
+                        $actionData['reason'] = $termination->reason;
+                    }
+                    break;
+    
+                default:
+                    // No action-specific model needed for reprimand
+                    break;
             }
-        
-            $disciplinaryActions = $disciplinaryActionsQuery->get();
-        
-            // Initialize an empty array to store the report data
-            $reportData = array();
-        
-            // Loop through each disciplinary action and add its data to the report
-            foreach ($disciplinaryActions as $disciplinaryAction) {
-                // Initialize an array to store the action data
-                $actionData = array(
-                    'action_type' => $disciplinaryAction->action_type,
-                    'description' => $disciplinaryAction->description,
-                    'action_date' => $disciplinaryAction->action_date
-                );
-        
-                // Get the action-specific model and add its data to the report (if applicable)
-                switch ($disciplinaryAction->action_type) {
-                    case 'suspension':
-                        $suspension = Suspension::where('displinary_action_id', $disciplinaryAction->id)->first();
-                        if ($suspension) {
-                            $actionData['days'] = $suspension->days;
-                            $actionData['start_date'] = $suspension->start_date;
-                            $actionData['end_date'] = $suspension->end_date;
-                            $actionData['with_pay'] = $suspension->with_pay;
-                        }
-                        break;
-        
-                    case 'final warning':
-                        $finalWarning = FinalWarning::where('displinary_action_id', $disciplinaryAction->id)->first();
-                        if ($finalWarning) {
-                            $actionData['date'] = $finalWarning->date;
-                            $actionData['reason'] = $finalWarning->description;
-                        }
-                        break;
-        
-                    case 'termination':
-                        $termination = Termination::where('displinary_action_id', $disciplinaryAction->id)->first();
-                        if ($termination) {
-                            $actionData['date'] = $termination->date;
-                            $actionData['reason'] = $termination->reason;
-                        }
-                        break;
-                        
-                    case 'stoppage_of_increment':
-                        $stoppageOfIncrement = StoppageOfIncrement::where('displinary_action_id', $disciplinaryAction->id)->first();
-                        if ($stoppageOfIncrement) {
-                            $actionData['duration'] = $stoppageOfIncrement->duration;
-                        }
-                        break;
-        
-                    default:
-                        // No action-specific model needed for reprimand
-                        break;
-                }
-        
-                // Add the employee name and action data to the report
-                $reportData[] = array_merge(['employee_name' => $employeeName], $actionData);
-                // dd($reportData);
-            }
-        
-            // Return the report data and search term
-            return view('displinary.displinary-actions.report', compact('reportData', 'search', 'employeeName'))->render();
+    
+            // Add the employee name and action data to the report
+            $reportData[] = array_merge(['employee_name' => $employeeName], $actionData);
         }
-        
+    
+        // Return the report data and search term
+        return view('displinary.displinary-actions.report', compact('reportData', 'search', 'employeeName'))->render();
+    }
+    
     
 
     

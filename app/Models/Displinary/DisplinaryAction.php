@@ -43,4 +43,9 @@ class DisplinaryAction extends Model
         return $this->hasOne(Termination::class);
     }
 
+    public function StoppageOfIncrement()
+    {
+        return $this->hasOne(StoppageOfIncrement::class);
+    }
+
 }

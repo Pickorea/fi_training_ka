@@ -14,11 +14,11 @@ class CreateSuspensionsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('displinary_action_id');
             $table->unsignedBigInteger('employee_id');
-            $table->integer('days');
+            $table->integer('days')->nullable();
              $table->text('reason');
             $table->date('start_date');
             $table->date('end_date');
-            $table->string('with_pay');
+            $table->string('with_pay')->default(1);
             $table->timestamps();
 
             $table->foreign('displinary_action_id')->references('id')->on('displinary_actions')->onDelete('cascade');
