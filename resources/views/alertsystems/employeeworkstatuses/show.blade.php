@@ -4,91 +4,80 @@
 
 <div class="container">
 
-    <div class="row justify-content-center">
+<div class="row justify-content-center">
 
-     <!-- About Start -->
-     <div class="col-md-12">
-            <div class="card card-new-task">
-                
-     <div class="container-fluid py-5">
-        <div class="container">
-            <div class="row gx-5">
-               
-                <div class="col-lg-7">
-                    
-                    <div>
+<!-- Employee Profile Start -->
+<div class="col-md-12">
+    <div class="card card-new-task">
+        <div class="card-header">
+            <h3>{{ $employee->name }}'s Profile</h3>
+        </div>
 
-                    <div class="col-md-8">
-                        <div class="tab-content profile-tab" id="myTabContent">
-                            <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-                                    
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <label>Full Name</label>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <p>{{$employeeworkstatuses->name}}</p>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <label>Start Date</label>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <p>{{$employeeworkstatuses['start_date']}}</p>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <label>End Date</label>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <p>{{$employeeworkstatuses['end_date']}}</p>
-                                            </div>
-                                        </div>
-
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <label>Work Status</label>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <p>{{$employeeworkstatuses['unestablished'] == 'unestablished'?'Archived meaning being Established and ':''}}</p>
-                                            </div>
-                                        </div>
-
-
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <label>Date of Establishment</label>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <p>{{$employeeworkstatuses['updated_at']}}</p>
-                                            </div>
-                                        </div>
-                                 
-                                      
-                                       
-                            </div>
-                           
-                                       
-                                       
+        <div class="card-body">
+            <div class="row">
+            <div class="col-md-7">
+                    <h5>Personal Information</h5>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Full Name:</strong> {{ $employee->name }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Department:</strong> {{ $employee->department->department_name }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Job Title:</strong> {{ $employee->jobTitle->name }}</p>
                         </div>
                     </div>
+                </div>
+                @php
+                        $now = Carbon::now();
+                                       
+                @endphp
+                <div class="col-md-5">
+                    <h5>Employment Information</h5>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-6">
+                
+                        <p><strong>Start Date:</strong> {{ Carbon::parse($employee->employeeWorkStatuses->first()->start_date)->format('Y-m-d') }}</p>
+
+                        </div>
+                        <div class="col-md-6">
+                        <p><strong>Start Date:</strong> {{ Carbon::parse($employee->employeeWorkStatuses->first()->end_date)->format('Y-m-d') }}</p>
+
+                        </div>
+                    </div>
+                    <div class="row">
+                    <div class="col-md-6">
+                        <label>Work Status</label>
+                       
+                    </div>
+                    <div class="col-md-6">
+                      
+                    @if (optional($employee->workstatus)->work_status_name)
+    <p>{{ $employee->workstatus->work_status_name }}</p>
+@endif
+
+                    </div>
 
 
                     </div>
-                  
-                   
+
+                        <div class="col-md-6">
+                            <p><strong>Joining Date:</strong> {{ $employee->joining_date }}</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+
     </div>
-    </div>
-        </div>
-    </div>
-    <!-- About End -->
-  
-      
+</div>
+<!-- Employee Profile End -->
+
+</div>
+
 
 </div>
 @endsection

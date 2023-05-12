@@ -31,6 +31,7 @@ class EmployeeRepository extends BaseRepository
 		$data['email']=$input['email'];
 		$data['work_status_id']=$input['work_status_id'];
         $data['department_id']=$input['department_id'];
+		$data['job_title_id']=$input['job_title_id'];
         $data['present_address']=$input['present_address'];
 		$data['pf_number']=$input['pf_number'];
 		$data['joining_date']=$input['joining_date'];
@@ -66,6 +67,7 @@ class EmployeeRepository extends BaseRepository
 		$data['email']=$input['email'];
 		$data['work_status_id']=$input['work_status_id'];
         $data['department_id']=$input['department_id'];
+		$data['job_title_id']=$input['job_title_id'];
         $data['present_address']=$input['present_address'];
 		$data['pf_number']=$input['pf_number'];
 		$data['joining_date']=$input['joining_date'];

@@ -41,13 +41,13 @@
                         <tr>
                             <th>{{ __('Action Type') }}</th>
                             <th>{{ __('Description') }}</th>
+                            <th>{{ __('Severity Level') }}</th>
                             <th>{{ __('Action Date') }}</th>
                             <th>{{ __('Days Suspended') }}</th>
                             <th>{{ __('With Pay') }}</th>
                             <th>{{ __('Freeze Salary Increment') }}</th>
                             <th>{{ __('Start Date') }}</th>
                             <th>{{ __('End Date') }}</th>
-                            <th>{{ __('Date') }}</th>
                             <th>{{ __('Reason') }}</th>
                         </tr>
                     </thead>
@@ -56,13 +56,19 @@
                         <tr>
                             <td>{{ $actionData['action_type'] }}</td>
                             <td>{{ $actionData['description'] }}</td>
+                            <td>{{ $actionData['severity_level'] }}</td>
                             <td> {{ date("d F Y", strtotime($actionData['action_date'])) }}</td>                           
                             <td>{{ $actionData['days'] ?? '' }}</td>
                             <td>{{ $actionData['with_pay'] ?? '' }}</td>
                             <td>{{ $actionData['duration'] ?? '' }}</td>
                             <td> {{ date("d F Y", strtotime($actionData['start_date'] ?? '' )) }}</td> 
-                            <td> {{ date("d F Y", strtotime($actionData['end_date'] ?? '' )) }}</td> 
-                            <td> {{ date("d F Y", strtotime($actionData['date'] ?? '' )) }}</td> 
+                            <td> 
+                                @if ($actionData['end_date']){{ $actionData['end_date']->format('d/m/Y') }}
+                                 @else
+                                    N/A
+                                @endif
+                            </td> 
+                          {{--<td> {{ date("d F Y", strtotime($actionData['date'] ?? '' )) }}</td>--}}
                             <td>{{ $actionData['reason'] ?? '' }}</td>
                         </tr>
                         @endforeach

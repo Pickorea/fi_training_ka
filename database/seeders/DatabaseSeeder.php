@@ -25,6 +25,9 @@ class DatabaseSeeder extends Seeder
         $this->call(QualificationSeeder::class);
         $this->call(DepartmentSeeder::class);
         $this->call(EmployeesTableSeeder::class);
+        $this->call(JobTitleSeeder::class);
+        $this->call(SalaryScaleSeeder::class);
+        $this->call(LeaveEntitlementSeeder::class);
         // $this->call(DisplinaryActionSeeder::class);
     }
 }

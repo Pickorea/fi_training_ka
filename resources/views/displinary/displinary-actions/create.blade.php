@@ -47,18 +47,15 @@
 
                 <!-- Nested form for suspension details -->
                 <div class="suspension-details" style="display:none">
-                <label>
-                    <input type="checkbox" id="with_pay_checkbox" value="true">
-                    With pay
-                </label>
+                
                     <div class="form-group">
                         <label for="start_date">Start Date:</label>
                         <input type="date" name="start_date" id="start_date" class="form-control">
                     </div>
-                    <div class="form-group">
+                    <!-- <div class="form-group">
                         <label for="end_date">End Date:</label>
                         <input type="date" name="end_date" id="end_date" class="form-control">
-                    </div>
+                    </div> -->
                     <div class="form-group">
                         <label for="suspension_reason">Suspension Reason:</label>
                         <textarea name="suspension_reason" id="suspension_reason" class="form-control"></textarea>
@@ -72,23 +69,28 @@
 
                     <div>
                         <label>
-                            <input type="radio" name="suspension_type" value="stoppage_of_increment" checked>
+                            <input type="radio" name="suspension_type" value="stoppage_of_increment">
                             Stoppage of Increment
                         </label>
                     </div>
                    
                     <div>
                         <label>
-                            <input type="radio" name="suspension_type" value="interim" checked>
+                            <input type="radio" name="suspension_type" value="interim">
                             Interim Suspension
                         </label>
                     </div>
                     <div>
+                    <label for="with_pay_checkbox" id="with_pay_label">With Pay</label>
+                    <input type="checkbox" id="with_pay_checkbox" value="true">
+
+                    </div>
+                    <!-- <div>
                         <label>
                             <input type="radio" name="suspension_type" value="final">
                             Final Suspension
                         </label>
-                    </div>
+                    </div> -->
 
                 </div>
                     <!-- Nested form for final warning details -->
@@ -127,7 +129,7 @@
                 </div>
 
                 <!-- Nested form for severityLevel-details details -->
-                <div class="severityLevel-details" style="display:none">
+                <!-- <div class="severityLevel-details" style="display:none">
                 <div class="form-group">
                     <label for="severityLevel">Severity Level:</label>
                     <select name="severityLevel" id="severityLevel" class="form-control">
@@ -137,7 +139,7 @@
                         <option value="extreme">Extreme</option>
                     </select>
                 </div>
-                </div>
+                </div> -->
                 <div class="form-group" id="salary_input" style="display:none">
                 <label for="salary">Salary:</label>
                 <input type="number" name="salary" id="salary" class="form-control">
@@ -169,31 +171,43 @@ $(document).ready(function() {
     var selectedOption = $(this).val();
     if (selectedOption == 'suspension') {
       $('.suspension-details').show();
-      $('.severityLevel-details').show();
+    //   $('.severityLevel-details').show();
       $('.final-warning-details').hide();
       $('.termination-details').hide();
+      $('#with_pay_checkbox').hide();
     } else if (selectedOption == 'final warning') {
       $('.final-warning-details').show();
       $('.suspension-details').hide();
       $('.termination-details').hide();
+      $('#with_pay_checkbox').hide();
     } else if (selectedOption == 'termination') {
       $('.termination-details').show();
       $('.suspension-details').hide();
       $('.final-warning-details').hide();
+      $('#with_pay_checkbox').hide();
     } else {
       $('.suspension-details').hide();
       $('.final-warning-details').hide();
       $('.termination-details').hide();
+      $('#with_pay_checkbox').hide();
     }
   });
 
   // Show/hide the additional form for "Final Suspension" based on radio button selection
   $('input[name="suspension_type"]').change(function() {
     var selectedSuspensionType = $('input[name="suspension_type"]:checked').val();
-    if (selectedSuspensionType == 'stoppage_of_increment') {
+    if (selectedSuspensionType == 'stoppage_of_increment' ) {
       $('.stoppage-increments-details').show();
-    } else if (selectedSuspensionType == '20_days' || selectedSuspensionType == 'interim' || selectedSuspensionType == 'final') {
+      $('#with_pay_checkbox').hide();
+      $('#with_pay_label').hide(); // add this line to hide the label
+    }else if (selectedSuspensionType == '20_days') {
       $('.stoppage-increments-details').hide();
+      $('#with_pay_checkbox').hide();
+      $('#with_pay_label').hide(); // add this line to show the label
+    }else if (selectedSuspensionType == 'interim') {
+      $('.stoppage-increments-details').hide();
+      $('#with_pay_checkbox').show();
+      $('#with_pay_label').show(); // add this line to show the label
     }
   });
 
@@ -218,6 +232,9 @@ $(document).ready(function() {
       $('#with_pay_hidden_input').val('false');
     }
   });
+
+//   // Hide the "With Pay" label initially
+  $('#with_pay_label').hide();
 
   // When submitting the form, include the value of the hidden input in the request
   $('#your_form').submit(function() {

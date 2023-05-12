@@ -14,52 +14,38 @@ class EmployeesTableSeeder extends Seeder
      */
     public function run()
     {
-        // Seed your database with employees data
         Employee::create([
             'name' => 'John Doe',
             'email' => 'johndoe@example.com',
             'work_status_id' => 1,
             'department_id' => 1,
-            'present_address' => '123 Main St',
+            'job_title_id' => 1,
+            'salary_scale_id' => 1,
+            'leave_entitlement_id' => 1,
+            'present_address' => '123 Main St, Anytown USA',
             'pf_number' => '123456789',
             'joining_date' => '2022-01-01',
-            'gender' => 'M',
+            'gender' => 'male',
             'date_of_birth' => '1990-01-01',
-            'marital_status' => '1',
-            'picture' => 'default.jpg',
+            'marital_status' => 'single',
+            'picture' => 'https://via.placeholder.com/150',
         ]);
-        
+
         Employee::create([
-            'name' => 'Jane Doe',
-            'email' => 'janedoe@example.com',
+            'name' => 'Jane Smith',
+            'email' => 'janesmith@example.com',
             'work_status_id' => 1,
-            'department_id' => 2,
-            'present_address' => '456 Second St',
+            'department_id' => 1,
+            'job_title_id' => 2,
+            'salary_scale_id' => 1,
+            'leave_entitlement_id' => 1,
+            'present_address' => '456 Main St, Anytown USA',
             'pf_number' => '987654321',
-            'joining_date' => '2021-05-01',
-            'gender' => 'F',
-            'date_of_birth' => '1995-05-01',
-            'marital_status' => '2',
-            'picture' => 'default.jpg',
+            'joining_date' => '2022-01-01',
+            'gender' => 'female',
+            'date_of_birth' => '1995-01-01',
+            'marital_status' => 'married',
+            'picture' => 'https://via.placeholder.com/150',
         ]);
-        
-        Employee::create([
-            'name' => 'Bob Smith',
-            'email' => 'bobsmith@example.com',
-            'work_status_id' => 2,
-            'department_id' => 3,
-            'present_address' => '789 Third St',
-            'pf_number' => '456123789',
-            'joining_date' => '2020-01-01',
-            'gender' => 'M',
-            'date_of_birth' => '1985-01-01',
-            'marital_status' => '1',
-            'picture' => 'default.jpg',
-        ]);
-        
-        // Add as many employees as needed
-        
-        // You can add more employee data as needed
-        
     }
 }

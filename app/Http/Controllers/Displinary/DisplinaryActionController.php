@@ -110,46 +110,49 @@ class DisplinaryActionController extends Controller
                             $severityLevel = 'Medium';
                         }
                         {
-                            // Create the suspension
-                            $suspension = new Suspension();
-                            $suspension->displinary_action_id = $disciplinaryAction->id;
-                            $suspension->employee_id = $employeeId;
-                            $suspension->start_date = $request->input('start_date');
-                            $suspension->end_date = $request->input('end_date');
-                            $suspension->reason = $request->input('suspension_reason');
-                    
-                            switch ($suspensionType) {
-                                case '20_days':
-                                    $suspension->with_pay = false;
-                                    $suspension->days = 20;
-                                    break;
-                                case 'stoppage_of_increment':
-                                    // Create the stoppage of increment
-                                    $stoppageOfIncrement = new StoppageOfIncrement();
-                                    $stoppageOfIncrement->displinary_action_id = $disciplinaryAction->id;
-                                    $stoppageOfIncrement->employee_id = $employeeId;
-                                    $stoppageOfIncrement->duration = $request->input('stoppage_duration');
-                                    $stoppageOfIncrement->save();
-                                    break;
-                                case 'interim':
-                                    $suspension->with_pay = $request->input('with_pay') == 'yes' ? true : false;
-                                    if (!$suspension->with_pay) {
-                                        // Deduct salary for interim suspension
-                                        $deduction = new Deduction();
-                                        $deduction->displinary_action_id = $disciplinaryAction->id;
-                                        $deduction->employee_id = $employeeId;
-                                        $deduction->amount = 0.5 * $request->input('salary');
-                                        $deduction->save();
-                                    }
-                                    // Here, you can set the suspension days to a default value or leave it as null
-                                    $suspension->days = null;
-                                    break;
-                                default:
-                                    // Handle any other cases if needed
-                                    break;
+                           // Create the suspension
+                    $suspension = new Suspension();
+                    $suspension->displinary_action_id = $disciplinaryAction->id;
+                    $suspension->employee_id = $employeeId;
+                    $suspension->start_date = date('Y-m-d', strtotime($request->input('start_date')));
+                    $suspension->reason = $request->input('suspension_reason');
+
+                    switch ($suspensionType) {
+                        case '20_days':
+                            $suspension->with_pay = false;
+                            $suspension->days = 20;
+                            // Calculate end date
+                            $suspension->end_date = date('Y-m-d', strtotime($suspension->start_date . ' + 20 days'));
+                            break;
+                        case 'stoppage_of_increment':
+                            // Create the stoppage of increment
+                            $stoppageOfIncrement = new StoppageOfIncrement();
+                            $stoppageOfIncrement->displinary_action_id = $disciplinaryAction->id;
+                            $stoppageOfIncrement->employee_id = $employeeId;
+                            $stoppageOfIncrement->duration = $request->input('stoppage_duration');
+                            $stoppageOfIncrement->save();
+                            break;
+                        case 'interim':
+                            $suspension->with_pay = $request->input('with_pay') == 'yes' ? '1' : '0';
+                            if (!$suspension->with_pay) {
+                                // Deduct salary for interim suspension
+                                $deduction = new Deduction();
+                                $deduction->displinary_action_id = $disciplinaryAction->id;
+                                $deduction->employee_id = $employeeId;
+                                $deduction->amount = 0.5 * $request->input('salary');
+                                $deduction->save();
                             }
-                    
-                            $suspension->save();
+                            // Here, you can set the suspension days to a default value or leave it as null
+                            $suspension->days = null;
+                            break;
+                        default:
+                            // Handle any other cases if needed
+                            break;
+                    }
+
+                    // Save suspension
+                    $suspension->save();
+
                         }
                         break;
                     
@@ -295,9 +298,88 @@ class DisplinaryActionController extends Controller
         }
         
     
-
-    
-
+        public function _allReport($search = '')
+        {
+            // Get all disciplinary actions
+            $disciplinaryActionsQuery = DisplinaryAction::with('employee');
+        
+            // Apply search criteria to the query
+            if (!empty($search)) {
+                $disciplinaryActionsQuery->where(function ($query) use ($search) {
+                    $query->where('action_type', 'LIKE', '%' . $search . '%')
+                        ->orWhere('description', 'LIKE', '%' . $search . '%')
+                        ->orWhereHas('employee', function ($query) use ($search) {
+                            $query->where('name', 'LIKE', '%' . $search . '%');
+                        });
+                });
+            }
+        
+            $disciplinaryActions = $disciplinaryActionsQuery->get();
+        
+            // Initialize an empty array to store the report data
+            $reportData = array();
+        
+            // Loop through each disciplinary action and add its data to the report
+            foreach ($disciplinaryActions as $disciplinaryAction) {
+                // Initialize an array to store the action data
+                $actionData = array(
+                    'id' => $disciplinaryAction->id,
+                    'employee_name' => $disciplinaryAction->employee->name,
+                    'action_type' => $disciplinaryAction->action_type,
+                    'description' => $disciplinaryAction->description,
+                    'action_date' => $disciplinaryAction->action_date,
+                    'severity_level' => $disciplinaryAction->severity_level,
+                    'employee_id' => $disciplinaryAction->employee_id
+                );
+        
+                // Get the action-specific model and add its data to the report (if applicable)
+                switch ($disciplinaryAction->action_type) {
+                    case 'suspension':
+                        $suspension = Suspension::where('displinary_action_id', $disciplinaryAction->id)->first();
+                        if ($suspension) {
+                            $actionData['days'] = $suspension->days;
+                            $actionData['start_date'] = $suspension->start_date;
+                            $actionData['end_date'] = $suspension->end_date;
+                            $actionData['with_pay'] = $suspension->with_pay;
+                        }
+                        break;
+        
+                    case 'final warning':
+                        $finalWarning = FinalWarning::where('displinary_action_id', $disciplinaryAction->id)->first();
+                        if ($finalWarning) {
+                            $actionData['date'] = $finalWarning->date;
+                            $actionData['reason'] = $finalWarning->description;
+                        }
+                        break;
+        
+                    case 'termination':
+                        $termination = Termination::where('displinary_action_id', $disciplinaryAction->id)->first();
+                        if ($termination) {
+                            $actionData['date'] = $termination->date;
+                            $actionData['reason'] = $termination->reason;
+                        }
+                        break;
+        
+                    case 'stoppage_of_increment':
+                        $stoppageOfIncrement = StoppageOfIncrement::where('displinary_action_id', $disciplinaryAction->id)->first();
+                        if ($stoppageOfIncrement) {
+                            $actionData['duration'] = $stoppageOfIncrement->duration;
+                        }
+                        break;
+        
+                    default:
+                        // No action-specific model needed for reprimand
+                        break;
+                }
+        
+                // Add the action data to the report
+                $reportData[] = $actionData;
+            }
+        
+            // Return the report data and search term
+    return view('displinary.displinary-actions._allreport', compact('reportData', 'search'))->render();
+        }
+  
 public function edit($id)
 {
     $displinaryAction = DisplinaryAction::findOrFail($id);
@@ -386,5 +468,122 @@ public function search(Request $request)
     return view('displinary.displinary-actions.report', ['employeeName' => $this->employeeName, 'reportData' => $reportData]);
 }
 
+public function generateLetterPdf($actionType, $employeeId)
+{
+    $disciplinaryAction = DisplinaryAction::with(['suspension', 'finalwarning', 'termination', 'employee'])
+        ->where('action_type', $actionType)
+        ->where('employee_id', $employeeId)
+        ->first();
+
+    if (!$disciplinaryAction) {
+        throw new \Exception('No disciplinary action found for the given action type');
+    }
+
+    $employeeName = $disciplinaryAction->employee->name;
+    $employeeId = $disciplinaryAction->employee->id;
+
+    $letter = "<div style='text-align: center;'><img src='" . public_path('logo/Coat_Of_Arms_Of_Kiribati_clip_art_medium.png') . "' alt='coat of arms of Kiribati' style='height: 100px;'></div><br>\n";
+    $letter .= '<div style="text-align: center; margin-left: 50px; margin-right: 50px;">';
+    $letter .= "<h1 style='font-size: 24px; margin: 0;'>GOVERNMENT OF KIRIBATI</h1>";
+    $letter .= "<h2 style='font-size: 20px; margin: 0;'>Ministry of Fisheries and Marine Resources Development</h2>";
+    $letter .= "<p style='font-size: 16px; margin: 0;'>Email: info@mfmrd.gov.ki</p>";
+    $letter .= "<p style='font-size: 16px; margin: 0;'>P.O. Box 64, Bairiki, Tarawa, Republic of Kiribati  Tel: (686) 75021099\t</p>";
+    $letter .= "<hr style='border: 0.5px solid black; background-color: black;'>";
+    $letter .= "</div>\n\n";
+    
+    
+    
+    
+
+    
+
+
+        // // add signature and stamp
+        // $letter .= "<div style='page-break-after:always;'></div>\n";
+        // $letter .= "<div style='text-align: center;'>\n";
+        // $letter .= "<img src='" . public_path('images/signature.png') . "' alt='Signature' style='height: 100px;'><br>\n";
+        // $letter .= "<img src='" . public_path('images/stamp.png') . "' alt='Stamp' style='height: 100px;'><br>\n";
+        // $letter .= "___________________________<br>\n";
+        // $letter .= "<strong>Minister of Fisheries and Marine Resources Development</strong><br>\n";
+        // $letter .= "</div>\n";
+
+        switch ($actionType) {
+            case 'reprimand':
+                $letter .= "<div style='margin-top: 20px; margin-bottom: 20px;'>";
+                $letter .= "<strong>Dear {$employeeName},\n\n</strong>";
+                if ($disciplinaryAction->action_date) {
+                    $letter .= "We would like to bring to your attention that a reprimand has been issued against you on {$disciplinaryAction->action_date->toFormattedDateString()} for the following reason:\n\n";
+                } else {
+                    $letter .= "We would like to bring to your attention that a reprimand has been issued against you for the following reason:\n\n";
+                }
+                $letter .= "{$disciplinaryAction->description}\n\n";
+                $letter .= "Please take note that any further disciplinary action may result in more serious consequences.\n\n";
+                $letter .= "<strong>Sincerely,\n\n\n\n</strong>";
+                $letter .= "<strong>Management\n</strong>";
+                $letter .= "</div>";
+                break;
+        
+        case 'suspension':
+            $suspension = $disciplinaryAction->suspension;
+            if (!$suspension) {
+                throw new \Exception('No suspension action found for the given disciplinary action');
+            }
+            $startDate = \Carbon\Carbon::parse($suspension->start_date)->toFormattedDateString();
+            $endDate = \Carbon\Carbon::parse($suspension->end_date)->toFormattedDateString();
+            $letter .= "<strong>Dear {$employeeName},\n\n</strong>";
+            $letter .= "We regret to inform you that you have been suspended without pay from {$startDate} to {$endDate} for the following reason:\n\n";
+            $letter .= "{$suspension->reason}\n\n";
+            $letter .= "Please take note that any further disciplinary action may result in more serious consequences.\n\n";
+            $letter .= "<strong>Sincerely,\n\n\n\n</strong>";
+            $letter .= "<strong>Management\n</strong>";
+            break;
+
+        case 'final warning':
+            $finalWarning = $disciplinaryAction->finalwarning;
+            if (!$finalWarning) {
+                throw new \Exception('No final warning found for the given disciplinary action');
+            }
+            $letter .= "<strong>Dear {$employeeName},\n\n</strong>";
+            $letter .= "We would like to bring to your attention that a final warning has been issued against you on {$finalWarning->date->toFormattedDateString()} for the following reason:\n\n";
+            $letter .= "{$finalWarning->description}\n\n";
+            $letter .= "Please take note that any further disciplinary action may result in termination of your employment.\n\n";
+            $letter .= "<strong>Sincerely,\n\n\n\n</strong>";
+            $letter .= "<strong>Management\n</strong>";
+            break;
+
+            case 'termination':
+                $termination = $disciplinaryAction->termination;
+                if (!$termination) {
+                    throw new \Exception('No termination action found for the given disciplinary action');
+                }
+                $terminationdate = \Carbon\Carbon::parse($termination->date)->toFormattedDateString();
+                $letter .=  "<strong>Dear {$employeeName},\n\n</strong>";
+                $letter .= "We regret to inform you that your employment with us has been terminated as of {$terminationdate} for the following reason:\n\n";
+                if ($termination->reason) {
+                    $letter .= "{$termination->reason}\n\n";
+                } else {
+                    $letter .= "No reason provided.\n\n";
+                }
+                $letter .= "Please take note that you are entitled to your final paycheck and any benefits that you may be eligible for.\n\n";
+                $letter .= "<strong>Sincerely,\n\n\n\n</strong>";
+                $letter .= "<strong>Management\n</strong>";
+                break;
+        
+            
+
+        default:
+            throw new \Exception('Invalid action type selected');
+    }
+
+    $pdf = \PDF::loadHTML('<html><body>' . nl2br($letter) . '</body></html>');
+
+    // Set the paper size to A4 landscape
+    $pdf->setPaper('a4', 'portrait');
+
+    // Set the cache time to 0, to prevent any caching issues
+    // $pdf->setCache(['enabled' => false]);
+
+    return $pdf->stream();
+}
    
 }

@@ -77,6 +77,21 @@
                     </span>
                 @endif
             </div>
+
+            <div class="form-group col-md-6">
+                {{ html()->label('Job Title')->class('form-control-label')->for('job_title_id') }}
+                <select name="job_title_id" id="job_title_id" class="form-control">
+                    <option value="" selected disabled>{{ __('Select one') }}</option>
+                    @foreach($jobtitles as $key => $jobtitle)
+                        <option value="{{ $key }}">{{ $jobtitle }}</option>
+                    @endforeach
+                </select>
+                @if ($errors->has('age'))
+                    <span class="invalid-feedback" role="alert">
+                        <strong>{{ $errors->first('job_title_id') }}</strong>
+                    </span>
+                @endif
+            </div>
         </div>
         <h4 class="box-title text-info"> SECTION B</h4>
 <hr class="my-15">
@@ -193,4 +208,28 @@
                        
             
 @endsection
-   
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+// Listen to the change event of the department select element
+$('#department_id').on('change', function() {
+    var departmentId = $(this).val();
+    var jobTitleSelect = $('#job_title_id');
+
+    // Send an AJAX request to the URL specified in the data-url attribute of the department select element
+    $.ajax({
+        url: $('#department_id').data('url'),
+        type: 'GET',
+        data: { department_id: departmentId },
+        success: function(data) {
+            // Update the options of the job title select element based on the response data
+            jobTitleSelect.empty();
+            $.each(data, function(key, value) {
+                jobTitleSelect.append('<option value="' + key + '">' + value + '</option>');
+            });
+        },
+        error: function(xhr, status, error) {
+            console.log(xhr.responseText);
+        }
+    });
+});
+</script>

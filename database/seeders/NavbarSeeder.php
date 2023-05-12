@@ -163,6 +163,22 @@ class NavbarSeeder extends Seeder
                 'name' => ' Displinary Action',
                 'route' => 'displinary-action.index',
                 'ordering' => 21,
+            ],
+            [
+                'name' => ' Vacancy',
+                'route' => 'vacancy.index',
+                'ordering' => 22,
+            ],
+            [
+                'name' => ' Job Title',
+                'route' => 'jobtitle.index',
+                'ordering' => 23,
+            ],
+
+            [
+                'name' => ' Salary Scale',
+                'route' => 'salaryscales.index',
+                'ordering' => 24,
             ]
             
             

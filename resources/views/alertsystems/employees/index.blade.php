@@ -28,6 +28,7 @@
                             <th>{{ __(' Martial Status') }}</th>
                             <th>{{ __(' Email') }}</th>
                             <th>{{ __(' Work Status') }}</th>
+                            <th>{{ __(' Job Title') }}</th>
                             <th>{{ __(' PF') }}</th>
                             <th>{{ __(' Joining Date') }}</th>
                             <th>{{ __(' Gender') }}</th> 
@@ -40,6 +41,7 @@
                     @php $sl = 1; @endphp
                      
                      @foreach($employees as $employee)
+              {{--{{dd($employee)}}--}}
                      <tr>
                          <td>{{ $sl++ }}</td>
                          <td>{{ $employee->name}}</td>
@@ -49,6 +51,7 @@
                              ($employee->marital_status === "4"?"Separated":"Widowed")))}}</td>
                          <td>{{ $employee->email}}</td>
                          <td>{{ $employee->work_status_name}}</td>
+                         <td>{{ $employee->job_title_name }}</td>
                          <td>{{ $employee->pf_number}}</td>
                          <td>{{ date("d F Y", strtotime($employee->joining_date))}}</td>
                          <td>{{ $employee->gender === "1"?"Male":"Female"}}</td>

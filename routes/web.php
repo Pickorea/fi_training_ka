@@ -26,6 +26,9 @@ use App\Http\Controllers\AlertSystem\DepartmentController;
 use App\Http\Controllers\AlertSystem\SchoolController;
 use App\Http\Controllers\AlertSystem\QualificationController;
 use App\Http\Controllers\AlertSystem\EducationController;
+use App\Http\Controllers\AlertSystem\JobTitleController;
+use App\Http\Controllers\AlertSystem\VacancyController;
+use App\Http\Controllers\AlertSystem\SalaryScaleController;
 
 //displinary 
 use App\Http\Controllers\Displinary\DisplinaryActionController;
@@ -474,7 +477,9 @@ Route::group([
     'middleware' => ['auth', 'role:hr'],
 ], function () {
     Route::get('', [DisplinaryActionController::class, 'index'])->name('index');
-    Route::get('/disciplinary/search', [DisplinaryActionController::class, 'search'])->name('displinary-action.search');
+    Route::get('/search', [DisplinaryActionController::class, 'search'])->name('displinary-action.search');
+    Route::get('/report', [DisplinaryActionController::class, '_allReport'])->name('displinary-action._allreport');
+    Route::get('/generate-letter/{actionType}/{employeeId}', [DisplinaryActionController::class, 'generateLetterPdf'])->name('displinary-action.generateLetter');
     Route::get('koolexcel', [DisplinaryActionController::class, 'export'])->name('koolexcel');
     Route::get('excel', [DisplinaryActionController::class, 'exportTrainingAttendance'])->name('excel');
     Route::get('create', [DisplinaryActionController::class, 'create'])->name('create');
@@ -486,5 +491,65 @@ Route::group([
     Route::get('edit', [DisplinaryActionController::class, 'edit'])->name('edit');
     Route::match(['PUT', 'PATCH'], '', [DisplinaryActionController::class, 'update'])->name('update');
     Route::delete('', [DisplinaryActionController::class, 'delete'])->name('delete');
+    });
+});
+
+
+ //jobtitle
+ Route::group([
+    'as' => 'jobtitle.',
+    'prefix' => 'jobtitle',
+    'middleware' => ['auth', 'role:hr'],
+], function () {
+    Route::get('', [JobTitleController::class, 'index'])->name('index');
+    Route::get('/datatables', [JobTitleController::class, 'getDataTables'])->name('datatables');
+    Route::get('jobtitles/{department_id}', [JobTitleController::class, 'getJobTitlesByDepartment'])->name('getJobTitlesByDepartment');
+    Route::get('excel', [JobTitleController::class, 'exportTrainingAttendance'])->name('excel');
+    Route::get('create', [JobTitleController::class, 'create'])->name('create');
+    Route::post('', [JobTitleController::class, 'store'])->name('store');
+    Route::get('export', [JobTitleController::class, 'exportlist'])->name('export');
+    Route::group(['prefix' => '{jobtitle}'], function () { 
+    Route::get('', [JobTitleController::class, 'show'])->name('show');
+    Route::get('edit', [JobTitleController::class, 'edit'])->name('edit');
+    Route::match(['PUT', 'PATCH'], '', [JobTitleController::class, 'update'])->name('update');
+    Route::delete('', [JobTitleController::class, 'delete'])->name('delete');
+    });
+});
+
+ //Vacancy
+ Route::group([
+    'as' => 'vacancy.',
+    'prefix' => 'vacancy',
+    'middleware' => ['auth', 'role:hr'],
+], function () {
+    Route::get('', [VacancyController::class, 'index'])->name('index');
+    Route::get('create', [VacancyController::class, 'create'])->name('create');
+    Route::post('', [VacancyController::class, 'store'])->name('store');
+    Route::get('export', [VacancyController::class, 'exportlist'])->name('export');
+    Route::group(['prefix' => '{vacancy}'], function () { 
+        Route::get('', [VacancyController::class, 'show'])->name('show');
+        Route::get('edit', [VacancyController::class, 'edit'])->name('edit');
+        Route::match(['PUT', 'PATCH'], '', [VacancyController::class, 'update'])->name('update');
+        Route::delete('', [VacancyController::class, 'delete'])->name('delete');
+        Route::put('/update-status', [VacancyController::class, 'updateStatus'])->name('updateStatus');
+    });
+});
+
+
+//Salary Scale
+Route::group([
+    'as' => 'salaryscales.',
+    'prefix' => 'salaryscales',
+    'middleware' => ['auth', 'role:hr'],
+], function () {
+    Route::get('', [SalaryScaleController::class, 'index'])->name('index');
+    Route::get('create', [SalaryScaleController::class, 'create'])->name('create');
+    Route::post('', [SalaryScaleController::class, 'store'])->name('store');
+      Route::group(['prefix' => '{salaryscale}'], function () { 
+        Route::get('', [SalaryScaleController::class, 'show'])->name('show');
+        Route::get('edit', [SalaryScaleController::class, 'edit'])->name('edit');
+        Route::match(['PUT', 'PATCH'], '', [SalaryScaleController::class, 'update'])->name('update');
+        Route::delete('', [SalaryScaleController::class, 'delete'])->name('delete');
+        
     });
 });

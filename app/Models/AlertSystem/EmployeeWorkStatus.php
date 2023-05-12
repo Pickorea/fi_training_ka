@@ -13,14 +13,16 @@ class EmployeeWorkStatus extends Model
     protected $dates = ['end_date'];
 
     protected $table = 'employee_work_statuses';
-    protected $fillable = ['employee_id', 'start_date', 'end_date','unestablished'];
+    protected $fillable = ['employee_id', 'start_date', 'end_date','unestablished', 'vacancy_id'];
 
     public function employee(){
 
         return $this->belongsTo(Employee::class);
     }
 
-    // Schedule for a week from now
-// $user->notifyAt(new NextWeekNotification, Carbon::now()->addDays(7));
+    public function vacancy()
+    {
+        return $this->belongsTo(Vacancy::class);
+    }
 
 }

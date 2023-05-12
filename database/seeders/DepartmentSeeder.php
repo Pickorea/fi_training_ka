@@ -13,26 +13,20 @@ class DepartmentSeeder extends Seeder
      *
      * @return void
      */
+
     public function run()
     {
-        $data = [
+        $departments = [
+            ['department_name' => 'Sales'],
+            ['department_name' => 'IT'],
+            ['department_name' => 'Marketing'],
+            ['department_name' => 'HR'],
+            ['department_name' => 'Operations'],
+            ['department_name' => 'Finance'],
+        ];
 
-			
-			
-			['department_name'=>'ICT'],
-			['department_name'=>'PDD'],
-			['department_name'=>'COPORATE'],
-			['department_name'=>'KSVA'],
-			
-		
-
-			
-			
-
-        ] ;
-        foreach ($data as $obj)
-        {
-            Department::create($obj);
+        foreach ($departments as $department) {
+            Department::create($department);
         }
     }
 }

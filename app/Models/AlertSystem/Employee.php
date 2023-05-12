@@ -16,13 +16,16 @@ class Employee extends Model
         'email', 
         'work_status_id',
         'department_id',
+        'job_title_id',
         'present_address',
         'pf_number',
         'joining_date',
         'gender',
         'date_of_birth',
         'marital_status',
-        'picture'
+        'picture',
+        'salary_scale_id', 
+        'leave_entitlement_id'
     ];
    
     public function employeeworkstatuses(){
@@ -58,6 +61,21 @@ class Employee extends Model
 public function hasSuspension()
 {
     return $this->disciplinaryActions()->where('action_type', 'suspension')->exists();
+}
+
+public function jobTitle()
+{
+    return $this->belongsTo(JobTitle::class);
+}
+
+public function salaryScale()
+{
+    return $this->belongsTo(SalaryScale::class);
+}
+
+public function leaveEntitlement()
+{
+    return $this->belongsTo(LeaveEntitlement::class);
 }
 
 }

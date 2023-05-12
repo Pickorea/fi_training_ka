@@ -3,29 +3,25 @@
 @section('title', __('Displinary'))
 
 @section('content')
+<head>
+  <!-- Include jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <!-- Include Popper.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+
+  <!-- Include Bootstrap -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+  <!-- Your other head content -->
+
+</head>
+
 <div class="container">
     
     <div class="content-wrapper">
-        <section class="content-header">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ url('/home') }}">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="{{ route('employee.index') }}">Employee List</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Island List</li>
-                </ol>
-            </nav>
-        </section>
-        <div class="row">
-            <div class="col-md-12">
-                <form action="{{--{{ route('displinary-action.employeeReport', $disciplinaryAction->id) }}--}}" method="get">
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="{{ __('Search...') }}" name="search" value="{{--{{ $search }}--}}">
-                        <button type="submit" class="btn btn-primary">{{ __('Search') }}</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
+       
         <section class="content">
             <div class="box">
                 <div class="box-header with-border">
@@ -33,10 +29,19 @@
 
                     <div class="box-body">
                         <div>
-                            <a href="{{ route('displinary-action.create') }}" class="breadcrumb-item btn btn-primary btn-sm float-end">{{ __(' Add Displinary') }}</a>
+                            <div class="dropdown float-end">
+                                <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    {{ __('Actions') }}
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <a class="dropdown-item" href="{{ route('displinary-action.create') }}">{{ __('Add Displinary') }}</a>
+                                    <a class="dropdown-item" href="{{route('displinary-action.displinary-action._allreport')}}">{{ __('View Displinary Actions') }}</a>
+                                    <!-- add more items here as needed -->
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
+
 
                 <div class="box-body">
                     <div class="col-md-6">
@@ -72,6 +77,7 @@
                         </thead>
                         <tbody>
                             @foreach ($disciplinaryActions as $disciplinaryAction)
+                            {{--{{dd($disciplinaryAction)}}--}}
                                 <tr>
                                     <td>{{ $disciplinaryAction->employee->name }}</td>
                                     <td>{{ $disciplinaryAction->action_type }}</td>
@@ -95,17 +101,18 @@
         </section>
    
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
+    <script>
         $(document).ready(function() {
-            $('#myInput').on('keyup', function() {
-                var value = $(this).val().toLowerCase();
-                $('table tbody tr').filter(function() {
-                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-                });
+            // Add click event listener to dropdown items
+            $('.dropdown-item').on('click', function() {
+            // Get the URL from the href attribute of the clicked item
+            var url = $(this).attr('href');
+            // Redirect to the URL
+            window.location.href = url;
             });
         });
     </script>
+
 @endsection
 
   

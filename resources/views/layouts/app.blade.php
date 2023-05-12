@@ -193,7 +193,10 @@
                                           'spas.index',
                                           'koolreport.repo',
                                           'employeeworkstatuses.index',
-                                          'artisan.command'
+                                          'artisan.command',
+                                          'vacancy.index',
+                                          'jobtitle.index',
+                                          'salaryscales.index'
                                           
                                           ])))
                                             <a class="dropdown-item" href="{{ route($navbarItem->route) }}">{{ $navbarItem->name }}</a>
@@ -238,16 +241,17 @@
         @yield('content')
         </div> <!-- .container -->
       </div> <!-- .page-section -->
-  
+      @stack('styles')
+      @stack('scripts')
   </div>
-  @stack('after-scripts')
+ 
   </main>
 
   <footer class="page-footer">
     <div class="container">
       <div class="row">
         <div class="col-lg-3 py-3">
-          <h3>Fisheries<span class="fg-primary">Training.</span></h3>
+          <h3>KI-<span class="fg-primary">FISHERIES.</span></h3>
         </div>
         <div class="col-lg-3 py-3">
         <h5>Contact Information</h5>

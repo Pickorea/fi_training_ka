@@ -48,7 +48,7 @@
                                     @endif
                               
                            </div>
-                           <div class="form-group col-md-6">
+                           {{--<div class="form-group col-md-6">
                            <label for="work_status_id">{{ __('WORK STATUS') }} <span class="text-danger">*</span></label>
                            <select name="work_status_id" id="work_status_id" class="form-control">
                                  <option value="" selected disabled>{{ __('Select one') }}</option>
@@ -62,7 +62,7 @@
                                           </span>
                                     @endif
                               
-                           </div>
+                           </div>--}}
                         <div class="row">
                         
                            <div class="form-group col-md-6">
@@ -91,6 +91,23 @@
                                  @endif
                            
                            </div>
+                        </div>   
+
+                        <div class="row">
+                        
+                          <!-- ... other form fields ... -->
+                        <div class="form-group">
+                           <label for="vacancy_id">Vacancy</label>
+                           <select name="vacancy_id" id="vacancy_id" class="form-control">
+                              <option value="">Select a vacancy</option>
+                              @foreach ($vacancies as $vacancy)
+                                    <option value="{{ $vacancy->id }}">{{ $vacancy->jobTitle->name }} - {{ $vacancy->department->department_name }}</option>
+                              @endforeach
+                           </select>
+                        </div>
+                        <!-- ... other form fields ... -->
+
+
                         </div>   
                      
                         

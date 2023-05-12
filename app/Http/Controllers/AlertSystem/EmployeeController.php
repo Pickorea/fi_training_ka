@@ -9,6 +9,7 @@ use App\Repositories\AlertSystem\DepartmentRepository;
 use App\Models\AlertSystem\Employee;
 use App\Models\AlertSystem\WorkStatus;
 use App\Models\AlertSystem\Department;
+use App\Repositories\AlertSystem\JobTitleRepository;
 use DB;
 use Illuminate\Http\Request;
 use PDF;
@@ -20,13 +21,15 @@ class EmployeeController extends Controller {
 	private $employees;
     private $workstatus;
     private $departments;
+	private $jobtitle;
 
     public function __construct(EmployeeRepository $employees,
-	WorkStatusRepository $workstatus, DepartmentRepository $departments)
+	WorkStatusRepository $workstatus, DepartmentRepository $departments, JobTitleRepository $jobtitle)
     {
         $this->employees=$employees;
         $this->workstatus=$workstatus;
 		$this->departments=$departments;
+		$this->jobtitle=$jobtitle;
        
     }
 
@@ -48,20 +51,24 @@ class EmployeeController extends Controller {
 	public function index() {
 	
 		$employees = DB::table('employees')
-		->select(
-				'employees.id',
-				'employees.created_at',
-				'employees.name',
-				'employees.email',
-				'employees.pf_number',
-				'employees.joining_date',
-				'employees.gender',
-				'employees.date_of_birth',
-				'employees.marital_status',
-				'work_status.work_status_name'
-			   )
-		->leftJoin('work_status','employees.work_status_id','=','work_status.id')
-		->get()->toArray();
+        ->select(
+            'employees.id',
+            'employees.created_at',
+            'employees.name',
+            'employees.email',
+            'employees.pf_number',
+            'employees.joining_date',
+            'employees.gender',
+            'employees.date_of_birth',
+            'employees.marital_status',
+            'work_status.work_status_name',
+            'job_titles.name as job_title_name' // updated alias
+        )
+        ->leftJoin('work_status', 'employees.work_status_id', '=', 'work_status.id')
+        ->leftJoin('job_titles', 'employees.job_title_id', '=', 'job_titles.id')
+        ->get()
+        ->toArray();
+
 	
 			// dd($employees);
 		return view('alertsystems.employees.index',compact('employees'));
@@ -82,9 +89,12 @@ class EmployeeController extends Controller {
 	
 		$workstatus=$this->workstatus->pluck();
 		$departments=$this->departments->pluck();
+		$jobtitle=$this->jobtitle->pluck();
 	
-        return view('alertsystems.employees.create')->withDepartments($departments)
-		->withStatus($workstatus);
+        return view('alertsystems.employees.create')
+		->withDepartments($departments)
+		->withStatus($workstatus)
+		->withJobtitles($jobtitle);
     }
 
 	/**

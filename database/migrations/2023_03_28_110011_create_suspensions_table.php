@@ -17,8 +17,8 @@ class CreateSuspensionsTable extends Migration
             $table->integer('days')->nullable();
              $table->text('reason');
             $table->date('start_date');
-            $table->date('end_date');
-            $table->string('with_pay')->default(1);
+            $table->date('end_date')->nullable();
+            $table->boolean('with_pay')->default(null);
             $table->timestamps();
 
             $table->foreign('displinary_action_id')->references('id')->on('displinary_actions')->onDelete('cascade');

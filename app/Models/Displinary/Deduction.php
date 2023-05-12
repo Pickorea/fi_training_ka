@@ -13,7 +13,7 @@ class Deduction extends Model
 
     protected $fillable = [
         'employee_id',
-        'disciplinary_action_id',
+        'displinary_action_id',
         'amount'
     ];
 

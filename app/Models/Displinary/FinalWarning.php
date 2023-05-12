@@ -10,7 +10,7 @@ class FinalWarning extends Model
     use HasFactory;
 
     protected $fillable = [
-        'disciplinary_action_id',
+        'displinary_action_id',
         'date',
         'description',
         'employee_id'
