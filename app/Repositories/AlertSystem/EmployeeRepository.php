@@ -15,38 +15,39 @@ class EmployeeRepository extends BaseRepository
         return Employee::class;
     }
 
-    	public function create(array $input)
+	public function create(array $input)
 	{
 		//$user = Auth::user();
-
+	
 		//if (! $user->can('recreational.create'))
 		//{
-
-		//throw new GeneralException(__('exceptions-app.frontend.not_auth'));
-
+		//    throw new GeneralException(__('exceptions-app.frontend.not_auth'));
 		//}
-	
-		$data=[];
-		$data['name']=$input['name'];
-		$data['email']=$input['email'];
-		$data['work_status_id']=$input['work_status_id'];
-        $data['department_id']=$input['department_id'];
-		$data['job_title_id']=$input['job_title_id'];
-        $data['present_address']=$input['present_address'];
-		$data['pf_number']=$input['pf_number'];
-		$data['joining_date']=$input['joining_date'];
-		$data['gender']=$input['gender'];
-		$data['date_of_birth']=$input['date_of_birth'];
-		$data['marital_status']=$input['marital_status'];
+		
+		$data = [];
+		$data['name'] = $input['name'];
+		$data['email'] = $input['email'];
+		$data['work_status_id'] = $input['work_status_id'];
+		$data['department_id'] = $input['department_id'];
+		$data['job_title_id'] = $input['job_title_id'];
+		$data['salary_scale_id'] = $input['salary_scale_id'];
+		$data['minimum_salary'] = isset($input['minimum_salary']) ? $input['minimum_salary'] : null;
+		$data['maximum_salary'] = isset($input['maximum_salary']) ? $input['maximum_salary'] : null;
+		$data['present_address'] = $input['present_address'];
+		$data['pf_number'] = $input['pf_number'];
+		$data['joining_date'] = $input['joining_date'];
+		$data['gender'] = $input['gender'];
+		$data['date_of_birth'] = $input['date_of_birth'];
+		$data['marital_status'] = $input['marital_status'];
 		$data['picture'] = $input['picture'];
 	
-		$item=$this->model();
-		$item=new $item($data);
+		$item = $this->model();
+		$item = new $item($data);
 		//$item->owner_organisation_id=$user->organisation_id;
-        $item->save();
-        
+		$item->save();
+		return $item;
 	}
-
+	
 	public function update(Employee $model, array $input)
 	{
 
@@ -59,21 +60,24 @@ class EmployeeRepository extends BaseRepository
 	//	{
 		//	throw  new GeneralException('No privallaged');
 
-
 	
 		//}
-		$data=[];
-		$data['name']=$input['name'];
-		$data['email']=$input['email'];
-		$data['work_status_id']=$input['work_status_id'];
-        $data['department_id']=$input['department_id'];
-		$data['job_title_id']=$input['job_title_id'];
-        $data['present_address']=$input['present_address'];
-		$data['pf_number']=$input['pf_number'];
-		$data['joining_date']=$input['joining_date'];
-		$data['gender']=$input['gender'];
-		$data['date_of_birth']=$input['date_of_birth'];
-		$data['marital_status']=$input['marital_status'];
+		$data = [];
+		$data['name'] = $input['name'];
+		$data['email'] = $input['email'];
+		$data['work_status_id'] = $input['work_status_id'];
+		$data['department_id'] = $input['department_id'];
+		$data['job_title_id'] = $input['job_title_id'];
+		$data['salary_scale_id'] = $input['salary_scale_id'];
+		$data['minimum_salary'] = isset($input['minimum_salary']) ? $input['minimum_salary'] : null;
+		$data['maximum_salary'] = isset($input['maximum_salary']) ? $input['maximum_salary'] : null;
+		$data['present_address'] = $input['present_address'];
+		$data['pf_number'] = $input['pf_number'];
+		$data['joining_date'] = $input['joining_date'];
+		$data['gender'] = $input['gender'];
+		$data['date_of_birth'] = $input['date_of_birth'];
+		$data['marital_status'] = $input['marital_status'];
+		$data['picture'] = $input['picture'];
 		return $model->update($data);
 	}
 
@@ -103,12 +107,24 @@ class EmployeeRepository extends BaseRepository
         return $dataTableQuery ;
     }
 	   
-    public function pluck($column = 'name', $key = 'id')
-    {
-        return $this->model->query()
-            ->orderBy($column)
-            ->pluck($column, $key);
+	public function pluck($column = 'name', $key = 'id')
+{
+    $salaryScales = $this->model->with('jobTitle')
+        ->orderBy($column)
+        ->get();
+
+    $pluckData = [];
+
+    foreach ($salaryScales as $salaryScale) {
+        $jobTitleName = $salaryScale->jobTitle->name;
+        $salaryScaleName = $salaryScale->name;
+        $pluckData[$salaryScale->$key] = "{$jobTitleName} - {$salaryScaleName}";
     }
+
+    return collect($pluckData);
+}
+
+	
 }
 
 ?>

@@ -37,103 +37,52 @@
     color: #009879;
 }
 .header {
-                position: fixed;
-                top: -60px;
-                left: 0px;
-                right: 0px;
-                height: 50px;
-                font-size: 20px !important;
-                background-color: #000;
-                color: white;
-                text-align: center;
-                line-height: 35px;
-            }
+    position: fixed;
+    top: -60px;
+    left: 0px;
+    right: 0px;
+    height: 50px;
+    font-size: 20px !important;
+    background-color: #000;
+    color: white;
+    text-align: center;
+    line-height: 35px;
+}
 </style>
 </head>
 <body>
   
 <table class="styled-table">
-    
                     <thead>
                         <tr>
-                        <th class="header" colspan="8"><center><b> ACTIVE AND EXPIRED CONTRACTED EMPLOYEE LIST </b></center></th >
-                        </tr>
-                        <tr>
-                            <th>{{ __(' SL#') }}</th>                     
-                            <th>{{ __(' FULL NAME') }}</th>
-                          <th>{{ __(' WORK STATUS') }}</th>
-                            <th>{{ __(' START DATE') }}</th>
-                            <th>{{ __(' END DATE') }}</th>
-                            <th>{{ __('DAYS') }}</th>
-                           {{--<th>{{ __('LEFT DAYS') }}</th>--}}
-                            <th>{{ __('ALERT') }}</th>
-                           
+                            <th>Employee</th>
+                            <th>WORK STATUS</th>
+                            <th>START DATE</th>
+                            <th>END DATE</th>
+                            <th>DAYS COUNT</th>
+                            <th>DEPARTMENT</th>
+                            <th>JOB TITLE</th>
+                            <th>SALARY SCALE</th>
+                            <th>STATUS</th>
                         </tr>
                     </thead>
-                    <tbody id="myTable">
-                        @php $sl = 1; @endphp
-                        @php
-                        $now = Carbon::now();
-                                       
-                        @endphp
-                      
-                     {{--dd($employees)--}}
-                        @forelse($employees as $employeeworkstatus)
+                    <tbody>
+                        @foreach($employees as $employee)
                         <tr>
-                           
-                        <td>{{ $sl++ }}</td>
-                            <td>{{$employeeworkstatus->name}}</td>
-                            @if ($employeeworkstatus->work_status_name !='Permenant')
-                            <td>  {{$employeeworkstatus->work_status_name}}</td>
-                            @elseif($employeeworkstatus->work_status_name ='Permenant') 
-                            <td> {{$employeeworkstatus->unestablished =='unestblished'?'Archived':'Archived'}}</td>
-                            @endif
-                            <td>{{$employeeworkstatus->start_date}}</td>
-                            <td>{{$employeeworkstatus->end_date}}</td>
-                            @php
-                            $start_date=Carbon::parse($employeeworkstatus->start_date);
-                             $end_date=Carbon::parse($employeeworkstatus->end_date);
-                            $left_days = Carbon\Carbon::now()->diffInDays($end_date, false);
-                            $no_of_days = $start_date->diffInDaysFiltered(function(Carbon $date) {
-                            return !$date->isSunday();
-                        }, $end_date);
-
-                            @endphp
-                            <td>
-                             {{$no_of_days}}
-                             </td>
-                             {{--<td>
-                             {{$left_days}}
-                             </td>--}}
-                            @if ($employeeworkstatus->end_date <= carbon::now())
-                            <td  style="background-color:lightgreen">Expire</td>
-                            @else ($employeeworkstatus->end_date >= carbon::now())
-                            <td  style="background-color:lightyellow">Active</td>
-                            @endif
-                          
-                       
-                        </tr>
+                            <td>{{ $employee->name }}</td>
+                            <td>{{ $employee->work_status_name }}</td>
+                            <td>{{ $employee->start_date }}</td>
+                            <td>{{ $employee->end_date }}</td>
+                            <td>{{ $employee->day_count }}</td> <!-- Display the day count -->
+                            <td>{{ $employee->department_name }}</td>
+                            <td>{{ $employee->job_title_name }}</td>
+                            <td>{{ $employee->recommended_salary_scale }}</td>
+                            <td>{{ $employee->status }}</td>
                             
-                            @empty
-                            <p>
-                                <strong>
-                                    
-                                <h4 class='card'> NO WORK STATUS AT THE MOMENT PLEASE COME BACK AGAIN </h4>
-                               
-                                </strong>
-                            </p>
-                          
-                           
-                      
-                        @endforelse
-                          
-                        
+                        </tr>
+                        @endforeach
                     </tbody>
-                  
                 </table>
-                
-               
+
 </body>
-
 </html>
-

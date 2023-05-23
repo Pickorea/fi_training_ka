@@ -196,7 +196,8 @@
                                           'artisan.command',
                                           'vacancy.index',
                                           'jobtitle.index',
-                                          'salaryscales.index'
+                                          'salaryscales.index',
+                                          'recommendedsalaryscales.index'
                                           
                                           ])))
                                             <a class="dropdown-item" href="{{ route($navbarItem->route) }}">{{ $navbarItem->name }}</a>

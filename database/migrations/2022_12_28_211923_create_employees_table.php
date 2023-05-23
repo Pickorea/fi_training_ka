@@ -20,8 +20,10 @@ class CreateEmployeesTable extends Migration
         $table->unsignedBigInteger('work_status_id');
         $table->unsignedBigInteger('department_id');
         $table->unsignedBigInteger('job_title_id');
+        $table->decimal('minimum_salary', 10, 2)->nullable();
+        $table->decimal('maximum_salary', 10, 2)->nullable();
         $table->unsignedBigInteger('salary_scale_id');
-        $table->unsignedBigInteger('leave_entitlement_id'); 
+        // $table->unsignedBigInteger('leave_entitlement_id'); 
         $table->string('present_address');
         $table->string('pf_number');
         $table->date('joining_date');

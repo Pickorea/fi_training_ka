@@ -6,7 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\AlertSystem\WorkStatus;
 use App\Models\AlertSystem\Employee;
 use App\Models\AlertSystem\EmployeeWorkStatus;
+use App\Models\AlertSystem\RecommendedSalaryScale;
 use App\Models\AlertSystem\Vacancy;
+use App\Models\AlertSystem\JobTitle;
+use App\Repositories\AlertSystem\RecommendedRecommendedSalaryScalesRepository;
+
 
 use DB;
 use Illuminate\Http\Request;
@@ -17,33 +21,14 @@ use Illuminate\Support\Facades\Auth;
 class EmployeeWorkStatusController extends Controller {
 
 
-    
-
-	public function getDataTables()
-    {
-        $search = $request->get('search', '') ;
-        if (is_array($search)) {
-            $search = $search['value'];
-        }
-        $query = $this->workstatus->getForDataTable($search);
-        $datatables = DataTables::make($query)->make(true);
-        return $datatables;
-    }
-
 	/**
 	 * Display a listing of the resource.
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function index() {
-
-		// $employees = DB::table('employees')
-		// ->select('employees.name', 'work_status.work_status_name', 'employee_work_statuses.start_date', 'employee_work_statuses.end_date')
-		// ->leftJoin('employee_work_statuses','employees.id','=','employee_work_statuses.employee_id')
-		// ->leftJoin('work_status','work_status.id','=','employee_work_statuses.work_status_id')
-		// ->get();
-
-		$employees =  DB::table('employees')
+	public function index()
+	{
+		$employees = DB::table('employees')
     ->select(
         'employees.name',
         'work_status.work_status_name',
@@ -53,28 +38,53 @@ class EmployeeWorkStatusController extends Controller {
         'employee_work_statuses.id',
         'employees.*',
         'departments.department_name',
-        'job_titles.name as job_title_name'
-        // 'vacancies.type'
+        'job_titles.name as job_title_name',
+        'recommended_salary_scales.name as recommended_salary_scale',
+        'recommended_salary_scales.recommended_minimum_salary',
+        'recommended_salary_scales.recommended_maximum_salary',
+        DB::raw('(CASE WHEN employee_work_statuses.end_date < NOW() THEN "Expired" ELSE "Active" END) AS status'),
+        DB::raw('DATEDIFF(employee_work_statuses.end_date, employee_work_statuses.start_date) - (DATEDIFF(employee_work_statuses.end_date, employee_work_statuses.start_date) DIV 7 * 2) - 
+                (CASE WHEN WEEKDAY(employee_work_statuses.start_date) = 6 THEN 1 ELSE 0 END) - 
+                (CASE WHEN WEEKDAY(employee_work_statuses.end_date) = 5 THEN 1 ELSE 0 END) as day_count')
     )
     ->leftJoin('work_status', 'work_status.id', '=', 'employees.work_status_id')
-    ->leftJoin('employee_work_statuses', 'employee_work_statuses.employee_id', '=', 'employees.id')
+    ->leftJoin('employee_work_statuses', function($join){
+        $join->on('employee_work_statuses.employee_id', '=', 'employees.id')
+            ->whereNotNull('employee_work_statuses.start_date')
+            ->whereNotNull('employee_work_statuses.end_date');
+    })
     ->leftJoin('vacancies', 'vacancies.id', '=', 'employee_work_statuses.vacancy_id')
     ->leftJoin('job_titles', 'job_titles.id', '=', 'vacancies.job_title_id')
     ->leftJoin('departments', 'departments.id', '=', 'vacancies.department_id')
+    ->leftJoin('recommended_salary_scales', function($join){
+        $join->on('recommended_salary_scales.job_title_id', '=', 'job_titles.id');
+    })
     ->where(function($query){
-        $query->where('work_status.work_status_name', '!=', 'permenant')
-              ->orWhere('employee_work_statuses.unestablished', '=', 'unestablished');
+        $query->where('work_status.work_status_name', '!=', 'permanent')
+            ->orWhere('employee_work_statuses.unestablished', '=', 'unestablished');
     })
     ->whereNotNull('employee_work_statuses.start_date')
     ->whereNotNull('employee_work_statuses.end_date')
     ->get()
     ->toArray();
- 
-		// $workpermits =EmployeeWorkStatus::where('start_date', '<', now()->addDays(10))->get();
-		// dd($workpermits);
 
-		return view('alertsystems.employeeworkstatuses.index')->with('employees',$employees);
+	
+			$jobTitleName = 'Help Desk'; // Replace 'Your Job Title' with the actual job title name
+			$jobTitle = JobTitle::where('name', $jobTitleName)->first();
+
+			if ($jobTitle) {
+				$jobTitleId = $jobTitle->id;
+			} else {
+				// Handle the case when the job title is not found
+				$jobTitleId = null; // Or assign a default value, or show an error message
+			}
+
+			
+	
+		return view('alertsystems.employeeworkstatuses.index', compact('employees', 'jobTitleId'));
 	}
+	
+	
 
 	
 
@@ -83,29 +93,38 @@ class EmployeeWorkStatusController extends Controller {
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+	public function create()
 {
     if (!Auth::user()->can('hr.create')) {
         abort(403, 'Unauthorized action.');
     }
 
     $workstatuses = WorkStatus::where('work_status_name', '!=', 'permanent')->get();
-    
-	$employees = Employee::distinct()
-    ->select('employees.name', 'employees.id')
-    ->leftJoin('work_status', 'work_status.id', '=', 'employees.work_status_id')
-    ->leftJoin('employee_work_statuses', 'employees.id', '=', 'employee_work_statuses.employee_id')
-    ->where('work_status.work_status_name', '!=', 'permanent')
-    ->get();
 
-	$vacancies = Vacancy::all();
-    
+    $employees = Employee::distinct()
+        ->select('employees.name', 'employees.id')
+        ->leftJoin('work_status', 'work_status.id', '=', 'employees.work_status_id')
+        ->leftJoin('employee_work_statuses', 'employees.id', '=', 'employee_work_statuses.employee_id')
+        ->where('work_status.work_status_name', '!=', 'permanent')
+        ->get();
+
+    // $jobTitles = JobTitle::all();
+
+    // Retrieve vacancies for the given job title ID
+    $vacancies = Vacancy::all();
+
+    // Retrieve RecommendedSalaryScales for the given job title ID
+    $salaryScales = RecommendedSalaryScale::all();
+
     return view('alertsystems.employeeworkstatuses.create')
         ->with('workstatuses', $workstatuses)
         ->with('employees', $employees)
-        ->with('vacancies', $vacancies);
+        ->with('vacancies', $vacancies)
+        // ->with('jobTitles', $jobTitles)
+        ->with('salaryScales', $salaryScales);
 }
 
+	
 
 	/**
 	 * Store a newly created resource in storage.
@@ -125,6 +144,7 @@ class EmployeeWorkStatusController extends Controller {
 					'start_date'=> $request->start_date,
 					'end_date'=> $request->end_date,
 					'vacancy_id'=> $request->vacancy_id,
+					'recommended_salary_scale_id'=> $request->recommended_salary_scale_id,
 					'unestablished'=> 'unestablished'
 				];
 
@@ -186,21 +206,27 @@ class EmployeeWorkStatusController extends Controller {
 	 * @param  int  $id
 	 * @return \Illuminate\Http\Response
 	 */
-	public function edit($id) {
-		if (! Auth::user()->can('hr.edit')) {
-            abort(403, 'Unauthorized action.');
-        }
-		
-        $employeeworkstatuses = EmployeeWorkStatus::find($id)->toArray();
-		$workstatus = WorkStatus::pluck('work_status_name', 'id')->get();
-		$employee = Employee::pluck('employee_name', 'id')->get();
+	public function edit($id)
+{
+    $employeeWorkStatus = EmployeeWorkStatus::findOrFail($id);
+	// dd($employeeWorkStatus->start_date);
+    $workstatuses = WorkStatus::where('work_status_name', '!=', 'permanent')->get();
+    $employees =Employee::find($id);
+    $vacancies = Vacancy::all();
+    $jobTitles = JobTitle::all();
+    $salaryScales = RecommendedSalaryScale::all();
+    
+    return view('alertsystems.employeeworkstatuses.edit', [
+        'employeeworkstatus' => $employeeWorkStatus,
+        'workstatus' => $employeeWorkStatus, // pass the $workstatus variable to the view
+        'workstatuses' => $workstatuses,
+        'employees' => $employees,
+        'vacancies' => $vacancies,
+        'jobTitles' => $jobTitles,
+        'salaryScales' => $salaryScales,
+    ]);
+}
 
-		return view('alertsystems.employeeworkstatuses.edit')
-		->with('employeeworkstatuses',$employeeworkstatuses)
-		->with('$workstatus',$workstatus)
-		->with('employee',$employee);;
-        
-	}
 
 	/**
 	 * Update the specified resource in storage.
@@ -209,20 +235,32 @@ class EmployeeWorkStatusController extends Controller {
 	 * @param  int  $id
 	 * @return \Illuminate\Http\Response
 	 */
-	public function update(Request $request, $id){
-
-		if (! Auth::user()->can('hr.update')) {
-            abort(403, 'Unauthorized action.');
-        }
-        
-          $employeeworkstatuses = $request->all();
-         $data = EmployeeWorkStatus::find($id)->update( $woemployeeworkstatusesrkstatuses);
-
-
-			return redirect()->route('employeeworkstatuses.index')->with('message', 'Updated successfully.');
-	
+	public function update(Request $request, $id)
+{
+	// dd($request->all());
+    if (!Auth::user()->can('hr.update')) {
+        abort(403, 'Unauthorized action.');
     }
 
+    $employeeworkstatus = EmployeeWorkStatus::findOrFail($id);
+
+    // Validate the end date
+    $request->validate([
+        'end_date' => ['required', 'date', 'after:' . $employeeworkstatus->start_date],
+    ]);
+
+    // Update the end date from the request data
+    $employeeworkstatus->end_date = $request->end_date;
+
+    // Save the changes to the database
+    if ($employeeworkstatus->save()) {
+        return redirect()->route('employeeworkstatuses.index')->with('message', 'Updated successfully.');
+    } else {
+        return back()->withInput()->withErrors(['An error occurred while updating the employee work status.']);
+    }
+}
+
+	
 	/**
 	 * Remove the specified resource from storage.
 	 *

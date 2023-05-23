@@ -57,6 +57,9 @@ class JobTitleController extends Controller {
 				return response()->json(['data' => $jobTitles]);
 			}
 
+			
+
+			
 	
 	
 	/**

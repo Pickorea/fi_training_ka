@@ -1,140 +1,74 @@
 @extends('layouts.app')
-@section('title', __('Employee work status'))
 
 @section('content')
-<div class="container">
-    <div class="content-wrapper">
-        <section class="content-header">
-            <h1>{{ __('Manage Non Permanent Employee Work Status') }}</h1>
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ url('/home') }}">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="{{ url('/island') }}">Island List</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Employee List</li>
-                </ol>
-            </nav>
-        </section>
-
-        <section class="content">
-            <div class="card">
-                <div class="card-header">
-                    <div>
-                        <a href="{{ route('employeeworkstatuses.create') }}" class="alert-link">
-                            <button type="button" class="btn btn-primary btn-sm float-end">{{ __(' Add Employee Work Status') }}</button>
-                        </a> 
-                        <a href="{{ route('excelreport.activeExpireEmployeelist') }}" class="alert-link">
-                            <button type="button" class="btn btn-primary btn-sm float-start">{{ __('TO EXCEL') }}</button>
-                        </a>
-                    </div>
+<div class="container-fluid">
+    <div class="col-md-6">
+        <h6 class="m-0 font-weight-bold text-primary">Employee Work Statuses</h6>
+    </div>
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <div class="row">
+                <div class="d-flex">
+                    <a href="{{ route('employeeworkstatuses.create') }}" class="btn btn-success btn-icon-split">
+                        <span class="icon text-white-50">
+                            <i class="fas fa-plus"></i>
+                        </span>
+                        <span class="text">Create</span>
+                    </a>
+                  
                 </div>
-                <div class="card-body">
-                    <!-- Notification Box -->
-                    <div class="col-md-12">
-                        @if (!empty(Session::get('message')))
-                        <div class="alert alert-success alert-dismissible" id="notification_box">
-                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                            <i class="icon fa fa-check"></i> {{ Session::get('message') }}
-                        </div>
-                        @elseif (!empty(Session::get('exception')))
-                        <div class="alert alert-warning alert-dismissible" id="notification_box">
-                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                            <i class="icon fa fa-warning"></i> {{ Session::get('exception') }}
-                        </div>
-                        @endif
-                    </div>
-                    <!-- /.Notification Box -->
-                    <div id="printable_area" class="col-md-12 table-responsive">
-                        <table class="table table-bordered table-striped">
-                            <thead>
-                                <tr>
-                                    <th>{{ __(' SL#') }}</th>                     
-                                    <th>{{ __(' FULL NAME') }}</th>
-                                    <th>{{ __(' WORK STATUS') }}</th>
-                                    <th>{{ __(' JOB TITLE') }}</th>
-                                    <th>{{ __(' DEPARTMENT') }}</th>
-                                    <th>{{ __(' START DATE') }}</th>
-                                    <th>{{ __(' END DATE') }}</th>
-                                    <th>{{ __('# DAYS') }}</th>
-                                    {{--<th>{{ __('# LEFT DAYS') }}</th>--}}
-                                    <th>{{ __('ALERT') }}</th>
-                                    <!-- <th>{{ __(' Created At') }}</th> -->
-                                    <th class="text-center">{{ __('Actions') }}</th>
-                                </tr>
-                            </thead>
-                            <tbody id="myTable">
-                                @php $sl = 1; @endphp
-                                @php
-                                $now = Carbon::now();
-                                @endphp
-                      
-           
-                        @forelse($employees as $employeeworkstatus)
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
                         <tr>
-                           
-                        <td>{{ $sl++ }}</td>
-                            <td>{{$employeeworkstatus->name}}</td>
-                            @if ($employeeworkstatus->work_status_name !='Permenant')
-                            <td>  {{$employeeworkstatus->work_status_name}}</td>
-                            @elseif($employeeworkstatus->work_status_name ='Permenant') 
-                            <td> {{$employeeworkstatus->unestablished =='unestblished'?'Archived':'Archived'}}</td>
-                            @endif
-                            <td>  {{$employeeworkstatus->job_title_name}}</td>
-                            <td>  {{$employeeworkstatus->department_name}}</td>
-                            <td>{{$employeeworkstatus->start_date}}</td>
-                            <td>{{$employeeworkstatus->end_date}}</td>
-                            @php
-                            $start_date=Carbon::parse($employeeworkstatus->start_date);
-                             $end_date=Carbon::parse($employeeworkstatus->end_date);
-                            $left_days = Carbon\Carbon::now()->diffInDays($end_date, false);
-                            $no_of_days = $start_date->diffInDaysFiltered(function(Carbon $date) {
-                            return !$date->isSunday();
-                        }, $end_date);
-
-                            @endphp
+                            <th>Employee</th>
+                            <th>WORK STATUS</th>
+                            <th>START DATE</th>
+                            <th>END DATE</th>
+                            <th>DAYS COUNT</th>
+                            <th>DEPARTMENT</th>
+                            <th>JOB TITLE</th>
+                            <th>SALARY SCALE</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($employees as $employee)
+                        <tr>
+                            <td>{{ $employee->name }}</td>
+                            <td>{{ $employee->work_status_name }}</td>
+                            <td>{{ $employee->start_date }}</td>
+                            <td>{{ $employee->end_date }}</td>
+                            <td>{{ $employee->day_count }}</td> <!-- Display the day count -->
+                            <td>{{ $employee->department_name }}</td>
+                            <td>{{ $employee->job_title_name }}</td>
+                            <td>{{ $employee->recommended_salary_scale }}</td>
+                            <td>{{ $employee->status }}</td>
                             <td>
-                             {{$no_of_days}}
-                             </td>
-                            {{-- <td>
-                             {{$left_days == $employeeworkstatus->id?"":$left_days}}
-                             </td>--}}
-                            {{--<td>
-                            {{$left_days}}
-                            </td>--}}
-                            @if ($employeeworkstatus->end_date <= carbon::now())
-                            <td  style="background-color:lightgreen">Expire</td>
-                            @else ($employeeworkstatus->end_date >= carbon::now())
-                            <td  style="background-color:lightyellow">Active</td>
-                            @endif
-                          
-                           <td class="text-center">
-                           <a  href="{{route('employeeworkstatuses.show', $employeeworkstatus->id)}}"><i class="icon fa fa-show"></i>{{__('Show')}}</a>      
-                            <a href="{{ route('employeeworkstatuses.edit', $employeeworkstatus->id) }}"><i class="icon fa fa-edit"></i> {{ __('Edit') }}</a>
+                                <a href="{{ route('employeeworkstatuses.show', $employee->id) }}" class="btn btn-primary btn-icon-split btn-sm">
+                                    <span class="icon text-white-50">
+                                        <i class="fas fa-eye"></i>
+                                    </span>
+                                    <span class="text">View</span>
+                                </a>
+                                <a href="{{ route('employeeworkstatuses.edit', $employee->id) }}" class="btn btn-warning btn-icon-split btn-sm">
+                                    <span class="icon text-white-50">
+                                        <i class="fas fa-pencil-alt"></i>
+                                    </span>
+                                    <span class="text">Edit</span>
+                                </a>
                             </td>
                         </tr>
-                            
-                            @empty
-                            <p>
-                                <strong>
-                                    
-                                <h4 class='card'> NO WORK STATUS AT THE MOMENT PLEASE COME BACK AGAIN </h4>
-                               
-                                </strong>
-                            </p>
-                          
-                           
-                      
-                        @endforelse
-                          
-                        
+                        @endforeach
                     </tbody>
                 </table>
             </div>
-            </div>
-            <!-- /.box-body -->
         </div>
-        <!-- /.box -->
-    </section>
-    <!-- /.content -->
-</div>
+    </div>
 </div>
 @endsection
+

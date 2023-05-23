@@ -24,10 +24,11 @@ class DatabaseSeeder extends Seeder
         $this->call(SchoolSeeder::class);
         $this->call(QualificationSeeder::class);
         $this->call(DepartmentSeeder::class);
-        $this->call(EmployeesTableSeeder::class);
+        // $this->call(EmployeesTableSeeder::class);
         $this->call(JobTitleSeeder::class);
         $this->call(SalaryScaleSeeder::class);
         $this->call(LeaveEntitlementSeeder::class);
+        // $this->call(RecommendedSalaryScalesTableSeeder::class);
         // $this->call(DisplinaryActionSeeder::class);
     }
 }

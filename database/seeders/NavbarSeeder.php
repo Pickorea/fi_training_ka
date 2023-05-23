@@ -179,6 +179,12 @@ class NavbarSeeder extends Seeder
                 'name' => ' Salary Scale',
                 'route' => 'salaryscales.index',
                 'ordering' => 24,
+            ],
+
+            [
+                'name' => ' Recommended Salary Scale',
+                'route' => 'recommendedsalaryscales.index',
+                'ordering' => 25,
             ]
             
             

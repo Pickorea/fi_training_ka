@@ -17,6 +17,8 @@ class Employee extends Model
         'work_status_id',
         'department_id',
         'job_title_id',
+        'minimum_salary', 
+        'maximum_salary',
         'present_address',
         'pf_number',
         'joining_date',
@@ -25,7 +27,7 @@ class Employee extends Model
         'marital_status',
         'picture',
         'salary_scale_id', 
-        'leave_entitlement_id'
+        // 'leave_entitlement_id'
     ];
    
     public function employeeworkstatuses(){

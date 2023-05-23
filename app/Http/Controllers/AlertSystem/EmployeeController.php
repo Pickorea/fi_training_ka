@@ -7,10 +7,14 @@ use App\Repositories\AlertSystem\EmployeeRepository;
 use App\Repositories\AlertSystem\WorkStatusRepository;
 use App\Repositories\AlertSystem\DepartmentRepository;
 use App\Models\AlertSystem\Employee;
+use App\Models\AlertSystem\SalaryScale;
 use App\Models\AlertSystem\WorkStatus;
 use App\Models\AlertSystem\Department;
 use App\Repositories\AlertSystem\JobTitleRepository;
-use DB;
+use App\Repositories\AlertSystem\SalaryScaleRepository;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Response;
+
 use Illuminate\Http\Request;
 use PDF;
 use Carbon\Carbon;
@@ -22,27 +26,33 @@ class EmployeeController extends Controller {
     private $workstatus;
     private $departments;
 	private $jobtitle;
+	private $salaryscales;
 
     public function __construct(EmployeeRepository $employees,
-	WorkStatusRepository $workstatus, DepartmentRepository $departments, JobTitleRepository $jobtitle)
+	WorkStatusRepository $workstatus, DepartmentRepository $departments, JobTitleRepository $jobtitle, SalaryScaleRepository $salaryscales)
     {
         $this->employees=$employees;
         $this->workstatus=$workstatus;
 		$this->departments=$departments;
 		$this->jobtitle=$jobtitle;
-       
+		$this->salaryscales=$salaryscales;
     }
 
-	public function getDataTables(Request $request)
-    {
-        $search = $request->get('search', '') ;
-        if (is_array($search)) {
-            $search = $search['value'];
-        }
-        $query = $this->employees->getForDataTable($search);
-        $datatables = DataTables::make($query)->make(true);
-        return $datatables;
-    }
+	public function getEmployeesJobTitles($employee_id)
+	{
+		$jobTitles = DB::table('job_titles')
+			->join('employees', 'job_titles.id', '=', 'employees.job_title_id')
+			->where('employees.id', $employee_id)
+			->select('job_titles.id', 'job_titles.name')
+			->get()
+			->toArray();
+	
+		return response()->json(['data' => $jobTitles]);
+	}
+	
+	
+
+
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -81,21 +91,29 @@ class EmployeeController extends Controller {
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
-		if (! Auth::user()->can('hr.create')) {
-            abort(403, 'Unauthorized action.');
-        }
+	public function create()
+	{
+		if (!Auth::user()->can('hr.create')) {
+			abort(403, 'Unauthorized action.');
+		}
 	
-		$workstatus=$this->workstatus->pluck();
-		$departments=$this->departments->pluck();
-		$jobtitle=$this->jobtitle->pluck();
+		$workstatus = $this->workstatus->pluck();
+		$departments = $this->departments->pluck();
+		$jobTitles = $this->jobtitle->pluck();
 	
-        return view('alertsystems.employees.create')
-		->withDepartments($departments)
-		->withStatus($workstatus)
-		->withJobtitles($jobtitle);
-    }
+		// Get all salary scales
+		$salaryScales = app(SalaryScaleRepository::class)->all();
+	
+		// Create the $data array using the retrieved data
+		$data = [        'jobTitles' => $jobTitles,        'salaryScales' => $salaryScales,    ];
+	
+		return view('alertsystems.employees.create', $data)
+			->withData($data)
+			->withDepartments($departments)
+			->withStatus($workstatus);
+	}
+	
+	
 
 	/**
 	 * Store a newly created resource in storage.
@@ -103,15 +121,18 @@ class EmployeeController extends Controller {
 	 * @param  \Illuminate\Http\Request  $request
 	 * @return \Illuminate\Http\Response
 	 */
-	public function store(Request $request) {
-		if (! Auth::user()->can('hr.store')) {
-            abort(403, 'Unauthorized action.');
-        }
-
+	public function store(Request $request)
+	{
+		if (!Auth::user()->can('hr.store')) {
+			abort(403, 'Unauthorized action.');
+		}
+	
 		$request->validate([
 			'picture' => 'required|image|mimes:jpeg,png,jpg,gif|max:16384',
 		]);
-		
+	
+		$input = $request->all();
+	
 		if ($picture = $request->file('picture')) {
 			// Move the uploaded file to a permanent location
 			$profilePicture = date('YmdHis') . "." . $picture->getClientOriginalExtension();
@@ -119,17 +140,20 @@ class EmployeeController extends Controller {
 			// Set the filename in the $input array
 			$input['picture'] = "$profilePicture";
 		}
-		
-		
-		            $input = $request->all();
-					$input['picture'] = "$profilePicture";
 	
-					$item = $this->employees->create($input);
-
-			
-				return redirect()->route('employee.index');
+		// Set the salary_scale_id based on the selected job title's salary scale
+		$jobTitleId = $input['job_title_id'];
+		$salaryScale = SalaryScale::where('job_title_id', $jobTitleId)->first();
+		if ($salaryScale) {
+			$input['salary_scale_id'] = $salaryScale->id;
+			$input['minimum_salary'] = $salaryScale->minimum_salary;
+			$input['maximum_salary'] = $salaryScale->maximum_salary;
+		}
+	
+		$item = $this->employees->create($input);
+	
+		return redirect()->route('employee.index');
 	}
-
 	
 
 	/**
@@ -165,21 +189,33 @@ class EmployeeController extends Controller {
 	 * @param  int  $id
 	 * @return \Illuminate\Http\Response
 	 */
-	public function edit($id) {
-		if (! Auth::user()->can('hr.edit')) {
-            abort(403, 'Unauthorized action.');
-        }
-        $employee = Employee::find($id);
-		$workstatus = WorkStatus::all()->toArray();
-		$departments = Department::all()->toArray();
-		// $departments=$this->departments->pluck();
-		// dd($employee);
-		return view('alertsystems.employees.edit')
-		->withStatus($workstatus)
-		->withEmployee($employee)
-		->withDepartments($departments);
-        
-	}
+	public function edit($id)
+{
+    if (!Auth::user()->can('hr.edit')) {
+        abort(403, 'Unauthorized action.');
+    }
+
+    $status = $this->workstatus->pluck();
+    $departments = $this->departments->pluck();
+    $jobTitles = $this->jobtitle->pluck();
+
+    // Get all salary scales
+    $salaryScales = app(SalaryScaleRepository::class)->all();
+
+    // Retrieve the employee by id
+    $employee = $this->employees->find($id)->first();
+
+    // Create the $data array using the retrieved data
+    $data = [
+        'employee' => $employee,
+        'jobTitles' => $jobTitles,
+        'departments' => $departments,
+        'status' => $status,
+        'salaryScales' => $salaryScales,
+    ];
+
+    return view('alertsystems.employees.edit', $data);
+}
 
 	/**
 	 * Update the specified resource in storage.
@@ -188,17 +224,45 @@ class EmployeeController extends Controller {
 	 * @param  int  $id
 	 * @return \Illuminate\Http\Response
 	 */
-	public function update(Request $request,  $id){
-        
-		if (! Auth::user()->can('hr.update')) {
-            abort(403, 'Unauthorized action.');
-        }
-		$item=$this->employees->getById($id);
-		$this->employees->update($item,$request->all()); 
+	public function update(Request $request, $id)
+	{
+		if (!Auth::user()->can('hr.update')) {
+			abort(403, 'Unauthorized action.');
+		}
 	
-       	return redirect()->route('employee.index')->with('message', 'Updated successfully.');
+		$request->validate([
+			'picture' => 'image|mimes:jpeg,png,jpg,gif|max:16384',
+		]);
 	
-    }
+		$item = $this->employees->findOrFail($id);
+		$input = $request->all();
+	
+		if ($picture = $request->file('picture')) {
+			// Move the uploaded file to a permanent location
+			$profilePicture = date('YmdHis') . "." . $picture->getClientOriginalExtension();
+			$picture->move(public_path('uploads/employees'), $profilePicture);
+			// Set the filename in the $input array
+			$input['picture'] = $profilePicture;
+		}
+	
+		// Set the salary_scale_id based on the selected job title's salary scale
+		$jobTitleId = $input['job_title_id'];
+		$salaryScale = SalaryScale::where('job_title_id', $jobTitleId)->first();
+		if ($salaryScale) {
+			$input['salary_scale_id'] = $salaryScale->id;
+			$input['minimum_salary'] = $salaryScale->minimum_salary;
+			$input['maximum_salary'] = $salaryScale->maximum_salary;
+		}
+	
+		// Instead of directly updating the $item model, use the fill() method
+		// to update the attributes and save() method to persist the changes.
+		$item->fill($input);
+		$item->save();
+	
+		return redirect()->route('employee.index');
+	}
+	
+
 
 	/**
 	 * Remove the specified resource from storage.

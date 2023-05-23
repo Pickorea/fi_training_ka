@@ -19,7 +19,9 @@ class CreateEmployeeWorkStatusesTable extends Migration
             $table->date('start_date');
             $table->date('end_date');
             $table->integer('vacancy_id');
+            $table->string('recommended_salary_scale_id')->nullable();
             $table->string('unestablished');
+            // $table->string('status')->default('Active');
             $table->timestamps();
         });
     }

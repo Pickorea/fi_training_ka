@@ -40,4 +40,9 @@ public function salaryScales()
         return $this->hasMany(LeaveEntitlement::class);
     }
 
+    public function vacancys()
+    {
+        return $this->hasMany(Vacancy::class);
+    }
+
 }

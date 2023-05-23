@@ -8,7 +8,7 @@ use App\Repositories\AlertSystem\JobTitleRepository;
 
 use App\Repositories\AlertSystem\SalaryScaleRepository;
 
-// use App\Models\AlertSystem\JobTitle;
+use App\Models\AlertSystem\SalaryScale;
 // use App\Models\AlertSystem\JobDescription;
 
 use DataTables;
@@ -37,6 +37,16 @@ class SalaryScaleController extends Controller {
     }
 
 	
+	
+		public function getSalaryScalesByJobTitle($job_title_id)
+		{
+			$salaryScales = SalaryScale::select('id', 'name')
+				->where('job_title_id', $job_title_id)
+				->get()
+				->toArray();
+
+			return response()->json(['data' => $salaryScales]);
+		}
 
 		
 	/**

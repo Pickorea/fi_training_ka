@@ -40,6 +40,17 @@ class VacancyController extends Controller {
        
     }
 
+		public function getJobTitleByVacancy($job_title_id)
+	{
+		$vacancies = Vacancy::select('vacancies.id', 'job_titles.name as job_title_name', 'departments.department_name as department_name')
+			->join('job_titles', 'job_titles.id', '=', 'vacancies.job_title_id')
+			->join('departments', 'departments.id', '=', 'job_titles.department_id')
+			->where('vacancies.job_title_id', $job_title_id)
+			->get()
+			->toArray();
+
+		return response()->json(['data' => $vacancies]);
+	}
 
 	
 	/**

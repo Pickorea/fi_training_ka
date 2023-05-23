@@ -29,6 +29,7 @@ use App\Http\Controllers\AlertSystem\EducationController;
 use App\Http\Controllers\AlertSystem\JobTitleController;
 use App\Http\Controllers\AlertSystem\VacancyController;
 use App\Http\Controllers\AlertSystem\SalaryScaleController;
+use App\Http\Controllers\AlertSystem\RecommendedSalaryScaleController;
 
 //displinary 
 use App\Http\Controllers\Displinary\DisplinaryActionController;
@@ -76,8 +77,10 @@ Route::group(['middleware' => 'auth'], function ()
         'middleware' => ['auth', 'role:hr'],
     ], function () {
         Route::get('', [EmployeeController::class, 'index'])->name('index');
+        Route::get('/job_titles/{employee_id}', [EmployeeController::class, 'getEmployeesJobTitles'])->name('getEmployeesJobTitles');
         Route::get('create', [EmployeeController::class, 'create'])->name('create');
         Route::post('', [EmployeeController::class, 'store'])->name('store');
+       
         Route::post('employee/datatable', [EmployeeController::class, 'getDataTables'])->name('datatables');
         Route::group(['prefix' => '{kiisland?}'], function () { 
         Route::get('', [EmployeeController::class, 'show'])->name('show');
@@ -117,10 +120,12 @@ Route::group(['middleware' => 'auth'], function ()
         Route::get('', [EmployeeWorkStatusController::class, 'index'])->name('index');
         Route::get('create', [EmployeeWorkStatusController::class, 'create'])->name('create');
         Route::post('', [EmployeeWorkStatusController::class, 'store'])->name('store');
+        Route::get('{id}/edit', [EmployeeWorkStatusController::class, 'edit'])->name('edit');
+
         Route::get('export', [EmployeeWorkStatusController::class, 'exportlist'])->name('export');
         Route::group(['prefix' => '{kiisland?}'], function () { 
         Route::get('', [EmployeeWorkStatusController::class, 'show'])->name('show');
-        Route::get('edit', [EmployeeWorkStatusController::class, 'edit'])->name('edit');
+        // Route::get('edit', [EmployeeWorkStatusController::class, 'edit'])->name('edit');
         Route::match(['PUT', 'PATCH'], '', [EmployeeWorkStatusController::class, 'update'])->name('update');
         Route::delete('', [EmployeeWorkStatusController::class, 'delete'])->name('delete');
         });
@@ -524,8 +529,9 @@ Route::group([
 ], function () {
     Route::get('', [VacancyController::class, 'index'])->name('index');
     Route::get('create', [VacancyController::class, 'create'])->name('create');
+
     Route::post('', [VacancyController::class, 'store'])->name('store');
-    Route::get('export', [VacancyController::class, 'exportlist'])->name('export');
+    Route::get('vacancys/{job_title_id}', [VacancyController::class, 'getJobTitleByVacancy']);
     Route::group(['prefix' => '{vacancy}'], function () { 
         Route::get('', [VacancyController::class, 'show'])->name('show');
         Route::get('edit', [VacancyController::class, 'edit'])->name('edit');
@@ -545,11 +551,33 @@ Route::group([
     Route::get('', [SalaryScaleController::class, 'index'])->name('index');
     Route::get('create', [SalaryScaleController::class, 'create'])->name('create');
     Route::post('', [SalaryScaleController::class, 'store'])->name('store');
+    Route::get('salaryscales/{job_title_id}', [SalaryScaleController::class, 'getSalaryscalesByJobtitle'])->name('getSalaryscalesByJobtitle');
       Route::group(['prefix' => '{salaryscale}'], function () { 
         Route::get('', [SalaryScaleController::class, 'show'])->name('show');
         Route::get('edit', [SalaryScaleController::class, 'edit'])->name('edit');
         Route::match(['PUT', 'PATCH'], '', [SalaryScaleController::class, 'update'])->name('update');
         Route::delete('', [SalaryScaleController::class, 'delete'])->name('delete');
+        
+    });
+});
+
+
+//Recommended Salary Scale
+Route::group([
+    'as' => 'recommendedsalaryscales.',
+    'prefix' => 'recommendedsalaryscales',
+    'middleware' => ['auth', 'role:hr'],
+], function () {
+    Route::get('', [RecommendedSalaryScaleController::class, 'index'])->name('index');
+    Route::get('create', [RecommendedSalaryScaleController::class, 'create'])->name('create');
+    Route::get('/{job_title_id}', [RecommendedSalaryScaleController::class, 'getRecommendedSalaryScalesByJobTitle'])->name('getRecommendedSalaryScalesByJobTitle');
+    
+    Route::post('', [RecommendedSalaryScaleController::class, 'store'])->name('store');
+      Route::group(['prefix' => '{recommendedsalaryscale}'], function () { 
+        Route::get('', [RecommendedSalaryScaleController::class, 'show'])->name('show');
+        Route::get('edit', [RecommendedSalaryScaleController::class, 'edit'])->name('edit');
+        Route::match(['PUT', 'PATCH'], '', [RecommendedSalaryScaleController::class, 'update'])->name('update');
+        Route::delete('', [RecommendedSalaryScaleController::class, 'delete'])->name('delete');
         
     });
 });
