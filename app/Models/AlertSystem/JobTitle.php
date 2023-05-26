@@ -45,4 +45,9 @@ public function salaryScales()
         return $this->hasMany(Vacancy::class);
     }
 
+    public function recommendedSalaryScales()
+    {
+        return $this->hasMany(RecommendedSalaryScale::class, 'job_title_id');
+    }
+
 }

@@ -16,10 +16,10 @@ class CreateLeaveEntitlementsTable extends Migration
             $table->integer('sick_leave_entitlement');
             $table->timestamps();
             
-            // $table->foreign('job_title_id')
-            //     ->references('id')
-            //     ->on('jobtitles')
-            //     ->onDelete('cascade');
+            $table->foreign('job_title_id')
+                ->references('id')
+                ->on('jobtitles')
+                ->onDelete('cascade');
         });
     }
 

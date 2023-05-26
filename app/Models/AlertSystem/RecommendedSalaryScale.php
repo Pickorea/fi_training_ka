@@ -19,6 +19,7 @@ class RecommendedSalaryScale extends Model
 
     public function jobTitle()
     {
-        return $this->belongsTo(JobTitle::class);
+        return $this->belongsTo(JobTitle::class, 'job_title_id');
+
     }
 }

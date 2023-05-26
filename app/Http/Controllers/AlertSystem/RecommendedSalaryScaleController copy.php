@@ -31,16 +31,26 @@ class RecommendedSalaryScaleController extends Controller {
        
     }
 
-	// public function getRecommendedSalaryScalesByJobTitle($job_title_id)
-	// {
-	//   $recommendedSalaryScales = RecommendedSalaryScale::select('id', 'name')
-	// 	->where('job_title_id', $job_title_id)
-	// 	->get()
-	// 	->toArray();
+	public function getRecommendedSalaryScalesByJobTitle($job_title_id)
+	{
+	  $recommendedSalaryScales = RecommendedSalaryScale::select('id', 'name')
+		->where('job_title_id', $job_title_id)
+		->get()
+		->toArray();
 	
-	//   return response()->json(['data' => $recommendedSalaryScales]);
-	// }
+	  return response()->json(['data' => $recommendedSalaryScales]);
+	}
 	
+	public function getDataTables(Request $request)
+	{
+		$search = $request->get('search', '');
+		if (is_array($search)) {
+			$search = $search['value'];
+		}
+		$query = $this->recommendedsalaryscales->getForDataTable($search);
+		$datatables = DataTables::make($query)->make(true);
+		return $datatables;
+	}
 	
 	/**
 	 * Display a listing of the resource.

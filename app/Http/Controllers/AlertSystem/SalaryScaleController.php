@@ -48,24 +48,58 @@ class SalaryScaleController extends Controller {
 			return response()->json(['data' => $salaryScales]);
 		}
 
+
+		public function getDataTables(Request $request)
+		{
+			$search = $request->get('search', '');
+			$order_by = $request->get('order_by', 'id');
+			$sort = $request->get('sort', 'asc');
+		
+			$data = $this->salaryscales->getForDataTable($search, $order_by, $sort);
+		
+			// Transform the data to match the desired structure
+			$transformedData = [];
+			foreach ($data as $item) {
+				$transformedData[] = [
+					'id' => $item->id,
+					'job_title' => [
+						'id' => $item->jobTitle->id,
+						'name' => $item->jobTitle->name,
+					],
+					'job_title_id' => $item->job_title_id,
+					'name' => $item->name,
+					'maximum_salary' => $item->maximum_salary,
+					'minimum_salary' => $item->minimum_salary,
+				];
+			}
+		
+			return response()->json(['data' => $transformedData]);
+		}
+		
 		
 	/**
 	 * Display a listing of the resource.
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function index() {
+	// public function index() {
 
-		$salaries = DB::table('job_titles')
-		->join('salary_scales', 'salary_scales.job_title_id', '=', 'job_titles.id')
-		->select('job_titles.id', 'job_titles.created_at', 'job_titles.name', 'salary_scales.minimum_salary', 'salary_scales.maximum_salary','salary_scales.name as salary_level')
-		->get()
-		->toArray();
+	// 	$salaries = DB::table('job_titles')
+	// 	->join('salary_scales', 'salary_scales.job_title_id', '=', 'job_titles.id')
+	// 	->select('job_titles.id', 'job_titles.created_at', 'job_titles.name', 'salary_scales.minimum_salary', 'salary_scales.maximum_salary','salary_scales.name as salary_level')
+	// 	->get()
+	// 	->toArray();
 	
 
-		return  view('alertsystems.salaryscale.index')->withsalaryScales($salaries);
-	}
+	// 	return  view('alertsystems.salaryscale.index')->withsalaryScales($salaries);
+	// }
+	public function index() {
 
+		
+	
+
+		return  view('alertsystems.salaryscale.index');
+	}
 	
 
     /**

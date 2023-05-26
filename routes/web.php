@@ -550,6 +550,7 @@ Route::group([
 ], function () {
     Route::get('', [SalaryScaleController::class, 'index'])->name('index');
     Route::get('create', [SalaryScaleController::class, 'create'])->name('create');
+    Route::get('/datatables', [SalaryScaleController::class, 'getDataTables'])->name('getDataTables');
     Route::post('', [SalaryScaleController::class, 'store'])->name('store');
     Route::get('salaryscales/{job_title_id}', [SalaryScaleController::class, 'getSalaryscalesByJobtitle'])->name('getSalaryscalesByJobtitle');
       Route::group(['prefix' => '{salaryscale}'], function () { 
@@ -570,8 +571,9 @@ Route::group([
 ], function () {
     Route::get('', [RecommendedSalaryScaleController::class, 'index'])->name('index');
     Route::get('create', [RecommendedSalaryScaleController::class, 'create'])->name('create');
+    Route::get('/datatables', [RecommendedSalaryScaleController::class, 'getDataTables'])->name('getDataTables');
     Route::get('/{job_title_id}', [RecommendedSalaryScaleController::class, 'getRecommendedSalaryScalesByJobTitle'])->name('getRecommendedSalaryScalesByJobTitle');
-    
+   
     Route::post('', [RecommendedSalaryScaleController::class, 'store'])->name('store');
       Route::group(['prefix' => '{recommendedsalaryscale}'], function () { 
         Route::get('', [RecommendedSalaryScaleController::class, 'show'])->name('show');

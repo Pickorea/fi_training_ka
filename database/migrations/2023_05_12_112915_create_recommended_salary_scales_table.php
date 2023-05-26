@@ -12,7 +12,8 @@ class CreateRecommendedSalaryScalesTable extends Migration
         Schema::create('recommended_salary_scales', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->foreignId('job_title_id')->constrained()->onDelete('cascade');
+            // $table->foreignId('job_title_id')->constrained()->onDelete('cascade');
+            $table->foreignId('job_title_id')->constrained('job_titles')->onDelete('cascade');
             $table->unsignedDecimal('recommended_minimum_salary', 10, 2);
             $table->unsignedDecimal('recommended_maximum_salary', 10, 2);
             $table->timestamps();

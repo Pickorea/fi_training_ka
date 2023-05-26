@@ -8,6 +8,7 @@ use App\Repositories\AlertSystem\JobTitleRepository;
 use App\Models\AlertSystem\Department;
 use App\Models\AlertSystem\RecommendedSalaryScale;
 use DB;
+use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Http\Request;
 use PDF;
 use Carbon\Carbon;
@@ -33,30 +34,53 @@ class RecommendedSalaryScaleController extends Controller {
 
 	public function getRecommendedSalaryScalesByJobTitle($job_title_id)
 	{
-	  $recommendedSalaryScales = RecommendedSalaryScale::select('id', 'name')
+	$recommendedSalaryScales = RecommendedSalaryScale::select('id', 'name')
 		->where('job_title_id', $job_title_id)
 		->get()
 		->toArray();
 	
-	  return response()->json(['data' => $recommendedSalaryScales]);
+	return response()->json(['data' => $recommendedSalaryScales]);
 	}
 	
+	public function getDataTables(Request $request)
+{
+    $search = $request->get('search', '');
+    $order_by = $request->get('order_by', 'id');
+    $sort = $request->get('sort', 'asc');
+
+    $data = $this->recommendedsalaryscales->getForDataTable($search, $order_by, $sort);
+
+    // Transform the data to match the desired structure
+    $transformedData = [];
+    foreach ($data as $item) {
+        $transformedData[] = [
+            'id' => $item->id,
+            'job_title' => [
+                'id' => $item->jobTitle->id,
+                'name' => $item->jobTitle->name,
+            ],
+            'job_title_id' => $item->job_title_id,
+            'name' => $item->name,
+            'recommended_maximum_salary' => $item->recommended_maximum_salary,
+            'recommended_minimum_salary' => $item->recommended_minimum_salary,
+        ];
+    }
+
+    return response()->json(['data' => $transformedData]);
+}
 	
+
+
+
 	/**
 	 * Display a listing of the resource.
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
 	public function index()
-{
-    $recommendedSalaryScales =  $this->recommendedsalaryscales->all();
-
-    return view('alertsystems.recommendedsalaryscale.index', compact('recommendedSalaryScales'));
-}
-
-
-	  
-	
+	{
+			return view('alertsystems.recommendedsalaryscale.index');
+	}
 
     /**
      * Show the form for creating a new resource.
@@ -110,7 +134,7 @@ class RecommendedSalaryScaleController extends Controller {
 		$recommendedSalaryScales = $this->recommendedsalaryscales->getById($id);
 
 		return view('alertsystems.recommendedsalaryscale.show')
-	       ->withjobTitles($jobtitiles);
+	       ->with('recommendedSalaryScales',$recommendedSalaryScales);
 
 	}
 

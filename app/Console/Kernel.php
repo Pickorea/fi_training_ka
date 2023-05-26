@@ -15,52 +15,34 @@ class Kernel extends ConsoleKernel
      * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
      * @return void
      */
-    // protected function schedule(Schedule $schedule)
-    // {
-    //     // $schedule->command('inspire')->hourly();
-    //     $schedule->command('send:notification')->everyMinute()
-    //     ->when(function(){
-
-    //         $now = Carbon::now()->addDays(1);
-
-    //         $notify =EmployeeWorkStatus::select('end_date')
-    //         ->whereDate('end_date', '>', $now->toDateString())
-    //         ->get();
-    //     return $notify;
-
-    //     });
-    // }
-
     protected function schedule(Schedule $schedule)
-{
-    $schedule->command('send:notification')
-        ->daily()
-        ->at('17:00')
-        ->when(function () {
-            $endDate = Carbon::now()->addDays(3);
-            $employees = Employee::whereHas('workStatus', function ($query) {
-                    $query->where('work_status_name', '!=', 'permanent');
-                })
-                ->whereHas('employeeWorkStatuses', function ($query) use ($endDate) {
-                    $query->whereNotNull('start_date')
-                          ->whereNotNull('end_date')
-                          ->whereDate('end_date', $endDate);
-                })
-                ->get();
+    {
+        $schedule->command('send:notification')
+            ->daily()
+            ->at('00:00')
+            ->when(function () {
+                $endDate = Carbon::now()->addDays(3);
+                $employees = Employee::whereHas('workStatus', function ($query) {
+                        $query->where('work_status_name', '!=', 'permanent');
+                    })
+                    ->whereHas('employeeWorkStatuses', function ($query) use ($endDate) {
+                        $query->whereNotNull('start_date')
+                              ->whereNotNull('end_date')
+                              ->whereDate('end_date', $endDate);
+                    })
+                    ->get();
 
-            // Check if there are employees who meet the criteria
-            $hasEmployees = $employees->count() > 0;
+                // Check if there are employees who meet the criteria
+                $hasEmployees = $employees->count() > 0;
 
-            return $hasEmployees;
-        });
-    
-    // Log the information outside the closure
-    $schedule->exec('echo "Scheduled command ran."')
-        ->daily()
-        ->at('17:05');
-}
-
-
+                return $hasEmployees;
+            });
+        
+        // Log the information outside the closure
+        $schedule->exec('echo "Scheduled command ran."')
+            ->daily()
+            ->at('00:00');
+    }
 
     /**
      * Register the commands for the application.
@@ -70,9 +52,6 @@ class Kernel extends ConsoleKernel
     protected function commands()
     {
         $this->load(__DIR__.'/Commands');
-
         require base_path('routes/console.php');
-
-               
     }
 }
