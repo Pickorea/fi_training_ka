@@ -1,12 +1,15 @@
 <?php
 namespace App\Repositories\AlertSystem;
 
+use Auth;
+use App\Exports\AlertSystem\ExportJobTitleListTable;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Repositories\BaseRepository;
 use App\Models\AlertSystem\JobTitle;
-use Auth;
 
 class JobTitleRepository extends BaseRepository
 {
+     
     /**
      * @return string
      */
@@ -57,41 +60,29 @@ class JobTitleRepository extends BaseRepository
 		return $model->update($data);
 	}
 
-	public function getForDataTable($search = '', $order_by = '', $sort = 'asc', $trashed = false)
-    {
+	public function getForDataTable($search = '', $order_by = 'id', $sort = 'asc', $trashed = false)
+{
+    $dataTableQuery = $this->model->query()
+        ->select(['job_titles.id', 'job_titles.name as job_title_name', 'departments.department_name as department_name'])
+        ->leftJoin('departments', 'departments.id', '=', 'job_titles.department_id');
 
-	//   \Barryvdh\Debugbar\Facade::info('JobTitle getForDataTable : "' . $search . '"');
-       // $user = Auth::user();
-        $dataTableQuery = $this->model->query()
-						       ->select(['job_titles.id', 'job_titles.name']);
-         if (!empty($search)) {
-            $search = '%' . strtolower($search) . '%' ;
-            $dataTableQuery->where(function ($query) use ($search) {
-                $query->where('id','ILIKE',  $search )
-				       ->orWhere('name','ILIKE',  $search );
-            });
-        }
-
-
-        if ($trashed == "true") {
-            return $dataTableQuery->onlyTrashed();
-        }
-        return $dataTableQuery ;
+    if (!empty($search)) {
+        $search = '%' . strtolower($search) . '%' ;
+        $dataTableQuery->where(function ($query) use ($search) {
+            $query->where('id','LIKE',  $search )
+                ->orWhere('job_title_name','LIKE',  $search )
+                ->orWhere('department_name','LIKE',  $search );
+        });
     }
 
-// 	public function getJobTitlesByDepartment($department_id)
-// {
-//     if ($this->model instanceof Illuminate\Database\Eloquent\Model) {
-//         return $this->model->query()
-//             ->select('job_titles.id', 'job_titles.name', 'departments.department_name as department_name')
-//             ->join('departments', 'departments.id', '=', 'job_titles.department_id')
-//             ->where('department_id', $department_id)
-//             ->pluck('name', 'id')
-//             ->dd();
-//     } else {
-//         // do something else, like throw an exception or return an error message
-//     }
-// }
+    if (!empty($order_by)) {
+        $dataTableQuery->orderBy($order_by, $sort);
+    }
+
+    return $dataTableQuery->get();
+}
+
+
 
         public function getJobTitlesByDepartment($department_id)
         {

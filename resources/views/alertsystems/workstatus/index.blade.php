@@ -1,94 +1,111 @@
 @extends('layouts.app')
-@section('title', __('status'))
 
 @section('content')
 <div class="container">
-    <div class="content-wrapper">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Work Status</h1>
+        <div>
+            <a href="{{ route('work_status.create') }}" class="btn btn-primary">Create Work Status</a>
+        </div>
+    </div>
 
-        <section class="content-header">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ url('/home') }}">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="{{ route('employee.index') }}">Employee List</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">status List</li>
-                </ol>
-            </nav>
-        </section>
+    <div class="mb-3">
+        <div class="input-group">
+            <input type="text" id="search" name="search" class="form-control" placeholder="Search">
+            <button id="searchBtn" class="btn btn-primary">Search</button>
+        </div>
+    </div>
 
-        <!-- Main content -->
-        <section class="content">
-            <!-- Default box -->
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">{{ __('Manage status') }}</h3>
+    <div class="table-responsive">
+        <table id="workStatusTable" class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Work Status Name</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
 
-                    <div class="card-tools">
-                    <a href="{{ route('work_status.create') }}" class="btn btn-primary btn-sm float-end">{{ __('Add work status') }}</a>
-
-                    </div>
-                </div>
-                <div class="card-body">
-
-                    <!-- Notification Box -->
-                    <div class="col-md-12">
-                        @if (!empty(Session::get('message')))
-                        <div class="alert alert-success alert-dismissible" id="notification_box">
-                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                            <i class="icon fa fa-check"></i> {{ Session::get('message') }}
-                        </div>
-                        @elseif (!empty(Session::get('exception')))
-                        <div class="alert alert-warning alert-dismissible" id="notification_box">
-                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                            <i class="icon fa fa-warning"></i> {{ Session::get('exception') }}
-                        </div>
-                        @endif
-                    </div>
-                    <!-- /.Notification Box -->
-
-                    <div class="col-md-6">
-                        <input type="text" id="myInput" class="form-control" placeholder="{{ __('Search..') }}">
-                    </div>
-
-                    <div id="printable_area" class="col-md-12 table-responsive">
-                        <table class="table table-bordered table-striped">
-                            <thead>
-                                <tr>
-                                    <th>{{ __(' SL#') }}</th>
-                                    <th>{{ __('Work Status') }}</th>
-                                    <th>{{ __(' Created At') }}</th>
-                                    <th class="text-center">{{ __('Actions') }}</th>
-                                </tr>
-                            </thead>
-                            <tbody id="myTable">
-                                @php $sl = 1; @endphp
-
-                                @foreach($workstatus as $status)
-                                <tr>
-                                    <td>{{ $sl++ }}</td>
-
-
-                                    <td>{{ $status['work_status_name'] }}</td>
-
-
-                                    <td class="text-center">{{ date("d F Y", strtotime($status['created_at'])) }}</td>
-
-
-                                    <td class="text-center">
-                                        <a class="btn btn-info text-center" href="{{route('work_status.show', $status['id'])}}">Show</a>
-                                        <a href="{{ route('work_status.edit', $status['id']) }}"><i class="icon fa fa-edit"></i> {{ __('Edit') }}</a>
-
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <!-- /.card-body -->
-            </div>
-            <!-- /.card -->
-        </section>
-        <!-- /.content -->
+    <div id="pagination" class="mt-4">
+        <nav>
+            <ul class="pagination justify-content-center"></ul>
+        </nav>
     </div>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // Function to fetch and display data
+        function fetchData(search, page) {
+            $.ajax({
+                url: "{{ route('work_status.getDataTables') }}",
+                type: 'GET',
+                data: { search: search, page: page },
+                success: function(response) {
+                    console.log(response);
+                    // Clear the existing table rows
+                    $('#workStatusTable tbody').empty();
+
+                    // Check if response contains data
+                    if (response && response.data && response.data.length > 0) {
+                        // Iterate through the response data and add rows to the table
+                        $.each(response.data, function(index, workStatus) {
+                            var editUrl = "{{ route('work_status.edit', ':id') }}";
+                            editUrl = editUrl.replace(':id', workStatus.id);
+
+                            var showUrl = "{{ route('work_status.show', ':id') }}";
+                            showUrl = showUrl.replace(':id', workStatus.id);
+
+                            var row = "<tr>" +
+                                "<td>" + workStatus.id + "</td>" +
+                                "<td>" + workStatus.work_status_name + "</td>" +
+                                "<td><a href=\"" + editUrl + "\" class=\"btn btn-sm btn-primary\">Edit</a> <a href=\"" + showUrl + "\" class=\"btn btn-sm btn-secondary\">Show</a></td>" +
+                                "</tr>";
+
+                            $('#workStatusTable tbody').append(row);
+                        });
+                    } else {
+                        // Display a message when no data is available
+                        var noDataMessage = "<tr><td colspan='6'>No data available</td></tr>";
+                        $('#workStatusTable tbody').append(noDataMessage);
+                    }
+
+                    // Update pagination links
+                    $('#pagination ul').empty();
+                    for (var i = 1; i <= response.meta.last_page; i++) {
+                        var activeClass = i === response.meta.current_page ? 'active' : '';
+                        var pageLink = "<li class='page-item " + activeClass + "'><a class='page-link' href='#'>" + i + "</a></li>";
+                        $('#pagination ul').append(pageLink);
+                    }
+                },
+                error: function(xhr) {
+                    // Handle error cases
+                    console.log('Error:', xhr.responseText);
+                }
+            });
+        }
+
+        // Initial data fetch
+        fetchData('', 1);
+
+        // Search button click event
+        $('#searchBtn').click(function() {
+            var searchValue = $('#search').val();
+            fetchData(searchValue, 1);
+        });
+
+        // Pagination link click event
+        $(document).on('click', '#pagination ul li a', function(e) {
+            e.preventDefault();
+            var page = $(this).text();
+            fetchData($('#search').val(), page);
+        });
+    });
+</script>
 @endsection

@@ -63,7 +63,7 @@
                 <!-- /.Notification Box -->
          {{--@can('isAdmin')--}}
         <div id="printable_area" class="col-md-12 table-responsive">
-               <table  class="table table-bordered table-striped">
+               <table  class="table">
                     <thead>
                         <tr>
                             <th>{{ __(' SL#') }}</th>

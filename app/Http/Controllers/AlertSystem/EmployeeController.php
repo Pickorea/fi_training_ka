@@ -20,6 +20,10 @@ use PDF;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+
+use App\Exports\AlertSystem\ExportEmployeesListTable;
+use Maatwebsite\Excel\Facades\Excel;
+
 class EmployeeController extends Controller {
 
 	private $employees;
@@ -50,38 +54,55 @@ class EmployeeController extends Controller {
 		return response()->json(['data' => $jobTitles]);
 	}
 	
-	
+	public function getDataTables(Request $request)
+{
+    $search = $request->get('search', '');
+    $order_by = $request->get('order_by', 'id');
+    $sort = $request->get('sort', 'asc');
 
+    $data = $this->employees->getForDataTable($search, $order_by, $sort);
+
+    // Transform the data to match the desired structure
+    $transformedData = [];
+
+    foreach ($data as $item) {
+        $transformedData[] = [
+            'id' => $item->id,
+            'name' => $item->name,
+            'email' => $item->email,
+            'work_status_name' => $item->work_status_name,
+            'department_name' => $item->department_name,
+            'job_title_name' => $item->job_title_name,
+			'pf_number' => $item->pf_number,
+            'joining_date' => $item->joining_date,
+            'gender' => $item->gender,
+			'date_of_birth' => $item->date_of_birth,
+            'marital_status' => $item->marital_status,
+            'job_title_name' => $item->job_title_name,
+			
+        ];
+    }
+
+    return response()->json(['data' => $transformedData]);
+}
 
 	/**
-	 * Display a listing of the resource.
+	 * Export employees to Excel file.
 	 *
-	 * @return \Illuminate\Http\Response
+	 * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
 	 */
+	public function exportToExcel()
+	{
+		// Create an instance of the ExportEmployeesListTable class
+		$exporter = new ExportEmployeesListTable($this->employees);
+
+		// Call the exportToExcel method of the exporter to generate the Excel file
+		return $exporter->exportToExcel();
+	}
+
 	public function index() {
 	
-		$employees = DB::table('employees')
-        ->select(
-            'employees.id',
-            'employees.created_at',
-            'employees.name',
-            'employees.email',
-            'employees.pf_number',
-            'employees.joining_date',
-            'employees.gender',
-            'employees.date_of_birth',
-            'employees.marital_status',
-            'work_status.work_status_name',
-            'job_titles.name as job_title_name' // updated alias
-        )
-        ->leftJoin('work_status', 'employees.work_status_id', '=', 'work_status.id')
-        ->leftJoin('job_titles', 'employees.job_title_id', '=', 'job_titles.id')
-        ->get()
-        ->toArray();
-
-	
-			// dd($employees);
-		return view('alertsystems.employees.index',compact('employees'));
+		return view('alertsystems.employees.index');
 	}
 
 	

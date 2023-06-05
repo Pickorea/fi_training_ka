@@ -50,37 +50,44 @@ class VacancyRepository extends BaseRepository
 	}
 
 	public function getForDataTable($search = '', $order_by = '', $sort = 'asc', $trashed = false)
-    {
+{
+    $dataTableQuery = $this->model->query()
+        ->join('departments', 'vacancies.department_id', '=', 'departments.id')
+        ->join('job_titles', 'vacancies.job_title_id', '=', 'job_titles.id')
+        ->join('vacancy_statuses', 'vacancies.id', '=', 'vacancy_statuses.vacancy_id')
+        ->select('vacancies.id', 'departments.department_name', 'job_titles.name', 'vacancy_statuses.status');
 
-	//   \Barryvdh\Debugbar\Facade::info('Vacancy getForDataTable : "' . $search . '"');
-       // $user = Auth::user();
-        $dataTableQuery = $this->model->query()
-						       ->select(['job_titles.id', 'job_titles.type']);
-         if (!empty($search)) {
-            $search = '%' . strtolower($search) . '%' ;
-            $dataTableQuery->where(function ($query) use ($search) {
-                $query->where('id','ILIKE',  $search )
-				       ->orWhere('type','ILIKE',  $search );
-            });
-        }
-
-
-        if ($trashed == "true") {
-            return $dataTableQuery->onlyTrashed();
-        }
-        return $dataTableQuery ;
+    // Apply search criteria if provided
+    if (!empty($search)) {
+        $dataTableQuery->where(function ($query) use ($search) {
+            $query->where('departments.department_name', 'like', '%' . $search . '%')
+                  ->orWhere('job_titles.name', 'like', '%' . $search . '%')
+                  ->orWhere('vacancy_statuses.status', 'like', '%' . $search . '%');
+        });
     }
 
+    // Apply order and sorting criteria if provided
+    if (!empty($order_by)) {
+        $dataTableQuery->orderBy($order_by, $sort);
+    }
+	// dd($dataTableQuery->get());
+
+    return $dataTableQuery->get();
+}
+
+	
+
+// public function pluck($column = 'type', $key = 'id')
+// {
+// 	return $this->model->query()
+// 		->orderBy($column)
+// 		->pluck($column, $key);
+// }
+
 	
 
 	
 	
-    // public function pluck($column = 'type', $key = 'id')
-    // {
-    //     return $this->model->query()
-    //         ->orderBy($column)
-    //         ->pluck($column, $key);
-    // }
 }
 
 ?>

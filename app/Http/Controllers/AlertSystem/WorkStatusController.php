@@ -30,11 +30,35 @@ class WorkStatusController extends Controller
        
     }
 
-    public function getForDataTable()
-    {
-             
-        return $workstatus = WorkStatus::all();
+    public function getDataTables(Request $request)
+{
+    $search = $request->get('search', '');
+    $order_by = $request->get('order_by', 'id');
+    $sort = $request->get('sort', 'asc');
+    $per_page = $request->get('per_page', 5); // Number of items per page
+
+    $data = $this->workstatus->getForDataTable($search, $order_by, $sort, false, $per_page);
+
+    // Transform the data to match the desired structure
+    $transformedData = [];
+    foreach ($data as $item) {
+        $transformedData[] = [
+            'id' => $item->id,
+            'work_status_name' => $item->work_status_name,
+            'created_at' => $item->created_at->format('Y-m-d'),
+        ];
     }
+
+    return response()->json(['data' => $transformedData, 'meta' => [
+        'current_page' => $data->currentPage(),
+        'last_page' => $data->lastPage(),
+        'per_page' => $data->perPage(),
+        'total' => $data->total(),
+    ]]);
+}
+
+    
+    
     /**
      * Display a listing of the resource.
      *
@@ -43,9 +67,9 @@ class WorkStatusController extends Controller
     public function index()
     {
         
-        $workstatus = $this->getForDataTable();
+        
    
-        return view('alertsystems.workstatus.index', ['workstatus'=>$workstatus]);
+        return view('alertsystems.workstatus.index');
 
     }
 

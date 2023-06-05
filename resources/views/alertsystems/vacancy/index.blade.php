@@ -1,105 +1,94 @@
 @extends('layouts.app')
-@section('title', __('Job Title'))
 
 @section('content')
-<div class="container">
-    <div class="content-wrapper">
-
-        <section class="content-header">
-            <h1>{{ __('Vacancy') }}</h1>
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ url('/home') }}">{{ __('Dashboard') }}</a></li>
-                    <li class="breadcrumb-item"><a href="{{ url('/island') }}">{{ __('Island List') }}</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">{{ __('Job Title List') }}</li>
-                </ol>
-            </nav>
-        </section>
-
-        <section class="content">
-            <div class="box">
-                
-                <div class="box-body">
-                    <div class="col-md-6">
-                        <input type="text" id="myInput" class="form-control" placeholder="{{ __('Search..') }}">
-                    </div>
-
-                    <!-- Notification Box -->
-                    <div class="col-md-12">
-                        @if (session('message'))
-                        <div class="alert alert-success alert-dismissible" id="notification_box">
-                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                            <i class="icon fa fa-check"></i> {{ session('message') }}
-                        </div>
-                        @elseif (session('exception'))
-                        <div class="alert alert-warning alert-dismissible" id="notification_box">
-                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                            <i class="icon fa fa-warning"></i> {{ session('exception') }}
-                        </div>
-                        @endif
-                    </div>
-                    <!-- /.Notification Box -->
-                    {{--@can('isAdmin')--}}
-                    <div class="table-responsive">
-                    <div class="card">
-    <div class="card-header">
-        <h3 class="card-title">{{ __('Manage Vacancy') }}</h3>
-        <div class="card-tools">
-            {{--@can('isUser')--}}
+    <div class="container">
+        <div class="row justify-content-between align-items-center mb-4">
+            <h1>Job Titles</h1>
             <div>
-                <a href="{{ route('vacancy.create') }}" class="alert-link"><button type="button" class="btn btn-primary btn-sm float-end">{{ __('Add Vacancy') }}</button></a>
+                <a href="{{ route('vacancy.create') }}" class="btn btn-primary">Create Vacancy</a>
             </div>
-            {{--@endcan--}}
         </div>
-    </div>
-    <div class="card-body">
+
+        <div class="mb-3">
+            <div class="input-group">
+                <input type="text" id="search" name="search" class="form-control" placeholder="Search">
+                <button id="searchBtn" class="btn btn-primary">Search</button>
+            </div>
+        </div>
+
         <div class="table-responsive">
-            <table class="table table-bordered table-striped">
+            <table class="table" id="vacancyTable">
                 <thead>
                     <tr>
+                    <th>{{ __('ID') }}</th>
                         <th>{{ __('Department') }}</th>
                         <th>{{ __('Job Title') }}</th>
-                       {{-- <th>{{ __('Type') }}</th>--}}
                         <th>{{ __('Status') }}</th>
                         <th>{{ __('Action') }}</th>
                     </tr>
                 </thead>
                 <tbody>
-                @foreach ($vacancies as $vacancy)
-                    <tr>
-                        <td>{{ $vacancy->department->department_name }}</td>
-                        <td>{{ $vacancy->jobTitle->name }}</td>
-                        {{--<td>{{ $vacancy->type }}</td>--}}
-                        <td>{{ $vacancy->statuses->last()->status }}</td>
-                        <td>
-                            <a href="{{ route('vacancy.show', ['vacancy' => $vacancy]) }}" class="btn btn-xs btn-primary">{{ __('View') }}</a>
-                            <a href="{{ route('vacancy.edit', ['vacancy' => $vacancy]) }}" class="btn btn-xs btn-success">{{ __('Edit') }}</a>
-                        </td>
-                    </tr>
-                @endforeach
                 </tbody>
             </table>
         </div>
     </div>
-</div>
 
-<!-- /.box -->
-</section>
-<!-- /.content -->
-</div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-</div>
-@endsection
-@section('scripts')
+    <script>
+        $(document).ready(function() {
+            // Function to fetch and display data
+            function fetchData(search) {
+                $.ajax({
+                    url: "{{ route('vacancy.datatables') }}",
+                    type: 'GET',
+                    data: { search: search },
+                    success: function(response) {
+                        console.log(response);
+                        // Clear the existing table rows
+                        $('#vacancyTable tbody').empty();
 
-<script>
-    $(document).ready(function(){
-        $("#myInput").on("keyup", function() {
-            var value = $(this).val().toLowerCase();
-            $("table tbody tr").filter(function() {
-            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                        // Check if response contains data
+                        if (response && response.data && response.data.length > 0) {
+                            // Iterate through the response data and add rows to the table
+                            $.each(response.data, function(index, item) {
+                                var showUrl = "{{ route('vacancy.show', ['vacancy' => 'vacancy_id']) }}".replace('vacancy_id', item.id);
+                                var editUrl = "{{ route('vacancy.edit', ['vacancy' => 'vacancy_id']) }}".replace('vacancy_id', item.id);
+
+                                var row = "<tr>" +
+                                    "<td>" + item.id + "</td>" +
+                                    "<td>" + item.department_name + "</td>" +
+                                    "<td>" + (item.job_title ? item.job_title.name : '') + "</td>" +
+                                    "<td>" + item.status + "</td>" +
+                                    "<td>" +
+                                    "<a href='" + showUrl + "' class='btn btn-sm btn-secondary'>Show</a> " +
+                                    "<a href='" + editUrl + "' class='btn btn-sm btn-primary'>Edit</a>" +
+                                    "</td>" +
+                                    "</tr>";
+
+                                $('#vacancyTable tbody').append(row);
+                            });
+                        } else {
+                            // Display a message when no data is available
+                            var noDataMessage = "<tr><td colspan='5'>No data available</td></tr>";
+                            $('#vacancyTable tbody').append(noDataMessage);
+                        }
+                    },
+                    error: function(xhr) {
+                        // Handle error cases
+                        console.log('Error:', xhr.responseText);
+                    }
+                });
+            }
+
+            // Initial data fetch
+            fetchData('');
+
+            // Search button click event
+            $('#searchBtn').click(function() {
+                var searchValue = $('#search').val();
+                fetchData(searchValue);
             });
         });
-    });
-</script>
+    </script>
 @endsection

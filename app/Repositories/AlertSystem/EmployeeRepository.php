@@ -81,31 +81,65 @@ class EmployeeRepository extends BaseRepository
 		return $model->update($data);
 	}
 
+	//$employees = DB::table('employees')
+    //     ->select(
+    //         'employees.id',
+    //         'employees.created_at',
+    //         'employees.name',
+    //         'employees.email',
+    //         'employees.pf_number',
+    //         'employees.joining_date',
+    //         'employees.gender',
+    //         'employees.date_of_birth',
+    //         'employees.marital_status',
+    //         'work_status.work_status_name',
+    //         'job_titles.name as job_title_name' // updated alias
+    //     )
+    //     ->leftJoin('work_status', 'employees.work_status_id', '=', 'work_status.id')
+    //     ->leftJoin('job_titles', 'employees.job_title_id', '=', 'job_titles.id')
+    //     ->get()
+    //     ->toArray();
 	public function getForDataTable($search = '', $order_by = '', $sort = 'asc', $trashed = false)
-    {
+{
+    $dataTableQuery = $this->model->query()
+        ->leftJoin('work_status', 'employees.work_status_id', '=', 'work_status.id')
+        ->leftJoin('job_titles', 'employees.job_title_id', '=', 'job_titles.id')
+        ->leftJoin('departments', 'employees.department_id', '=', 'departments.id') // Fix the join condition here
+        ->select(
+            'employees.id',
+            'employees.created_at',
+            'employees.name',
+            'employees.email',
+            'employees.pf_number',
+            'employees.joining_date',
+            'employees.gender',
+            'employees.date_of_birth',
+            'employees.marital_status',
+			'employees.picture',
+            'work_status.work_status_name',
+            'job_titles.name as job_title_name',
+            'departments.department_name' // Include department_name in the select statement
+        );
 
-	//   \Barryvdh\Debugbar\Facade::info('Employee getForDataTable : "' . $search . '"');
-       // $user = Auth::user();
-        $dataTableQuery = $this->model->query()
-						->leftjoin('work_status','work_status.id', '=', 'employees.work_status_id')						
-                       ->select(['employees.id', 'employees.name', 'employees.age', 'employees.email', 'work_status.work_status_name']);
-         if (!empty($search)) {
-            $search = '%' . strtolower($search) . '%' ;
-            $dataTableQuery->where(function ($query) use ($search) {
-                $query->where('id','ILIKE',  $search )
-					->orWhere('name','ILIKE',  $search )
-					->orWhere('age','ILIKE',  $search )
-					->orWhere('email','ILIKE',  $search )
-                    ->orWhere('work_status_name','ILIKE',  $search );
-            });
-        }
-
-
-        if ($trashed == "true") {
-            return $dataTableQuery->onlyTrashed();
-        }
-        return $dataTableQuery ;
+    // Apply search criteria if provided
+    if (!empty($search)) {
+        $dataTableQuery->where(function ($query) use ($search) {
+            $query->where('employees.name', 'like', '%' . $search . '%')
+                  ->orWhere('employees.email', 'like', '%' . $search . '%')
+                  ->orWhere('work_statuses.name', 'like', '%' . $search . '%')
+                  ->orWhere('departments.department_name', 'like', '%' . $search . '%')
+                  ->orWhere('job_titles.name', 'like', '%' . $search . '%');
+        });
     }
+
+    // Apply order and sorting criteria if provided
+    if (!empty($order_by)) {
+        $dataTableQuery->orderBy($order_by, $sort);
+    }
+
+    return $dataTableQuery->get();
+}
+
 	   
 	public function pluck($column = 'name', $key = 'id')
 {
@@ -113,16 +147,18 @@ class EmployeeRepository extends BaseRepository
         ->orderBy($column)
         ->get();
 
-    $pluckData = [];
+    $pluckData = collect([]);
 
     foreach ($salaryScales as $salaryScale) {
-        $jobTitleName = $salaryScale->jobTitle->name;
-        $salaryScaleName = $salaryScale->name;
+               $salaryScaleName = $salaryScale->name;
+			   $jobTitleName = $salaryScale->jobTitle->name;
         $pluckData[$salaryScale->$key] = "{$jobTitleName} - {$salaryScaleName}";
     }
 
-    return collect($pluckData);
+    return $pluckData;
 }
+
+
 
 	
 }

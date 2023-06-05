@@ -64,26 +64,27 @@ class SalaryScaleRepository extends BaseRepository
 	}
 
 	
-		public function getForDataTable($search = '', $order_by = 'id', $sort = 'asc')
-		{
-			$dataTableQuery = $this->model->query()
-				->select(['id', 'name', 'minimum_salary', 'maximum_salary', 'job_title_id'])
-				->with('jobTitle:id,name');
-
-			if (!empty($search)) {
-				$search = '%' . strtolower($search) . '%';
-				$dataTableQuery->where(function ($query) use ($search) {
-					$query->where('name', 'LIKE', $search)
-						->orWhereHas('jobTitle', function ($query) use ($search) {
-							$query->where('name', 'LIKE', $search);
-						});
-				});
-			}
-
-			$dataTableQuery->orderBy($order_by, $sort);
-
-			return $dataTableQuery->get();
+	public function getForDataTable($search = '', $order_by = 'id', $sort = 'asc')
+	{
+		$dataTableQuery = $this->model->query()
+			->select(['id', 'name', 'minimum_salary', 'maximum_salary', 'job_title_id'])
+			->with('jobTitle:id,name');
+	
+		if (!empty($search)) {
+			$search = '%' . strtolower($search) . '%';
+			$dataTableQuery->where(function ($query) use ($search) {
+				$query->where('name', 'LIKE', $search)
+					->orWhereHas('jobTitle', function ($query) use ($search) {
+						$query->where('name', 'LIKE', $search);
+					});
+			});
 		}
+	
+		$dataTableQuery->orderBy($order_by, $sort);
+	
+		return $dataTableQuery->paginate(10);
+	}
+	
 
 
 	   

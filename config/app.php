@@ -165,6 +165,8 @@ return [
         Illuminate\View\ViewServiceProvider::class,
         Yajra\DataTables\DataTablesServiceProvider::class,
         DaveJamesMiller\Breadcrumbs\BreadcrumbsServiceProvider::class,
+        // Barryvdh\Debugbar\ServiceProvider::class,
+
 
 
         /*
@@ -242,6 +244,8 @@ return [
         'Carbon' => Illuminate\Support\Carbon::class,
         'Html' => Spatie\Html\Facades\Html::class,
         'DataTables' => Yajra\DataTables\Facades\DataTables::class,
+        // 'Debugbar' => Barryvdh\Debugbar\Facade::class,
+
 
 
     ],

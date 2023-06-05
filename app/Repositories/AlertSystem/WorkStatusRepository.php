@@ -54,29 +54,25 @@ class WorkStatusRepository extends BaseRepository
 		return $model->update($data);
 	}
 
-	public function getForDataTable($search = '', $order_by = '', $sort = 'asc', $trashed = false)
-    {
+	public function getForDataTable($search = '', $order_by = 'id', $sort = 'asc', $trashed = false, $per_page = 3)
+{
+    $dataTableQuery = $this->model->query();
 
-	 
-       // $user = Auth::user();
-        $dataTableQuery = $this->model->query()			
-                       ->select(['id', 'work_status_name']);
-         if (!empty($search)) {
-            $search = '%' . strtolower($search) . '%' ;
-            $dataTableQuery->where(function ($query) use ($search) {
-                $query->where('id','ILIKE',  $search )
-                    ->orWhere('work_status_name','ILIKE',  $search );
-            });
-        }
-
-
-        if ($trashed == "true") {
-            return $dataTableQuery->onlyTrashed();
-        }
-
-
-        return $dataTableQuery ;
+    if (!empty($search)) {
+        $search = '%' . strtolower($search) . '%';
+        $dataTableQuery->where(function ($query) use ($search) {
+            $query->where('id', 'LIKE', $search)
+                ->orWhere('work_status_name', 'LIKE', $search);
+        });
     }
+
+    $dataTableQuery->orderBy($order_by, $sort);
+
+    return $dataTableQuery->paginate($per_page);
+}
+
+
+    
 	   
     public function pluck($column = 'work_status_name', $key = 'id')
     {

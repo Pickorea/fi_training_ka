@@ -79,17 +79,17 @@ Route::group(['middleware' => 'auth'], function ()
         Route::get('', [EmployeeController::class, 'index'])->name('index');
         Route::get('/job_titles/{employee_id}', [EmployeeController::class, 'getEmployeesJobTitles'])->name('getEmployeesJobTitles');
         Route::get('create', [EmployeeController::class, 'create'])->name('create');
+        Route::get('/datatable', [EmployeeController::class, 'getDataTables'])->name('datatables');
+        Route::get('toexcel', [EmployeeController::class, 'exportToExcel'])->name('toexcel');
         Route::post('', [EmployeeController::class, 'store'])->name('store');
-       
-        Route::post('employee/datatable', [EmployeeController::class, 'getDataTables'])->name('datatables');
-        Route::group(['prefix' => '{kiisland?}'], function () { 
-        Route::get('', [EmployeeController::class, 'show'])->name('show');
-        Route::get('edit', [EmployeeController::class, 'edit'])->name('edit');
-        Route::match(['PUT', 'PATCH'], '', [EmployeeController::class, 'update'])->name('update');
-        Route::delete('', [EmployeeController::class, 'delete'])->name('delete');
+        Route::group(['prefix' => '{employee}'], function () {
+            Route::get('', [EmployeeController::class, 'show'])->name('show');
+            Route::get('edit', [EmployeeController::class, 'edit'])->name('edit');
+            Route::match(['PUT', 'PATCH'], '', [EmployeeController::class, 'update'])->name('update');
+            Route::delete('', [EmployeeController::class, 'delete'])->name('delete');
         });
     });
-
+    
     //work_status
     Route::group([
         'as' => 'work_status.',
@@ -101,7 +101,8 @@ Route::group(['middleware' => 'auth'], function ()
         Route::get('excel', [WorkStatusController::class, 'exportTrainingAttendance'])->name('excel');
         Route::get('create', [WorkStatusController::class, 'create'])->name('create');
         Route::post('', [WorkStatusController::class, 'store'])->name('store');
-        Route::get('datatable', [WorkStatusController::class, 'getForDataTable'])->name('datatable');
+        Route::get('/datatables', [WorkStatusController::class, 'getDataTables'])->name('getDataTables');
+        // Route::get('datatable', [WorkStatusController::class, 'getForDataTable'])->name('datatable');
         Route::group(['prefix' => '{WorkStatus}'], function () { 
         Route::get('', [WorkStatusController::class, 'show'])->name('show');
         Route::get('edit', [WorkStatusController::class, 'edit'])->name('edit');
@@ -119,9 +120,11 @@ Route::group(['middleware' => 'auth'], function ()
     ], function () {
         Route::get('', [EmployeeWorkStatusController::class, 'index'])->name('index');
         Route::get('create', [EmployeeWorkStatusController::class, 'create'])->name('create');
+        Route::get('/datatables', [EmployeeWorkStatusController::class, 'getDataTables'])->name('getDataTables');
+        Route::get('toexcel', [EmployeeWorkStatusController::class, 'exportToExcel'])->name('toexcel');
         Route::post('', [EmployeeWorkStatusController::class, 'store'])->name('store');
         Route::get('{id}/edit', [EmployeeWorkStatusController::class, 'edit'])->name('edit');
-
+        // Route::get(/{id}, [EmployeeWorkStatusController::class, 'show'])->name('show');
         Route::get('export', [EmployeeWorkStatusController::class, 'exportlist'])->name('export');
         Route::group(['prefix' => '{kiisland?}'], function () { 
         Route::get('', [EmployeeWorkStatusController::class, 'show'])->name('show');
@@ -509,7 +512,7 @@ Route::group([
     Route::get('', [JobTitleController::class, 'index'])->name('index');
     Route::get('/datatables', [JobTitleController::class, 'getDataTables'])->name('datatables');
     Route::get('jobtitles/{department_id}', [JobTitleController::class, 'getJobTitlesByDepartment'])->name('getJobTitlesByDepartment');
-    Route::get('excel', [JobTitleController::class, 'exportTrainingAttendance'])->name('excel');
+    Route::get('toexcel', [JobTitleController::class, 'exportToExcel'])->name('toexcel');
     Route::get('create', [JobTitleController::class, 'create'])->name('create');
     Route::post('', [JobTitleController::class, 'store'])->name('store');
     Route::get('export', [JobTitleController::class, 'exportlist'])->name('export');
@@ -529,7 +532,7 @@ Route::group([
 ], function () {
     Route::get('', [VacancyController::class, 'index'])->name('index');
     Route::get('create', [VacancyController::class, 'create'])->name('create');
-
+    Route::get('/datatables', [VacancyController::class, 'getDataTables'])->name('datatables');
     Route::post('', [VacancyController::class, 'store'])->name('store');
     Route::get('vacancys/{job_title_id}', [VacancyController::class, 'getJobTitleByVacancy']);
     Route::group(['prefix' => '{vacancy}'], function () { 
@@ -573,10 +576,10 @@ Route::group([
     Route::get('create', [RecommendedSalaryScaleController::class, 'create'])->name('create');
     Route::get('/datatables', [RecommendedSalaryScaleController::class, 'getDataTables'])->name('getDataTables');
     Route::get('/{job_title_id}', [RecommendedSalaryScaleController::class, 'getRecommendedSalaryScalesByJobTitle'])->name('getRecommendedSalaryScalesByJobTitle');
-   
+    Route::get('{recommendedsalaryscale}', [RecommendedSalaryScaleController::class, 'show'])->name('show');
     Route::post('', [RecommendedSalaryScaleController::class, 'store'])->name('store');
       Route::group(['prefix' => '{recommendedsalaryscale}'], function () { 
-        Route::get('', [RecommendedSalaryScaleController::class, 'show'])->name('show');
+       
         Route::get('edit', [RecommendedSalaryScaleController::class, 'edit'])->name('edit');
         Route::match(['PUT', 'PATCH'], '', [RecommendedSalaryScaleController::class, 'update'])->name('update');
         Route::delete('', [RecommendedSalaryScaleController::class, 'delete'])->name('delete');

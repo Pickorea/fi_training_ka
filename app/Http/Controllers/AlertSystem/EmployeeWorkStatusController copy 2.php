@@ -1,21 +1,16 @@
 <?php
 
 namespace App\Http\Controllers\AlertSystem;
-
 use App\Http\Controllers\Controller;
 
-use App\Repositories\AlertSystem\WorkStatusRepository;
-use App\Repositories\AlertSystem\EmployeeRepository;
-use App\Repositories\AlertSystem\EmployeeWorkStatusRepository;
-use App\Repositories\AlertSystem\RecommendedSalaryScalesRepository;
-use App\Repositories\AlertSystem\VacancyRepository;
-use App\Repositories\AlertSystem\JobTitleRepository;
-use App\Models\AlertSystem\JobTitle;
+use App\Models\AlertSystem\WorkStatus;
 use App\Models\AlertSystem\Employee;
 use App\Models\AlertSystem\EmployeeWorkStatus;
-use App\Models\AlertSystem\WorkStatus;
-use App\Models\AlertSystem\Vacancy;
 use App\Models\AlertSystem\RecommendedSalaryScale;
+use App\Models\AlertSystem\Vacancy;
+use App\Models\AlertSystem\JobTitle;
+use App\Repositories\AlertSystem\RecommendedRecommendedSalaryScalesRepository;
+
 
 use DB;
 use Illuminate\Http\Request;
@@ -23,116 +18,75 @@ use PDF;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
-
-
-use App\Exports\AlertSystem\ExportEmployeeWorkStatusListTable;
-use Maatwebsite\Excel\Facades\Excel;
 class EmployeeWorkStatusController extends Controller {
 
-	private $employees;
 
-	private $workstatus;
-
-	private $employeesworkstatus;
-
-	private $vacancy;
-
-
-	private $recommendedsalaryscales;
-
-	private $jobtitles;
-
-
-
-    public function __construct(
-		RecommendedSalaryScalesRepository $recommendedsalaryscales, 
-		JobTitleRepository $jobtitles,
-		WorkStatusRepository $workstatus,
-		EmployeeRepository $employees,
-		EmployeeWorkStatusRepository $employeesworkstatus,
-		VacancyRepository $vacancy
-	)
-    {
-        $this->employees=$employees;
-
-		$this->workstatus=$workstatus;
-
-		$this->vacancy=$vacancy;
-
-		$this->recommendedsalaryscales=$recommendedsalaryscales;
-
-		$this->jobtitles=$jobtitles;
-
-		$this->employeesworkstatus = $employeesworkstatus;
-      
-       
-    }
 	/**
 	 * Display a listing of the resource.
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	
-	
-
 	public function index()
 	{
+		$employees = DB::table('employees')
+    ->select(
+        'employees.name',
+        'work_status.work_status_name',
+        'employee_work_statuses.start_date',
+        'employee_work_statuses.end_date',
+        'employee_work_statuses.unestablished',
+        'employee_work_statuses.id',
+        'employees.*',
+        'departments.department_name',
+        'job_titles.name as job_title_name',
+        'recommended_salary_scales.name as recommended_salary_scale',
+        'recommended_salary_scales.recommended_minimum_salary',
+        'recommended_salary_scales.recommended_maximum_salary',
+        DB::raw('(CASE WHEN employee_work_statuses.end_date < NOW() THEN "Expired" ELSE "Active" END) AS status'),
+        DB::raw('DATEDIFF(employee_work_statuses.end_date, employee_work_statuses.start_date) - (DATEDIFF(employee_work_statuses.end_date, employee_work_statuses.start_date) DIV 7 * 2) - 
+                (CASE WHEN WEEKDAY(employee_work_statuses.start_date) = 6 THEN 1 ELSE 0 END) - 
+                (CASE WHEN WEEKDAY(employee_work_statuses.end_date) = 5 THEN 1 ELSE 0 END) as day_count')
+    )
+    ->leftJoin('work_status', 'work_status.id', '=', 'employees.work_status_id')
+    ->leftJoin('employee_work_statuses', function($join){
+        $join->on('employee_work_statuses.employee_id', '=', 'employees.id')
+            ->whereNotNull('employee_work_statuses.start_date')
+            ->whereNotNull('employee_work_statuses.end_date');
+    })
+    ->leftJoin('vacancies', 'vacancies.id', '=', 'employee_work_statuses.vacancy_id')
+    ->leftJoin('job_titles', 'job_titles.id', '=', 'vacancies.job_title_id')
+    ->leftJoin('departments', 'departments.id', '=', 'vacancies.department_id')
+    ->leftJoin('recommended_salary_scales', function($join){
+        $join->on('recommended_salary_scales.job_title_id', '=', 'job_titles.id');
+    })
+    ->where(function($query){
+        $query->where('work_status.work_status_name', '!=', 'permanent')
+            ->orWhere('employee_work_statuses.unestablished', '=', 'unestablished');
+    })
+    ->whereNotNull('employee_work_statuses.start_date')
+    ->whereNotNull('employee_work_statuses.end_date')
+    ->get()
+    ->toArray();
+
 	
-		return view('alertsystems.employeeworkstatuses.index');
+			$jobTitleName = 'Help Desk'; // Replace 'Your Job Title' with the actual job title name
+			$jobTitle = JobTitle::where('name', $jobTitleName)->first();
 
+			if ($jobTitle) {
+				$jobTitleId = $jobTitle->id;
+			} else {
+				// Handle the case when the job title is not found
+				$jobTitleId = null; // Or assign a default value, or show an error message
+			}
 
+			
+	
+		return view('alertsystems.employeeworkstatuses.index', compact('employees', 'jobTitleId'));
 	}
 	
 	
-	public function getDataTables(Request $request)
-{
-    $search = $request->get('search', '');
-    $order_by = $request->get('order_by', 'id');
-    $sort = $request->get('sort', 'asc');
 
-    $data = $this->employeesworkstatus->getForDataTable($search, $order_by, $sort);
-
-    // Transform the data to match the desired structure
-    $transformedData = [];
-
-    foreach ($data['employees'] as $item) {
-        $employee = $item->employee_name;
-        $workStatusName = $item->work_status_name;
-        $department = $item->department;
-
-        $transformedData[] = [
-			'employee' => $employee,
-			'work_status_name' => $workStatusName,
-			'start_date' => $item->start_date,
-			'end_date' => $item->end_date,
-			'day_count' => $item->day_count,
-			'countdown' => $item->countdown,
-			'department' => $department,
-			'job_title' => $item->job_title,
-			'recommended_salary_scale' => $item->recommended_salary_scale,
-			'status' => $item->status,
-			'action' => '<a href="' . route('employeeworkstatuses.edit', $item->employee_work_status_id) . '" class="btn btn-sm btn-primary">Edit</a> <a href="' . route('employeeworkstatuses.show', $item->employee_work_status_id) . '" class="btn btn-sm btn-secondary">Show</a>',
-		];
-		
-    }
-
-    $result = [
-        'data' => $transformedData,
-        'jobTitleId' => $data['jobTitleId'],
-    ];
-
-    return $result;
-}
-
-
-public function exportToExcel()
-	{
-		// Create an instance of the ExportEmployeeWorkStatusListTable class
-		$exporter = new ExportEmployeeWorkStatusListTable($this->employeesworkstatus);
-
-		// Call the exportToExcel method of the exporter to generate the Excel file
-		return $exporter->exportToExcel();
-	}
+	
 
     /**
      * Show the form for creating a new resource.
@@ -145,19 +99,28 @@ public function exportToExcel()
         abort(403, 'Unauthorized action.');
     }
 
-    $workstatuses = $workstatus=$this->workstatus->pluck();
-	// dd($workstatuses);
-	$employees = $employees=$this->employees->pluck();   
-	// dd($employees);
-	$vacancies=$this->vacancy->pluck();
-	// dd($vacancies);
-    $salaryScales=$this->recommendedsalaryscales->pluck();
-	// dd($salaryScales);
+    $workstatuses = WorkStatus::where('work_status_name', '!=', 'permanent')->get();
+
+    $employees = Employee::distinct()
+        ->select('employees.name', 'employees.id')
+        ->leftJoin('work_status', 'work_status.id', '=', 'employees.work_status_id')
+        ->leftJoin('employee_work_statuses', 'employees.id', '=', 'employee_work_statuses.employee_id')
+        ->where('work_status.work_status_name', '!=', 'permanent')
+        ->get();
+
+    // $jobTitles = JobTitle::all();
+
+    // Retrieve vacancies for the given job title ID
+    $vacancies = Vacancy::all();
+
+    // Retrieve RecommendedSalaryScales for the given job title ID
+    $salaryScales = RecommendedSalaryScale::all();
 
     return view('alertsystems.employeeworkstatuses.create')
         ->with('workstatuses', $workstatuses)
         ->with('employees', $employees)
         ->with('vacancies', $vacancies)
+        // ->with('jobTitles', $jobTitles)
         ->with('salaryScales', $salaryScales);
 }
 
@@ -186,7 +149,7 @@ public function exportToExcel()
 				];
 
 	
-					$results = $this->employeesworkstatus->create($input);
+					$results = EmployeeWorkStatus::create($input);
 
 			
 				return redirect()->route('employeeworkstatuses.index');

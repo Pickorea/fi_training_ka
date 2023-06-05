@@ -59,7 +59,7 @@ class RecommendedSalaryScaleController extends Controller {
                 'id' => $item->jobTitle->id,
                 'name' => $item->jobTitle->name,
             ],
-            'job_title_id' => $item->job_title_id,
+            // 'job_title_id' => $item->job_title_id,
             'name' => $item->name,
             'recommended_maximum_salary' => $item->recommended_maximum_salary,
             'recommended_minimum_salary' => $item->recommended_minimum_salary,

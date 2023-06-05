@@ -17,7 +17,7 @@
         </div>
 
         <div class="table-responsive">
-            <table id="salaryTable" class="table table-striped">
+            <table id="salaryTable" class="table">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -53,6 +53,11 @@
                         if (response && response.data && response.data.length > 0) {
                             // Iterate through the response data and add rows to the table
                             $.each(response.data, function(index, item) {
+                                var editUrl = "{{ route('recommendedsalaryscales.edit', ['recommendedsalaryscale' => 'vacancy_id']) }}".replace('vacancy_id', item.id);
+
+                                var showUrl = "{{ route('recommendedsalaryscales.show', ['recommendedsalaryscale' => 'vacancy_id']) }}".replace('vacancy_id', item.id);
+
+
                                 var jobTitle = item.job_title ? item.job_title.name : '';
                                 var row = "<tr>" +
                                     "<td>" + item.id + "</td>" +
@@ -60,7 +65,7 @@
                                     "<td>" + jobTitle + "</td>" +
                                     "<td>" + item.recommended_minimum_salary + "</td>" +
                                     "<td>" + item.recommended_maximum_salary + "</td>" +
-                                    "<td><a href=\"/recommendedsalaryscales/" + item.id + "/edit\" class=\"btn btn-sm btn-primary\">Edit</a> <a href=\"/recommendedsalaryscales/" + item.id + "\" class=\"btn btn-sm btn-secondary\">Show</a></td>" +
+                                    "<td><a href='" + editUrl + "' class='btn btn-sm btn-primary'>Edit</a> <a href='" + showUrl + "' class='btn btn-sm btn-secondary'>Show</a></td>" +
                                     "</tr>";
 
                                 $('#salaryTable tbody').append(row);

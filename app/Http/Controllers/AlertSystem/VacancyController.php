@@ -52,7 +52,30 @@ class VacancyController extends Controller {
 		return response()->json(['data' => $vacancies]);
 	}
 
-	
+	public function getDataTables(Request $request)
+{
+    $search = $request->get('search', '');
+    $order_by = $request->get('order_by', 'id');
+    $sort = $request->get('sort', 'asc');
+
+    $data = $this->vacancy->getForDataTable($search, $order_by, $sort);
+
+    // Transform the data to match the desired structure
+    $transformedData = [];
+foreach ($data as $item) {
+    $transformedData[] = [
+        'id' => $item->id,
+        'job_title' => [
+            'id' => $item->id,
+            'name' => $item->name, // Accessing the "Job titles" attribute
+        ],
+        'department_name' => $item->department_name,
+        'status' => $item->status, // Accessing the "status" attribute
+    ];
+}
+
+    return response()->json(['data' => $transformedData]);
+}
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -60,13 +83,19 @@ class VacancyController extends Controller {
 	 */
 	// VacancyController.php
 
-public function index()
-{
-    $vacancies = Vacancy::with(['department', 'jobTitle', 'statuses'])->get();
+		public function index()
+		{
+			return view('alertsystems.vacancy.index');
+		}
 
 
-    return view('alertsystems.vacancy.index', ['vacancies' => $vacancies]);
-}
+// public function index()
+// {
+//     $vacancies = Vacancy::with(['department', 'jobTitle', 'statuses'])->get();
+
+
+//     return view('alertsystems.vacancy.index', ['vacancies' => $vacancies]);
+// }
 
 
 	
@@ -167,17 +196,24 @@ public function index()
 	 * @param  int  $id
 	 * @return \Illuminate\Http\Response
 	 */
-	public function edit($id) {
-		if (! Auth::user()->can('hr.edit')) {
-            abort(403, 'Unauthorized action.');
-        }
-		
-	
-		$departments=$this->departments->pluck();
-		return view('alertsystems.vacancy.edit')
-		->withDepartments($departments);
-        
-	}
+	public function edit($id)
+{
+    if (!Auth::user()->can('hr.edit')) {
+        abort(403, 'Unauthorized action.');
+    }
+
+     $vacancy = $this->vacancy->getById($id);
+	 $departments = $this->departments->pluck();
+	 $jobTitles =$this->jobtitiles->pluck();
+    // dd($vacancy);
+
+    if (!$vacancy) {
+        abort(404, 'Vacancy not found.');
+    }
+
+    return view('alertsystems.vacancy.edit', compact('departments', 'vacancy', 'jobTitles'));
+}
+
 
 	/**
 	 * Update the specified resource in storage.
@@ -186,7 +222,7 @@ public function index()
 	 * @param  int  $id
 	 * @return \Illuminate\Http\Response
 	 */
-	public function update(Request $request, $id)
+				public function update(Request $request, $id)
 			{
 				if (!Auth::user()->can('hr.update')) {
 					abort(403, 'Unauthorized action.');
@@ -200,19 +236,20 @@ public function index()
 					throw new \Exception("Vacancy not found.");
 				}
 
-				$result = $this->vacancy->update($id, $input);
+				$result = $this->vacancy->update($vacancy, $input);
 
-				if ($result) {
-					$this->status->create([
-						'vacancy_id' => $id,
-						'status' => $request->input('status'),
-					]);
+				// if ($result) {
+				//     $this->status->create([
+				//         'vacancy_id' => $id,
+				//         'status' => $request->input('status'),
+				//     ]);
 
 					return redirect()->route('vacancy.index');
-				} else {
-					throw new \Exception("Failed to update vacancy.");
-				}
+				// } else {
+				//     throw new \Exception("Failed to update vacancy.");
+				// }
 			}
+
 
 
 			public function updateStatus(Request $request, $id)
