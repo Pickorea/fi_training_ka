@@ -91,6 +91,7 @@ class EmployeeWorkStatusController extends Controller {
     $sort = $request->get('sort', 'asc');
 
     $data = $this->employeesworkstatus->getForDataTable($search, $order_by, $sort);
+	
 
     // Transform the data to match the desired structure
     $transformedData = [];
@@ -101,19 +102,18 @@ class EmployeeWorkStatusController extends Controller {
         $department = $item->department;
 
         $transformedData[] = [
-			'employee' => $employee,
-			'work_status_name' => $workStatusName,
-			'start_date' => $item->start_date,
-			'end_date' => $item->end_date,
-			'day_count' => $item->day_count,
-			'countdown' => $item->countdown,
-			'department' => $department,
-			'job_title' => $item->job_title,
-			'recommended_salary_scale' => $item->recommended_salary_scale,
-			'status' => $item->status,
-			'action' => '<a href="' . route('employeeworkstatuses.edit', $item->employee_work_status_id) . '" class="btn btn-sm btn-primary">Edit</a> <a href="' . route('employeeworkstatuses.show', $item->employee_work_status_id) . '" class="btn btn-sm btn-secondary">Show</a>',
-		];
-		
+            'employee' => $employee,
+            'work_status_name' => $workStatusName,
+            'start_date' => $item->start_date,
+            'end_date' => $item->end_date,
+            'day_count' => $item->day_count,
+            'countdown' => $item->countdown,
+            'department' => $department,
+            'job_title' => $item->job_title,
+            'recommended_salary_scale' => $item->recommended_salary_scale,
+            'status' => $item->status,
+            'action' => '<a href="' . url('employeeworkstatuses') . '/' . $item->employee_work_status_id . '/edit" class="btn btn-sm btn-primary">Edit</a> <a href="' . url('employeeworkstatuses') . '/' . $item->employee_work_status_id . '" class="btn btn-sm btn-secondary">Show</a>',
+        ];
     }
 
     $result = [
@@ -123,6 +123,7 @@ class EmployeeWorkStatusController extends Controller {
 
     return $result;
 }
+
 
 
 public function exportToExcel()
@@ -245,24 +246,19 @@ public function exportToExcel()
 	 */
 	public function edit($id)
 {
-    $employeeWorkStatus = EmployeeWorkStatus::findOrFail($id);
-	// dd($employeeWorkStatus->start_date);
-    $workstatuses = WorkStatus::where('work_status_name', '!=', 'permanent')->get();
-    $employees =Employee::find($id);
-    $vacancies = Vacancy::all();
-    $jobTitles = JobTitle::all();
-    $salaryScales = RecommendedSalaryScale::all();
-    
-    return view('alertsystems.employeeworkstatuses.edit', [
-        'employeeworkstatus' => $employeeWorkStatus,
-        'workstatus' => $employeeWorkStatus, // pass the $workstatus variable to the view
-        'workstatuses' => $workstatuses,
-        'employees' => $employees,
-        'vacancies' => $vacancies,
-        'jobTitles' => $jobTitles,
-        'salaryScales' => $salaryScales,
-    ]);
+    if (!Auth::user()->can('hr.create')) {
+        abort(403, 'Unauthorized action.');
+    }
+
+    $model = EmployeeWorkStatus::findOrFail($id);
+    $workstatuses = $this->workstatus->pluck();
+    $employees = $this->employees->pluck();   
+    $vacancies = $this->vacancy->pluck();
+    $salaryScales = $this->recommendedsalaryscales->pluck();
+
+    return view('alertsystems.employeeworkstatuses.edit', compact('model', 'workstatuses', 'employees', 'vacancies', 'salaryScales'));
 }
+
 
 
 	/**

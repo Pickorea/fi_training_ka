@@ -17,9 +17,10 @@ class CreateLeaveEntitlementsTable extends Migration
             $table->timestamps();
             
             $table->foreign('job_title_id')
-                ->references('id')
-                ->on('jobtitles')
-                ->onDelete('cascade');
+            ->references('id')
+            ->on('job_titles')
+            ->onDelete('cascade');
+        
         });
     }
 

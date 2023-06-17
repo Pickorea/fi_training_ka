@@ -21,12 +21,12 @@
                 <thead>
                     <tr>
                         <th>EMPLOYEE</th>
-                        <th>WORK STATUS</th>
-                        <th>START DATE</th>
-                        <th>END DATE</th>
-                        <th>DAYS LIMIT</th>
+                        <th>WORK</th>
+                        <th>START</th>
+                        <th>END</th>
+                        <th>LIMIT</th>
                         <th>DEPARTMENT</th>
-                        <th>JOB TITLE</th>
+                        <th>JOB</th>
                         <th>SALARY</th>
                         <th>STATUS</th>
                         <th>BALANCE</th>
@@ -41,6 +41,10 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.5.0/dist/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css">
+
     <script>
         $(document).ready(function() {
             // Function to fetch and display data
@@ -69,10 +73,7 @@
                                     "<td>" + item.recommended_salary_scale + "</td>" +
                                     "<td>" + item.status + "</td>" +
                                     "<td>" + item.countdown + "</td>" + // Include balance attribute
-                                    "<td>" +
-                                        "<a href='{{ route('employeeworkstatuses.edit', ['id' => " + item.employee_work_status_id + "]) }}'>Edit</a> | " +
-                                        "<a href='{{ route('employeeworkstatuses.show', ['id' => " + item.employee_work_status_id + "]) }}'>Show</a>" +
-                                    "</td>" + // Include the action value from the response
+                                    "<td>" + item.action + "</td>" + // Include the action value from the response
                                     "</tr>";
 
                                 $('#workStatusTable tbody').append(row);

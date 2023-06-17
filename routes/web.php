@@ -15,6 +15,11 @@ use App\Http\Controllers\Training\TrainingTypeController;
 use App\Http\Controllers\Training\VillageController;
 use App\Http\Controllers\Training\ChartController;
 
+//TrainTrack
+use App\Http\Controllers\TrainTrack\CourseController;
+use App\Http\Controllers\TrainTrack\ProgramController;
+use App\Http\Controllers\TrainTrack\EmployeeProgramController;
+
 //Alert System
 use App\Http\Controllers\AlertSystem\WorkStatusController;
 use App\Http\Controllers\AlertSystem\EmployeeController;
@@ -30,6 +35,7 @@ use App\Http\Controllers\AlertSystem\JobTitleController;
 use App\Http\Controllers\AlertSystem\VacancyController;
 use App\Http\Controllers\AlertSystem\SalaryScaleController;
 use App\Http\Controllers\AlertSystem\RecommendedSalaryScaleController;
+use App\Http\Controllers\AlertSystem\SystemInfoController; 
 
 //displinary 
 use App\Http\Controllers\Displinary\DisplinaryActionController;
@@ -584,5 +590,70 @@ Route::group([
         Route::match(['PUT', 'PATCH'], '', [RecommendedSalaryScaleController::class, 'update'])->name('update');
         Route::delete('', [RecommendedSalaryScaleController::class, 'delete'])->name('delete');
         
+    });
+});
+
+//system-info
+Route::group([
+    'as' => 'system-info.',
+    'prefix' => 'system-info',
+    'middleware' => ['auth', 'role:hr'],
+], function () {
+    Route::get('', [SystemInfoController::class, 'index'])->name('index');
+    
+});
+
+
+//course
+Route::group([
+    'as' => 'course.',
+    'prefix' => 'course',
+    'middleware' => ['auth', 'role:hr'],
+], function () {
+    Route::get('', [CourseController::class, 'index'])->name('index');
+    Route::get('create', [CourseController::class, 'create'])->name('create');
+    Route::get('/datatables', [CourseController::class, 'getDataTables'])->name('datatables');
+    Route::post('', [CourseController::class, 'store'])->name('store');
+    Route::group(['prefix' => '{course}'], function () { 
+        Route::get('', [CourseController::class, 'show'])->name('show');
+        Route::get('edit', [CourseController::class, 'edit'])->name('edit');
+        Route::match(['PUT', 'PATCH'], '', [CourseController::class, 'update'])->name('update');
+        Route::delete('', [CourseController::class, 'delete'])->name('delete');
+    });
+});
+
+//program
+Route::group([
+    'as' => 'program.',
+    'prefix' => 'program',
+    'middleware' => ['auth', 'role:hr'],
+], function () {
+    Route::get('', [ProgramController::class, 'index'])->name('index');
+    Route::get('create', [ProgramController::class, 'create'])->name('create');
+    Route::get('/datatables', [ProgramController::class, 'getDataTables'])->name('datatables');
+    Route::post('', [ProgramController::class, 'store'])->name('store');
+    Route::group(['prefix' => '{program}'], function () { 
+        Route::get('', [ProgramController::class, 'show'])->name('show');
+        Route::get('edit', [ProgramController::class, 'edit'])->name('edit');
+        Route::match(['PUT', 'PATCH'], '', [ProgramController::class, 'update'])->name('update');
+        Route::delete('', [ProgramController::class, 'delete'])->name('delete');
+    });
+});
+
+//employee program
+Route::group([
+    'as' => 'employee_program.',
+    'prefix' => 'employee_program',
+    'middleware' => ['auth', 'role:hr'],
+], function () {
+    Route::get('', [EmployeeProgramController::class, 'index'])->name('index');
+    Route::get('create', [EmployeeProgramController::class, 'create'])->name('create');
+    Route::get('/datatables', [EmployeeProgramController::class, 'getDataTables'])->name('datatables');
+    Route::post('', [EmployeeProgramController::class, 'store'])->name('store');
+    Route::group(['prefix' => '{employeeprogram}'], function () { 
+        Route::get('', [EmployeeProgramController::class, 'show'])->name('show');
+        Route::get('edit', [EmployeeProgramController::class, 'edit'])->name('edit');
+        Route::match(['PUT', 'PATCH'], '', [EmployeeProgramController::class, 'update'])->name('update');
+        Route::delete('', [EmployeeProgramController::class, 'delete'])->name('delete');
     });
 });

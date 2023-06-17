@@ -5,13 +5,12 @@
    <div class="row justify-content-center">
       <div class="col-md-12">
          <div class="card card-new-task">
-            <div class="card-header"></div>
+            <div class="card-header"><h3 class="box-title">{{ __('EDIT EMPLOYEE WORK STATUS') }}</h3></div>
             <div class="card-body">
                <div class="content-wrapper">
                   <section class="content">
                      <div class="box">
                         <div class="box-header with-border">
-                           <h3 class="box-title">{{ __('ENTER EMPLOYEE WORK STATUS') }}</h3>
                            <div class="box-tools pull-right">
                               <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="Collapse"><i class="fa fa-minus"></i></button>
                               <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove"><i class="fa fa-times"></i></button>
@@ -21,15 +20,13 @@
                            <form method="POST" enctype="multipart/form-data" id="upload-file" action="{{ route('employeeworkstatuses.store') }}">
                               @csrf
                               <div class="box-body">
-                                 <h4 class="box-title text-info">SECTION A</h4>
-                                 <hr class="my-15">
                                  <div class="row">
                                     <div class="form-group col-md-6">
                                        <label for="employee_id">{{ __('EMPLOYEE') }} <span class="text-danger">*</span></label>
                                        <select name="employee_id" id="employee_id" class="form-control">
                                           <option value="" selected disabled>{{ __('Select one') }}</option>
                                           @foreach($employees as $id => $employee)
-                                          <option value="{{$id}}" data-jobtitle="{{ $employee }}">{{ $employee }}</option>
+                                          <option value="{{$id}}" data-jobtitle="{{ $employee }}" @if(old('employee_id', $model->employee_id) == $id) selected @endif>{{ $employee }}</option>
                                           @endforeach
                                        </select>
                                        @error('employee_id')
@@ -53,18 +50,16 @@
                                  <div class="row">
                                     <div class="form-group col-md-6">
                                        <label for="start_date"><span class="text-danger">*</span>START DATE</label>
-                                       <input type="date" class="form-control @error('start_date') is-invalid @enderror" value="" id="start_date" name="start_date" autocomplete="off">
-                                       @error('start_date')
+                                       <input type="date" class="form-control {{ $errors->has('start_date') ? ' is-invalid' : '' }}" value="{{ $model->start_date }}" id="start_date" name="start_date" autocomplete="off">
+                                       @if ($errors->has('start_date'))
                                        <span class="invalid-feedback" role="alert">
-                                          <strong>{{ $message }}</strong>
+                                          <strong>{{ $errors->first('start_date') }}</strong>
                                        </span>
-                                       @enderror
+                                       @endif
                                     </div>
-                                 </div>
-                                 <div class="row">
                                     <div class="form-group col-md-6">
                                        <label for="end_date"><span class="text-danger">*</span>END DATE</label>
-                                       <input type="date" class="form-control @error('end_date') is-invalid @enderror" value="" id="end_date" name="end_date" autocomplete="off">
+                                       <input type="date" class="form-control @error('end_date') is-invalid @enderror" value="{{ $model->end_date }}" id="end_date" name="end_date" autocomplete="off">
                                        @error('end_date')
                                        <span class="invalid-feedback" role="alert">
                                           <strong>{{ $message }}</strong>
@@ -73,12 +68,14 @@
                                     </div>
                                  </div>
                                  <div class="row">
-                                    <div class="form-group">
+                                    <div class="form-group col-md-6">
                                        <label for="vacancy_id">Vacancy</label>
                                        <select name="vacancy_id" id="vacancy_id" class="form-control">
                                           <option value="">Select a vacancy</option>
                                           @foreach ($vacancies as $vacancy)
-                                          <option value="{{ $vacancy->id }}">{{ $vacancy->jobTitle->name }} - {{ $vacancy->department->department_name }}</option>
+                                          <option value="{{ $vacancy->id }}" {{ $model->vacancy_id == $vacancy->id ? 'selected' : '' }}>
+                                             {{ $vacancy->jobTitle->name }} - {{ $vacancy->department->department_name }}
+                                          </option>
                                           @endforeach
                                        </select>
                                     </div>

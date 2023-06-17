@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Models\AlertSystem;
+use App\Models\TrainTrack\Program;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -79,5 +80,11 @@ public function leaveEntitlement()
 {
     return $this->belongsTo(LeaveEntitlement::class);
 }
+
+public function programs()
+{
+    return $this->belongsToMany(Program::class, 'employee_program', 'employee_id', 'program_id');
+}
+
 
 }
