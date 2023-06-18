@@ -33,6 +33,8 @@ class CourseRepository extends BaseRepository
 		$item=new $item($data);
 		//$item->owner_organisation_id=$user->organisation_id;
         $item->save();
+
+        return $item;
         
 	}
 

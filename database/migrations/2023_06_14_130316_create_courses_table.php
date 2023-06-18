@@ -9,7 +9,7 @@ class CreateCoursesTable extends Migration
     public function up()
     {
         Schema::create('courses', function (Blueprint $table) {
-            $table->id('course_id'); // Use increments() instead of id()
+            $table->id('course_id'); 
             $table->string('title');
             $table->text('description');
             $table->integer('duration');

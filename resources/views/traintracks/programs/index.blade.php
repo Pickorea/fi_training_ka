@@ -40,64 +40,65 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function () {
-        // Function to fetch and populate course data
-        function fetchCourses() {
-            $.ajax({
-                url: '{{ route("program.datatables") }}',
-                type: 'GET',
-                dataType: 'json',
-                success: function (response) {
-                    console.log(response);
-                    // Clear existing table data
-                    $('#program-table tbody').empty();
+    // Function to fetch and populate program data
+    function fetchPrograms() {
+        $.ajax({
+            url: '{{ route("program.datatables") }}',
+            type: 'GET',
+            dataType: 'json',
+            success: function (response) {
+                console.log(response);
+                // Clear existing table rows
+                $('#program-table tbody').empty();
 
-                    // Check if data is available
-                    if (response && response.data && response.data.length > 0) {
-                        // Iterate through the response data and add rows to the table
-                        $.each(response.data, function (index, course) {
-                            var row = '<tr>' +
-                                '<td>' + course.title + '</td>' +
-                                '<td>' + course.description + '</td>' +
-                                '<td>' + course.duration + '</td>' +
-                                '<td>' + (course.program ? course.program.program_id : '') + '</td>' +
-                                '<td>' + (course.program ? course.program.trainer : '') + '</td>' +
-                                '<td>' +
-                                '<div class="btn-group">' +
-                                '<button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
-                                'Actions' +
-                                '</button>' +
-                                '<div class="dropdown-menu">' +
-                                '<a class="dropdown-item" href="#">Show</a>' +
-                                '<a class="dropdown-item" href="#">Edit</a>' +
-                                '</div>' +
-                                '</div>' +
-                                '</td>' +
-                                '</tr>';
+                // Check if data is available
+                if (response && response.data && response.data.length > 0) {
+                    // Iterate through the response data and add rows to the table
+                    $.each(response.data, function (index, program) {
+                        var row = '<tr>' +
+                            '<td>' + program.title + '</td>' +
+                            '<td>' + program.description + '</td>' +
+                            '<td>' + program.duration + '</td>' +
+                            '<td>' + (program.program ? program.program.program_id : '') + '</td>' +
+                            '<td>' + (program.program ? program.program.trainer : '') + '</td>' +
+                            '<td>' +
+                            '<div class="btn-group">' +
+                            '<button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
+                            'Actions' +
+                            '</button>' +
+                            '<div class="dropdown-menu">' +
+                            '<a class="dropdown-item" href="#">Show</a>' +
+                            '<a class="dropdown-item" href="#">Edit</a>' +
+                            '</div>' +
+                            '</div>' +
+                            '</td>' +
+                            '</tr>';
 
-                            $('#program-table tbody').append(row);
-                        });
-                    } else {
-                        // Display a message when no data is available
-                        var noDataMessage = "<tr><td colspan='6'>No data available</td></tr>";
-                        $('#program-table tbody').append(noDataMessage);
-                    }
-
-                    // Update the pagination links
-                    $('#pagination-links').html(response.pagination);
-                },
-                error: function (xhr, status, error) {
-                    console.log(xhr.responseText);
+                        $('#program-table tbody').append(row);
+                    });
+                } else {
+                    // Display a message when no data is available
+                    var noDataMessage = "<tr><td colspan='6'>No data available</td></tr>";
+                    $('#program-table tbody').append(noDataMessage);
                 }
-            });
-        }
 
-        // Call the fetchCourses function to load initial data
-        fetchCourses();
-
-        // Event listener for search input
-        $('#search-input').on('keyup', function () {
-            fetchCourses();
+                // Update the pagination links
+                $('#pagination-links').html(response.pagination);
+            },
+            error: function (xhr, status, error) {
+                console.log(xhr.responseText);
+            }
         });
+    }
+
+    // Call the fetchPrograms function to load initial data
+    fetchPrograms();
+
+    // Event listener for search input
+    $('#search-input').on('keyup', function () {
+        fetchPrograms();
     });
+});
+
 </script>
 @endpush

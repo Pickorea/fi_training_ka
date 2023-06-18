@@ -4,6 +4,7 @@ namespace App\Http\Controllers\TrainTrack;
 use App\Http\Controllers\Controller;
 
 use App\Repositories\TrainTrack\CourseRepository;
+use App\Models\TrainTrack\Course;
 use App\Repositories\TrainTrack\ProgramRepository;
 use App\Repositories\AlertSystem\DepartmentRepository;
 use Illuminate\Http\Request;
@@ -106,19 +107,64 @@ class ProgramController extends Controller {
 	 * @param  \Illuminate\Http\Request  $request
 	 * @return \Illuminate\Http\Response
 	 */
-	public function store(Request $request) {
-
-			if (! Auth::user()->can('hr.store')) {
-            abort(403, 'Unauthorized action.');
-        }
-		            $input = $request->all();
-					// dd($input);
+	public function store(Request $request)
+	{
+		if (!Auth::user()->can('hr.store')) {
+			abort(403, 'Unauthorized action.');
+		}
 	
-			$item = $this->programs->create($input);
-
+		if ($request->course_id == 0) {
+			$courseData = [
+				'title' => $request->title,
+				'description' => $request->description,
+				'duration' => $request->duration,
+			];
+	
+			$course = $this->courses->create($courseData);
+	
+				
+			$input = [
+				'course_id' => $course->course_id,
+				'department_id' => $request->department_id,
+				'trainer' => $request->trainer,
+				'start_date' => $request->start_date,
+				'end_date' => $request->end_date,
+			];
+	
+			$program = $this->programs->create($input);
+	
 			
-				return redirect()->route('program.index');
+		} else {
+			$input = $request->all();
+	
+			$program = $this->programs->create($input);
+	
+			
+		}
+	
+		return redirect()->route('program.index');
 	}
+	
+
+
+// public function store(Request $request)
+// {
+//     if ($request->course_id == 0) {
+//         $course = new Course();
+//         $course->title = $request->title;
+//         $course->description = $request->description;
+//         $course->duration = $request->duration;
+//         $course->save();
+//         $course_id = $request->course_id;
+//     } else {
+//         $course_id = $request->course_id;
+//     }
+//     $input = $request->all();
+//     $input['course_id'] = $course_id;
+//     $program = $this->programs->create($input);
+
+//     return redirect()->route('program.index');
+// }
 
 	
 
